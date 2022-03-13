@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 
 import { TradeContextProvider } from "./TradeContext";
 import { AppContextProvider } from "@/AppContext";
@@ -38,7 +38,7 @@ function App() {
   return (
     <AppContextProvider>
       <TradeContextProvider>
-        <BrowserRouter>
+        <HashRouter>
           <div className={styles.root}>
             <LeftNav />
             <div className={styles.right}>
@@ -48,7 +48,7 @@ function App() {
               </div>
             </div>
           </div>
-        </BrowserRouter>
+        </HashRouter>
       </TradeContextProvider>
     </AppContextProvider>
   );

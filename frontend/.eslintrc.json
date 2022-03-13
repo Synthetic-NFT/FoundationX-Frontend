@@ -30,6 +30,7 @@
     "no-console": "warn",
     "no-param-reassign": "off",
     "react/button-has-type": "off",
+    "no-empty-function": "off",
     "react-hooks/exhaustive-deps": "error",
     "import/order": [
       "error",
