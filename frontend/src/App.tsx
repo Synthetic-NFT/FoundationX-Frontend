@@ -32,6 +32,7 @@ const useStyles = makeStyles({
   },
 });
 
+// The top level component of the app
 function App() {
   const styles = useStyles();
 

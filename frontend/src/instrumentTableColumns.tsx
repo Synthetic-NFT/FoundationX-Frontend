@@ -47,6 +47,7 @@ function FeeCellRenderer({ row }: CellRendererProps): TableCellElement {
   return <TableCell align="right">{row.ticker}</TableCell>;
 }
 
+// Defines the available columns in the instrument table and how they are rendered.
 export const tableColumns: ColumnConfig[] = [
   {
     id: "ticker",

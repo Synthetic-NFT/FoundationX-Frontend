@@ -12,6 +12,9 @@ type Route = {
 // automatically nav to defaultRoute when loading "/"
 export const defaultRoute = "/wallet";
 
+// The available top level routes of this app. Each route may have secondary routes
+// (e.g. the trade route has `/trade/buy` and `/trade/sell`). The RouteContainer is rendered
+// if the route matches.
 export const routes: Route[] = [
   {
     path: "/wallet",

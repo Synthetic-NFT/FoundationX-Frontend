@@ -22,6 +22,8 @@ const useStyles = makeStyles({
   },
 });
 
+// This renders the container based on the current route.
+// The routes are defined in routeRegistry.
 function AppRouter() {
   const styles = useStyles();
   return (

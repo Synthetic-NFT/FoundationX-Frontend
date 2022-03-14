@@ -8,6 +8,8 @@ import React, { useContext } from "react";
 import tableColumns from "@/instrumentTableColumns";
 import { Instrument, TradeContext } from "@/TradeContext";
 
+// Renders the list of instruments available for trade.
+// How the instruments are rendered (i.e. columns) is defined in tableColumns.
 export default function InstrumentTable({
   onRowClick,
 }: {

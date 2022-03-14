@@ -4,6 +4,7 @@ export type AppData = {
   userName: string;
 };
 
+// Provides data related to the current user such as wallet.
 export const AppContext = React.createContext<{
   appData: AppData | null;
   setAppData: (_: AppData | null) => void;

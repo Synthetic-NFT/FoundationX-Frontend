@@ -10,4 +10,6 @@ const theme = {
 
 export type Theme = typeof theme;
 
+// A more scalable solution is [themeing](https://mui.com/customization/theming/) but this
+// is good for now.
 export default theme;

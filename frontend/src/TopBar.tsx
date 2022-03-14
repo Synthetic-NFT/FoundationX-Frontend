@@ -32,17 +32,20 @@ export default function TopBar(): React.ReactElement {
           <Button
             color="inherit"
             onClick={() => {
+              // we don't want to send duplicated request for connecting wallet.
               if (loading) {
                 return;
               }
               setLoading(true);
 
+              // disconnect
               if (appData != null) {
                 setAppData(null);
                 api.disconnect().then(() => setLoading(false));
                 return;
               }
 
+              // connect
               api.connect().then((newAppData) => {
                 setLoading(false);
                 setAppData(newAppData);

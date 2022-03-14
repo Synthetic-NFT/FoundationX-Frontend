@@ -2,6 +2,7 @@ import { AppData } from "./AppContext";
 import { TradeData } from "./TradeContext";
 import { fakeAppData, fakeTradeData } from "@/fakeData";
 
+// Simulates real API calls which are likely returning the response as a Promise.
 const fakeAPI = {
   async connect(): Promise<AppData> {
     return new Promise((resolve) => {

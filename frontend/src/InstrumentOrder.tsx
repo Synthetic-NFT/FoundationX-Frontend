@@ -17,6 +17,8 @@ import theme from "./theme";
 import InstrumentBuy from "@/InstrumentBuy";
 import { TradeContext } from "@/TradeContext";
 
+// Apart from `useStyles`, this shows an example of using styled for custom component, which
+// can be more flexible.
 const Tab = styled(TabUnstyled)`
   color: white;
   cursor: pointer;
@@ -48,6 +50,8 @@ const BASE_URL = `${TRADE_URL}/order`;
 const BUY_URL = `${BASE_URL}/buy`;
 const SELL_URL = `${BASE_URL}/sell`;
 
+// Rendered in `/trade/order` and has 2 sub pages, one for buy and another for sell.
+// The instrument of this order is in the URL search param `ticker=`
 export default function InstrumentOrder(): React.ReactElement {
   const match = useRouteMatch([BUY_URL, SELL_URL]);
   const location = useLocation();
@@ -80,6 +84,7 @@ export default function InstrumentOrder(): React.ReactElement {
     if (targetURL === match?.url) {
       return;
     }
+    // switch to buy or sell tab. `location.search` is needed to keep the URL params.
     history.push(`${targetURL}${location.search}`);
   };
 
@@ -91,17 +96,20 @@ export default function InstrumentOrder(): React.ReactElement {
           borderColor: "divider",
         }}
       >
+        {/* Since there are only 2 tabs, just hard code 0 or 1 as the selected tab */}
         <Tabs centered value={match?.url === BUY_URL ? 0 : 1}>
           <Tab label="Buy" onClick={() => onSwitch(BUY_URL)} />
           <Tab label="Sell" onClick={() => onSwitch(SELL_URL)} />
         </Tabs>
       </Box>
+      {/* Renders the ticker of this order */}
       <div className={styles.currentTicker}>{ticker}</div>
       <Switch>
+        {/* Renders buy or sell based on URL */}
         <Route path="/trade/order/buy" exact>
           <InstrumentBuy instrument={instrument} />
         </Route>
-        <Route path="/trade/order/sell">
+        <Route path="/trade/order/sell" exact>
           <div className={styles.currentTicker}>Sell</div>
         </Route>
       </Switch>

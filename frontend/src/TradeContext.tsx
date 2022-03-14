@@ -22,6 +22,7 @@ export const TradeContext = React.createContext<{
   setTradeData: () => {},
 });
 
+// Provides the data of the instruments available for trade.
 export function TradeContextProvider({
   children = null,
 }: {
@@ -29,6 +30,8 @@ export function TradeContextProvider({
 }) {
   const [tradeData, setTradeData] = React.useState<TradeData | null>(null);
   const [loading, setIsLoading] = React.useState(false);
+  // Automatically kicks off the loading upon rendering since we don't need to wait for
+  // an user action (such as connecting wallet).
   useEffect(() => {
     if (!loading && tradeData == null) {
       setIsLoading(true);
