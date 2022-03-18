@@ -9,7 +9,7 @@ FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 RUN apk add dumb-init
 RUN rm -rf ./*
-COPY --from=frontend /frontend/dist .
+COPY --from=frontend /frontend/build .
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 ENTRYPOINT ["dumb-init"]
 CMD sed -i 's/$PORT/'"$PORT"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
