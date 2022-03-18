@@ -6,6 +6,21 @@ const theme = {
 
   activeTextColor: "#f1f5f9",
   inactiveTextColor: "#94a3b8",
+
+  tableBackgroundColor: "#475569",
+  tableHeaderBackgroundColor: "#0f172a",
+  tableHeaderTextColor: "#94a3b8",
+
+  tableSearchBarBackgroundColor: "#0f172a",
+
+  tableRowPrimaryTextColor: "#f1f5f9",
+  tableRowSecondaryTextColor: "#94a3b8",
+
+  tableBorderColor: "#0f172a",
+
+  instrumentCardBackgroundColor: "#0f172a",
+  tradeFormBackgroundColor: "#1e293b",
+  tradeFormOutline: "#94a3b8",
 };
 
 export type Theme = typeof theme;

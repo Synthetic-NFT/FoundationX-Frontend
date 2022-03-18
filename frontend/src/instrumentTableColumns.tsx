@@ -1,7 +1,8 @@
 import TableCell from "@mui/material/TableCell";
 import React from "react";
 
-import type { Instrument } from "@/TradeContext";
+import { Instrument } from "./api";
+import theme from "./theme";
 
 type ColumnConfigWithoutRenderers = {
   id: string;
@@ -29,22 +30,68 @@ function DefaultHeaderRenderer({
   config,
 }: HeaderRendererProps): TableCellElement {
   return (
-    <TableCell align={config.align} style={{ minWidth: config.minWidth }}>
-      {config.label}
+    <TableCell
+      align={config.align}
+      style={{
+        minWidth: config.minWidth,
+        backgroundColor: theme.tableHeaderBackgroundColor,
+        color: theme.tableHeaderTextColor,
+        borderColor: theme.tableBorderColor,
+      }}
+    >
+      <b>{config.label}</b>
     </TableCell>
   );
 }
 
+const TABLE_CELL_STYLE = {
+  color: theme.tableRowPrimaryTextColor,
+  borderColor: theme.tableBorderColor,
+};
+
 function TickerCellRenderer({ row }: CellRendererProps): TableCellElement {
-  return <TableCell>{row.ticker}</TableCell>;
+  return (
+    <TableCell style={TABLE_CELL_STYLE}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {/* This is just a placeholder. We need to replace this with img tag when we have
+        the images for the tickers. */}
+        <div
+          style={{
+            width: "32px",
+            height: "32px",
+            backgroundColor: "green",
+            marginRight: "16px",
+          }}
+        />
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex" }}>
+            <b>{row.ticker}</b>
+          </div>
+          <div
+            style={{ color: theme.tableRowSecondaryTextColor, display: "flex" }}
+          >
+            {row.fullName}
+          </div>
+        </div>
+      </div>
+    </TableCell>
+  );
 }
 
 function PriceCellRenderer({ row }: CellRendererProps): TableCellElement {
-  return <TableCell align="right">{row.price}</TableCell>;
+  return (
+    <TableCell align="right" style={TABLE_CELL_STYLE}>
+      <b>{row.price}</b>
+    </TableCell>
+  );
 }
 
 function FeeCellRenderer({ row }: CellRendererProps): TableCellElement {
-  return <TableCell align="right">{row.ticker}</TableCell>;
+  return (
+    <TableCell align="right" style={TABLE_CELL_STYLE}>
+      <b>{row.fee}</b>
+    </TableCell>
+  );
 }
 
 // Defines the available columns in the instrument table and how they are rendered.

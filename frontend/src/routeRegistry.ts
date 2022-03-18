@@ -1,7 +1,7 @@
 import React from "react";
 
-import TradeRouteContainer from "@/TradeRouteContainer";
-import WalletRouteContainer from "@/WalletRouteContainer";
+import TradeRouteContainer from "./TradeRouteContainer";
+import WalletRouteContainer from "./WalletRouteContainer";
 
 type Route = {
   path: string;

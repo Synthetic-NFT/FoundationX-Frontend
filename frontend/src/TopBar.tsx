@@ -5,9 +5,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import React, { useContext, useState } from "react";
 
-import api from "@/api";
-import { AppContext } from "@/AppContext";
-import theme from "@/theme";
+import api from "./api";
+import { AppContext } from "./AppContext";
+import theme from "./theme";
 
 const useStyles = makeStyles({
   root: {

@@ -1,12 +1,12 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { HashRouter } from "react-router-dom";
 
+import { AppContextProvider } from "./AppContext";
+import AppRouter from "./AppRouter";
+import LeftNav from "./LeftNav";
+import theme from "./theme";
+import TopBar from "./TopBar";
 import { TradeContextProvider } from "./TradeContext";
-import { AppContextProvider } from "@/AppContext";
-import AppRouter from "@/AppRouter";
-import LeftNav from "@/LeftNav";
-import theme from "@/theme";
-import TopBar from "@/TopBar";
 
 const useStyles = makeStyles({
   root: {

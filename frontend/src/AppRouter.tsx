@@ -1,8 +1,8 @@
 import { makeStyles } from "@material-ui/core";
 import { Switch, Route } from "react-router-dom";
 
-import { routes } from "@/routeRegistry";
-import theme from "@/theme";
+import { routes } from "./routeRegistry";
+import theme from "./theme";
 
 const useStyles = makeStyles({
   root: {

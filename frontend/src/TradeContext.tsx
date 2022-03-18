@@ -1,18 +1,7 @@
 import React, { useEffect } from "react";
 
-import api from "@/api";
-
-export type Instrument = {
-  ticker: string;
-  fullName: string;
-  id: string;
-  price: string;
-  fee: string;
-};
-
-export type TradeData = {
-  instruments: Instrument[];
-};
+import type { TradeData } from "./api";
+import api from "./api";
 
 export const TradeContext = React.createContext<{
   tradeData: TradeData | null;

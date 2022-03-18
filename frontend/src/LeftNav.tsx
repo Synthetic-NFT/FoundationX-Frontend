@@ -6,8 +6,8 @@ import { Divider } from "@mui/material";
 import React, { useCallback, useEffect } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
-import { routes, defaultRoute } from "@/routeRegistry";
-import theme from "@/theme";
+import { routes, defaultRoute } from "./routeRegistry";
+import theme from "./theme";
 
 const useStyles = makeStyles({
   root: {
@@ -47,10 +47,9 @@ function Nav({
   const match = useRouteMatch(path);
 
   const onNav = useCallback(() => {
-    if (match == null) {
-      history.push(path);
-    }
-  }, [history, match, path]);
+    // Note: click "Trade" when we are at `/trade/order` will route us to `/trade`
+    history.push(path);
+  }, [history, path]);
 
   return (
     <ListItem button onClick={onNav}>

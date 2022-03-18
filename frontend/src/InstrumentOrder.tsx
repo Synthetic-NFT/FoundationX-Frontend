@@ -13,9 +13,9 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import InstrumentBuy from "./InstrumentBuy";
 import theme from "./theme";
-import InstrumentBuy from "@/InstrumentBuy";
-import { TradeContext } from "@/TradeContext";
+import { TradeContext } from "./TradeContext";
 
 // Apart from `useStyles`, this shows an example of using styled for custom component, which
 // can be more flexible.
@@ -102,17 +102,24 @@ export default function InstrumentOrder(): React.ReactElement {
           <Tab label="Sell" onClick={() => onSwitch(SELL_URL)} />
         </Tabs>
       </Box>
-      {/* Renders the ticker of this order */}
-      <div className={styles.currentTicker}>{ticker}</div>
-      <Switch>
-        {/* Renders buy or sell based on URL */}
-        <Route path="/trade/order/buy" exact>
-          <InstrumentBuy instrument={instrument} />
-        </Route>
-        <Route path="/trade/order/sell" exact>
-          <div className={styles.currentTicker}>Sell</div>
-        </Route>
-      </Switch>
+      <div
+        style={{
+          position: "relative",
+          maxHeight: "100%",
+          overflow: "scroll",
+          paddingTop: "12px",
+        }}
+      >
+        <Switch>
+          {/* Renders buy or sell based on URL */}
+          <Route path="/trade/order/buy" exact>
+            <InstrumentBuy instrument={instrument} />
+          </Route>
+          <Route path="/trade/order/sell" exact>
+            <div className={styles.currentTicker}>Sell</div>
+          </Route>
+        </Switch>
+      </div>
     </>
   );
 }

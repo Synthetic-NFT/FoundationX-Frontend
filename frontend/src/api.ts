@@ -1,6 +1,17 @@
 import { AppData } from "./AppContext";
-import { TradeData } from "./TradeContext";
-import { fakeAppData, fakeTradeData } from "@/fakeData";
+import { fakeAppData, fakeTradeData } from "./fakeData";
+
+export type Instrument = {
+  ticker: string;
+  fullName: string;
+  id: string;
+  price: string;
+  fee: string;
+};
+
+export type TradeData = {
+  instruments: Instrument[];
+};
 
 // Simulates real API calls which are likely returning the response as a Promise.
 const fakeAPI = {
