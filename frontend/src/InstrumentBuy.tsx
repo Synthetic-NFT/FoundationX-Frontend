@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from "react";
 import { Instrument } from "./api";
 import { AppContext } from "./AppContext";
 import theme from "./theme";
+import {connectWallet, mintSynth} from "./util/interact";
 
 function InstrumentCard({ instrument }: { instrument: Instrument }) {
   const data = [
@@ -247,11 +248,17 @@ function RatioField({
 
 function BuyForm({ instrument }: { instrument: Instrument }) {
   const { appData } = useContext(AppContext);
+  const { walletAddress } = useContext(AppContext);
   const fakeLimits = {
     minRatio: 150,
     maxRatio: 200,
   };
   const buySpec = useBuySpec(fakeLimits);
+
+  const mintSynthPressed = async () => {
+    const mintSynthResponse = await mintSynth(walletAddress, "SynthTest1", buySpec.count, buySpec.ratio);
+    console.log(mintSynthResponse);
+  };
 
   // The place order button. We can connect it with the wallet connection flow.
   return (
@@ -280,9 +287,10 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
         style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
         size="large"
         variant="contained"
-        onClick={() => {}}
+        disabled={walletAddress === ""}
+        onClick={mintSynthPressed}
       >
-        {appData == null ? "Wallet Not Connected" : "Place Order"}
+        {walletAddress === "" ? "Wallet Not Connected" : "Place Order"}
       </Button>
     </div>
   );

@@ -1,17 +1,82 @@
+import { BigNumber } from "ethers";
+
 require("dotenv").config();
+// const { BigNumber } = require("@ethersproject");
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 
+// console.trace(alchemyKey);
 const web3 = createAlchemyWeb3(alchemyKey);
 
-// const contractABI = require("../contract-abi.json");
-// const contractAddress = "0x6f3f635A9762B47954229Ea479b4541eAF402A6A";
+const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
+const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
+const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
+const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
+
+
+const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
 //
-// export const helloWorldContract = new web3.eth.Contract(
-//     contractABI,
-//     contractAddress
-// );
+export const FactoryContract = new web3.eth.Contract(
+    FactoryABI,
+    FactoryAddress
+);
+
+export const mintSynth = async (address: string|null, synthName: string, amount: number, ratio: number) => {
+    // input error handling
+    if (!(window as any).ethereum || address === null) {
+        return {
+            status:
+                "💡 Connect your Metamask wallet to update the message on the blockchain.",
+        };
+    }
+    const unit = BigNumber.from(10).pow(18);
+
+    // amount is in eth
+    const amountWei = BigNumber.from(amount).mul(unit);
+    // eslint-disable-next-line
+    console.log(web3.utils.toWei(new web3.utils.BN(amount), 'ether').toString());
+
+    // set up transaction parameters
+    const depositParameters = {
+        to: FactoryAddress, // Required except during contract publications.
+        from: address, // must match user's active address.
+        value: web3.utils.toHex(amountWei.toString()),
+        data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
+    };
+
+    const bigNumberRatio = BigNumber.from(ratio);
+    const amountSynthInWei = amountWei.mul(bigNumberRatio).div(BigNumber.from(100));
+    const mintParameters = {
+        to: FactoryAddress, // Required except during contract publications.
+        from: address, // must match user's active address.
+        data: FactoryContract.methods.userMintSynth(synthName, amountSynthInWei).encodeABI(),
+    };
+
+    // sign the transaction
+    try {
+        const depositHash = await (window as any).ethereum.request({
+            method: "eth_sendTransaction",
+            params: [depositParameters],
+        });
+        console.log(depositHash);
+        const mintHash = await (window as any).ethereum.request({
+            method: "eth_sendTransaction",
+            params: [mintParameters],
+        });
+        console.log(mintHash);
+        return {
+            status: "success",
+            depositHash,
+            mintHash,
+        };
+    } catch (error) {
+        return {
+            status: (error as any).message
+        };
+    }
+};
+
 
 // export const loadCurrentMessage = async () => {
 //     const message = await helloWorldContract.methods.message().call();
@@ -74,49 +139,3 @@ export const getCurrentWalletConnected = async () => {
     }
 };
 
-// export const updateMessage = async (address, message) => {
-//     //input error handling
-//     if (!window.ethereum || address === null) {
-//         return {
-//             status:
-//                 "💡 Connect your Metamask wallet to update the message on the blockchain.",
-//         };
-//     }
-//
-//     if (message.trim() === "") {
-//         return {
-//             status: "❌ Your message cannot be an empty string.",
-//         };
-//     }
-//     //set up transaction parameters
-//     const transactionParameters = {
-//         to: contractAddress, // Required except during contract publications.
-//         from: address, // must match user's active address.
-//         data: helloWorldContract.methods.update(message).encodeABI(),
-//     };
-//
-//     //sign the transaction
-//     try {
-//         const txHash = await window.ethereum.request({
-//             method: "eth_sendTransaction",
-//             params: [transactionParameters],
-//         });
-//         return {
-//             status: (
-//                 <span>
-//           ✅{" "}
-//         <a target="_blank" href={`https://ropsten.etherscan.io/tx/${txHash}`}>
-//         View the status of your transaction on Etherscan!
-//         </a>
-//         <br />
-//         ℹ️ Once the transaction is verified by the network, the message will
-//         be updated automatically.
-//         </span>
-//     ),
-//     };
-//     } catch (error) {
-//         return {
-//             status: "😥 " + error.message,
-//         };
-//     }
-// };

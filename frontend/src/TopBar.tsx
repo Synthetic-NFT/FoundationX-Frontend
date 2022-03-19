@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 export default function TopBar(): React.ReactElement {
   const { appData, setAppData } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
-  const [walletAddress, setWallet] = useState("");
+  const {walletAddress, setWallet} = useContext(AppContext);
   const [status, setStatus] = useState("");
 
   const styles = useStyles();
@@ -46,6 +46,8 @@ export default function TopBar(): React.ReactElement {
     }
   }
 
+
+
   useEffect(() => {
     const setWalletAndStatus = async () => {
       const { address, status } = await getCurrentWalletConnected();
@@ -54,6 +56,7 @@ export default function TopBar(): React.ReactElement {
     }
     setWalletAndStatus();
     addWalletListener();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
