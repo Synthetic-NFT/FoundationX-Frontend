@@ -304,7 +304,7 @@ export default function InstrumentBuy({
   instrument: Instrument;
 }) {
   return (
-    <div style={{ display: "flex", overflow: "hidden" }}>
+    <div style={{ display: "flex", overflow: "scroll" }}>
       <BuyForm instrument={instrument} />
       <InstrumentCard instrument={instrument} />
     </div>

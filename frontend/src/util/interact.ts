@@ -16,10 +16,17 @@ const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 
 
 const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
+const ReserveAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+
 //
 export const FactoryContract = new web3.eth.Contract(
     FactoryABI,
     FactoryAddress
+);
+
+export const ReserveContract = new web3.eth.Contract(
+    ReserveABI,
+    ReserveAddress
 );
 
 export const mintSynth = async (address: string|null, synthName: string, amount: number, ratio: number) => {
@@ -77,6 +84,19 @@ export const mintSynth = async (address: string|null, synthName: string, amount:
     }
 };
 
+export const loadUserCollateral = async (address:string) => {
+    // const collateral = await ReserveContract.methods.getMinterDeposit(address).call();
+    // const collateral = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call()
+    FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call((err: any, result: any) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(result);
+        }
+    });
+    // console.log(collateral);
+    // return collateral;
+};
 
 // export const loadCurrentMessage = async () => {
 //     const message = await helloWorldContract.methods.message().call();

@@ -13,7 +13,7 @@ const useStyles = makeStyles({
   },
   routeContainer: {
     width: "1024px",
-    overflowY: "auto",
+    overflowY: "hidden",
   },
   title: {
     color: theme.activeTextColor,

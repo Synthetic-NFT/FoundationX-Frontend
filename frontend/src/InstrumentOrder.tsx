@@ -14,6 +14,7 @@ import {
 } from "react-router-dom";
 
 import InstrumentBuy from "./InstrumentBuy";
+import InstrumentSell from "./InstrumentSell";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
 
@@ -106,8 +107,8 @@ export default function InstrumentOrder(): React.ReactElement {
         style={{
           position: "relative",
           maxHeight: "100%",
-          overflow: "scroll",
           paddingTop: "12px",
+          overflow: "scroll",
         }}
       >
         <Switch>
@@ -116,7 +117,7 @@ export default function InstrumentOrder(): React.ReactElement {
             <InstrumentBuy instrument={instrument} />
           </Route>
           <Route path="/trade/order/sell" exact>
-            <div className={styles.currentTicker}>Sell</div>
+            <InstrumentSell instrument={instrument} />
           </Route>
         </Switch>
       </div>
