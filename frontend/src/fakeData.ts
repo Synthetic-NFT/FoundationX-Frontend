@@ -4,7 +4,7 @@ const fakeTradeData = {
       ticker: "NFT",
       fullName: "Nftsynth",
       id: "1",
-      price: "123.21",
+      price: "2.0",
       fee: "1.15",
     },
     {

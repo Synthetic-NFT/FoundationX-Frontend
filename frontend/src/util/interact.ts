@@ -4,19 +4,26 @@ require("dotenv").config();
 // const { BigNumber } = require("@ethersproject");
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
+// eslint-disable-next-line import/order
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const BN = require('bn.js');
 
 // console.trace(alchemyKey);
-const web3 = createAlchemyWeb3(alchemyKey);
+// const web3 = createAlchemyWeb3(alchemyKey);
+const Web3 = require('web3');
+
+const web3 = new Web3('http://localhost:8545');
 
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
 const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
+const messageABI = require("../abi/contracts/message.json");
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 
-
 const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
 const ReserveAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+const messageAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
+const synthAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
 
 //
 export const FactoryContract = new web3.eth.Contract(
@@ -29,6 +36,15 @@ export const ReserveContract = new web3.eth.Contract(
     ReserveAddress
 );
 
+export const messageContract = new web3.eth.Contract(
+    messageABI,
+    messageAddress
+);
+
+export const synthContract = new web3.eth.Contract(
+    SynthABI,
+    synthAddress,
+);
 export const mintSynth = async (address: string|null, synthName: string, amount: number, ratio: number) => {
     // input error handling
     if (!(window as any).ethereum || address === null) {
@@ -51,13 +67,15 @@ export const mintSynth = async (address: string|null, synthName: string, amount:
         value: web3.utils.toHex(amountWei.toString()),
         data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
     };
+    const synthPrice = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call();
+    const bnSynthPrice = (new BN(synthPrice)).div((new BN(10)).pow(new BN(18)));
+    const bnrRatio = new BN(ratio);
 
-    const bigNumberRatio = BigNumber.from(ratio);
-    const amountSynthInWei = amountWei.mul(bigNumberRatio).div(BigNumber.from(100));
+    const amountSynthInWei = (new BN(amountWei.toString())).div(bnrRatio).mul(new BN(100)).div(bnSynthPrice);
     const mintParameters = {
         to: FactoryAddress, // Required except during contract publications.
         from: address, // must match user's active address.
-        data: FactoryContract.methods.userMintSynth(synthName, amountSynthInWei).encodeABI(),
+        data: FactoryContract.methods.userMintSynth(synthName, BigNumber.from(amountSynthInWei.toString())).encodeABI(),
     };
 
     // sign the transaction
@@ -84,24 +102,66 @@ export const mintSynth = async (address: string|null, synthName: string, amount:
     }
 };
 
-export const loadUserCollateral = async (address:string) => {
-    // const collateral = await ReserveContract.methods.getMinterDeposit(address).call();
-    // const collateral = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call()
-    FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call((err: any, result: any) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(result);
-        }
-    });
-    // console.log(collateral);
-    // return collateral;
+export const burnSynth = async (address: string|null, synthName: string, amount: BigNumber) => {
+    // input error handling
+    if (!(window as any).ethereum || address === null) {
+        return {
+            status:
+                "💡 Connect your Metamask wallet to update the message on the blockchain.",
+        };
+    }
+    const burnParameters = {
+        to: FactoryAddress, // Required except during contract publications.
+        from: address, // must match user's active address.
+        data: FactoryContract.methods.userBurnSynth(synthName, amount).encodeABI(),
+    };
+    const approveParameters = {
+        to: synthAddress, // Required except during contract publications.
+        from: address, // must match user's active address.
+        data: synthContract.methods.approve(FactoryAddress, amount).encodeABI(),
+    };
+
+    // sign the transaction
+    try {
+        const approveHash = await (window as any).ethereum.request({
+            method: "eth_sendTransaction",
+            params: [approveParameters],
+        });
+        console.log(approveHash);
+        const burnHash = await (window as any).ethereum.request({
+            method: "eth_sendTransaction",
+            params: [burnParameters],
+        });
+        console.log(burnHash);
+        return {
+            status: "success",
+            approveHash,
+            burnHash,
+        };
+    } catch (error) {
+        return {
+            status: (error as any).message
+        };
+    }
 };
 
-// export const loadCurrentMessage = async () => {
-//     const message = await helloWorldContract.methods.message().call();
-//     return message;
-// };
+export const loadSynthPrice = async (synthName:string) => {
+    const synthPrice = FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call();
+    return synthPrice;
+};
+
+export const loadUserOrderStat = async (address:string, price:number) => {
+    const synthPrice = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call();
+    const bnSynthPrice = BigNumber.from(synthPrice);
+    const [collateral, cRatio, debt] = await Promise.all([
+        ReserveContract.methods.getMinterDeposit(address).call(),
+        ReserveContract.methods.getMinterCollateralRatio(address, bnSynthPrice).call(),
+        ReserveContract.methods.getMinterDebt(address).call(),
+    ]);
+
+    return [collateral, cRatio, debt, synthPrice];
+};
+
 
 export const connectWallet = async () => {
     if ((window as any).ethereum) {
