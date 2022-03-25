@@ -1,4 +1,4 @@
-import {BigNumber} from "ethers";
+import {BigNumber} from "bignumber.js";
 import React from "react";
 
 export type AppData = {
@@ -20,7 +20,7 @@ export const AppContext = React.createContext<{
   setAppData: () => {},
   walletAddress: "",
   setWallet: () => {},
-  unit: BigNumber.from(10).pow(18),
+  unit: new BigNumber("1e18")
 });
 
 export function AppContextProvider({
@@ -30,7 +30,7 @@ export function AppContextProvider({
 }) {
   const [appData, setAppData] = React.useState<AppData | null>(null);
   const [walletAddress, setWallet] = React.useState<string>("");
-  const [unit] = React.useState<BigNumber>(BigNumber.from(10).pow(18));
+  const [unit] = React.useState<BigNumber>(new BigNumber("1e18"));
   return (
     <AppContext.Provider value={{ appData, setAppData, walletAddress, setWallet, unit}}>
       {children}

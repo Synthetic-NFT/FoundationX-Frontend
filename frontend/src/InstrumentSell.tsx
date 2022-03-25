@@ -5,7 +5,8 @@ import Slider from "@material-ui/core/Slider";
 import { withStyles } from "@material-ui/core/styles";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { TextField } from "@mui/material";
-import {BigNumber, ethers} from "ethers";
+import { BigNumber } from "bignumber.js";
+import {ethers} from "ethers";
 import { useContext, useEffect, useState } from "react";
 
 import { Instrument } from "./api";
@@ -92,11 +93,13 @@ type BurnSpec = {
 
 function useBurnSpec(config: BurnSpecConfig): BurnSpec {
     const { unit } = useContext(AppContext);
-    const [cRatio, setCRatio] = useState((BigNumber.from(0)));
-    const cRatioPercent = cRatio.mul(100).div(unit).toNumber();
+    const [collateral, setCollateral] = useState(new BigNumber(0));
+    const [cRatio, setCRatio] = useState(new BigNumber(0));
+    const [debt, setDebt] = useState(new BigNumber(0));
 
-    const [collateral, setCollateral] = useState((BigNumber.from(0)));
-    const [debt, setDebt] = useState((BigNumber.from(0)));
+
+    const cRatioPercent = cRatio.times(100).div(unit).toNumber();
+
     // const collateralFP = config.collateral.div(unit).toNumber();
     // const debtlFP = config.debt.div(unit).toNumber();
     const [isValid, setIsValid] = useState(false);
@@ -241,75 +244,74 @@ function FieldLabel({
 
 
 function setCollateralInWeiWithDebt(debt: BigNumber) {
-    const base = new BN(10);
-    const expo = new BN(18);
+    const base = new BigNumber(10);
+    const expo = new BigNumber(18);
     const unit = base.pow(expo);
-    const [cRatio, setCRatio] = useState(BigNumber.from(0));
-    const [collateral, setCollateral] = useState(BigNumber.from(0));
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
+    const [cRatio, setCRatio] = useState(new BigNumber(0));
+    const [collateral, setCollateral] = useState(new BigNumber(0));
+    const [synthPrice, setSynthPrice] = useState(new BigNumber(0));
 
-    const floatCRatio = new BN(cRatio.toString()).div(unit);
-    const floatDebt = new BN(debt.toString());
-    const floatSynthPrice = new BN(synthPrice.toString()).div(unit);
-    const floatCollateral = floatDebt.mul(floatCRatio).mul(floatSynthPrice);
-    // return BigNumber.from(floatCollateral.toString());
-    setCollateral(BigNumber.from(floatCollateral.toString()));
+    const floatCRatio = new BigNumber(cRatio.toString()).div(unit);
+    const floatDebt = new BigNumber(debt.toString());
+    const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
+    const floatCollateral = floatDebt.times(floatCRatio).times(floatSynthPrice);
+    // return new BigNumber(floatCollateral.toString());
+    setCollateral(new BigNumber(floatCollateral.toString()));
 }
 
 function setDebtInWeiWithCollateral(collateral: BigNumber) {
-    const base = new BN(10);
-    const expo = new BN(18);
+    const base = new BigNumber(10);
+    const expo = new BigNumber(18);
     const unit = base.pow(expo);
 
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
-    const [cRatio, setCRatio] = useState(BigNumber.from(0));
-    const [debt, setDebt] = useState(BigNumber.from(0));
+    const [synthPrice, setSynthPrice] = useState(new BigNumber(0));
+    const [cRatio, setCRatio] = useState(new BigNumber(0));
+    const [debt, setDebt] = useState(new BigNumber(0));
 
-    const floatCRatio = new BN(cRatio.toString()).div(unit);
-    const floatCollateral = new BN(collateral.toString())
-    const floatSynthPrice = new BN(synthPrice.toString()).div(unit);
-    const floatDebt = floatCollateral.div(floatCRatio.mul(floatSynthPrice));
-    setDebt(BigNumber.from(floatDebt.toString()));
-    // return BigNumber.from(floatDebt.toString());
+    const floatCRatio = new BigNumber(cRatio.toString()).div(unit);
+    const floatCollateral = new BigNumber(collateral.toString())
+    const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
+    const floatDebt = floatCollateral.div(floatCRatio.times(floatSynthPrice));
+    setDebt(new BigNumber(floatDebt.toString()));
+    // return new BigNumber(floatDebt.toString());
 }
 
 function setCollateralInWeiWithCRatio(cRatio: BigNumber) {
-    const base = new BN(10);
-    const expo = new BN(18);
+    const base = new BigNumber(10);
+    const expo = new BigNumber(18);
     const unit = base.pow(expo);
 
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
-    const [debt, setDebt] = useState(BigNumber.from(0));
-    const [collateral, setCollateral] = useState(BigNumber.from(0));
-    const floatCRatio = new BN(cRatio.toString()).div(unit);
-    const floatDebt = new BN(debt.toString());
-    const floatSynthPrice = new BN(synthPrice.toString()).div(unit);
-    const floatCollateral = floatDebt.mul(floatCRatio).mul(floatSynthPrice);
+    const [synthPrice, setSynthPrice] = useState(new BigNumber(0));
+    const [debt, setDebt] = useState(new BigNumber(0));
+    const [collateral, setCollateral] = useState(new BigNumber(0));
+    const floatCRatio = new BigNumber(cRatio.toString()).div(unit);
+    const floatDebt = new BigNumber(debt.toString());
+    const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
+    const floatCollateral = floatDebt.times(floatCRatio).times(floatSynthPrice);
 
-    // return BigNumber.from(floatCollateral.toString());
-    setCollateral(BigNumber.from(floatCollateral.toString()));
+    // return new BigNumber(floatCollateral.toString());
+    setCollateral(new BigNumber(floatCollateral.toString()));
 }
 
 
-function CollateralField(spec: BurnSpec) {
-    const base = new BN(10);
-    const expo = new BN(18);
+function CollateralField({burnSpec, statSpec}: {burnSpec: BurnSpec, statSpec: UserStatSpec}) {
+    const base = new BigNumber(10);
+    const expo = new BigNumber(18);
     const unit = base.pow(expo);
-    const {collateral, setCollateral} = spec;
-    const currCollateral = (new BN(collateral.toString()).div(unit)).toNumber();
+    const {collateral, setCollateral, setDebt} = burnSpec;
+    const currCollateral = (new BigNumber(collateral.toString()).div(unit)).toNumber();
 
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
-    const [oldCRatio, setOldCRatio] = useState(BigNumber.from(0));
-    const [oldDebt, setOldDebt] = useState(BigNumber.from(0));
-
+    const {synthPrice, setSynthPrice} = statSpec;
+    const {oldCRatio, setOldCRatio} = statSpec;
+    // const [oldDebt, setOldDebt] = useState(new BigNumber(0));
 
     function updateCollateral(newCollateral: number) {
-        const floatCollateral = new BN(newCollateral).mul(unit);
-        const floatCRatio = new BN(oldCRatio.toString()).div(unit);
-        const floatSynthPrice = new BN(synthPrice.toString()).div(unit);
-        const floatDebt = floatCollateral.div(floatCRatio.mul(floatSynthPrice));
-        setOldDebt(BigNumber.from(floatDebt.toString()));
-        setCollateral(BigNumber.from(floatCollateral.toString()));
+        const floatCollateral = new BigNumber(newCollateral).times(unit);
+        const floatCRatio = new BigNumber(oldCRatio.toString()).div(unit);
+        const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
+        const floatDebt = floatCollateral.div(floatCRatio.times(floatSynthPrice));
+        setDebt(new BigNumber(floatDebt.toString()));
+        setCollateral(new BigNumber(floatCollateral.toString()));
     };
     return (
         <StyledTextField
@@ -323,25 +325,25 @@ function CollateralField(spec: BurnSpec) {
     );
 }
 
-function DebtField(spec: BurnSpec) {
-    const base = new BN(10);
-    const expo = new BN(18);
+function DebtField({burnSpec, statSpec}: {burnSpec: BurnSpec, statSpec: UserStatSpec}) {
+    const base = new BigNumber(10);
+    const expo = new BigNumber(18);
     const unit = base.pow(expo);
-    const {debt, setDebt} = spec;
-    const currDebt = (new BN(debt.toString()).div(unit)).toNumber();
+    const {debt, setDebt} = burnSpec;
+    const currDebt = (new BigNumber(debt.toString()).div(unit)).toNumber();
 
-    const [cRatio, setCRatio] = useState(BigNumber.from(0));
-    const [collateral, setCollateral] = useState(BigNumber.from(0));
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
+    const {cRatio, setCRatio} = burnSpec;
+    const {collateral, setCollateral} = burnSpec;
+    const {synthPrice, setSynthPrice} = statSpec;
 
     function updateDebt(newDebt: number) {
-        const floatDebt = new BN(newDebt).mul(unit);
-        // const floatCRatio = new BN(cRatio.toString()).div(unit);
-        // const floatSynthPrice = new BN(synthPrice.toString()).div(unit);
-        // const floatCollateral = floatDebt.mul(floatCRatio).mul(floatSynthPrice);
-        // // return BigNumber.from(floatCollateral.toString());
-        // setCollateral(BigNumber.from(floatCollateral.toString()));
-        setDebt(BigNumber.from(floatDebt.toString()));
+        const floatDebt = new BigNumber(newDebt).times(unit);
+        const floatCRatio = new BigNumber(cRatio.toString()).div(unit);
+        const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
+        const floatCollateral = floatDebt.times(floatCRatio).times(floatSynthPrice);
+        // return new BigNumber(floatCollateral.toString());
+        setCollateral(new BigNumber(floatCollateral.toString()));
+        setDebt(new BigNumber(floatDebt.toString()));
     };
     return (
         <StyledTextField
@@ -355,27 +357,27 @@ function DebtField(spec: BurnSpec) {
     );
 }
 
-function CRatioField(spec: BurnSpec) {
-    const base = new BN(10);
-    const expo = new BN(18);
+function CRatioField({burnSpec, statSpec}: {burnSpec: BurnSpec, statSpec: UserStatSpec}) {
+    const base = new BigNumber(10);
+    const expo = new BigNumber(18);
     const unit = base.pow(expo);
-    const {cRatio, setCRatio} = spec;
-    const currCRatio = (new BN(cRatio.toString()).mul(new BN(100)).div(unit)).toNumber();
+    const {cRatio, setCRatio} = burnSpec;
+    const currCRatio = (new BigNumber(cRatio.toString()).times(new BigNumber(100)).div(unit)).toNumber();
 
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
-    const [debt, setDebt] = useState(BigNumber.from(0));
-    const [collateral, setCollateral] = useState(BigNumber.from(0));
+    const {synthPrice, setSynthPrice} = statSpec;
+    const {debt, setDebt} = burnSpec;
+    const {collateral, setCollateral} = burnSpec;
 
 
     function updateCRatio(newCRatio: number) {
-        const floatCRatio = new BN(newCRatio).mul(unit).div(new BN(100));
-        const floatDebt = new BN(debt.toString());
-        const floatSynthPrice = new BN(synthPrice.toString()).div(unit);
-        const floatCollateral = floatDebt.mul(floatCRatio).mul(floatSynthPrice);
+        const floatCRatio = new BigNumber(newCRatio).div(new BigNumber(100));
+        const floatDebt = new BigNumber(debt.toString());
+        const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
+        const floatCollateral = floatDebt.times(floatCRatio).times(floatSynthPrice);
 
-        // return BigNumber.from(floatCollateral.toString());
-        setCollateral(BigNumber.from(floatCollateral.toString()));
-        setCRatio(BigNumber.from(floatCRatio.toString()));
+        // return new BigNumber(floatCollateral.toString());
+        setCollateral(new BigNumber(floatCollateral.toString()));
+        setCRatio(new BigNumber(floatCRatio.times(unit).toString()));
     };
     return (
         <StyledTextField
@@ -389,8 +391,12 @@ function CRatioField(spec: BurnSpec) {
     );
 }
 
-function OrigCountField({ count }: {count: BigNumber}) {
-    const numCount = ethers.utils.formatEther(count);
+function OrigCountField({ count, isCRatio }: {count: BigNumber, isCRatio:boolean}) {
+    let c = count;
+    if (isCRatio) {
+        c = c.times(new BigNumber(100));
+    }
+    const numCount = ethers.utils.formatEther(c.toString());
     return (
         <StyledTextField
             value={numCount}
@@ -415,9 +421,11 @@ const StyledSlider = withStyles({
 function RatioField({
                         minRatio,
                         maxRatio,
-                        ratio,
-                        setRatio,
-                    }: SellSpecConfig & SellSpec) {
+                        cRatio,
+                        setCRatio,
+                    }: SellSpecConfig & BurnSpec) {
+    const cRatioPercent = cRatio.times(new BigNumber(100)).div(new BigNumber("1e18"));
+    console.log(cRatioPercent.toString());
     return (
         <div
             style={{
@@ -428,7 +436,7 @@ function RatioField({
         >
             <StyledSlider
                 style={{ width: "364px" }}
-                value={ratio}
+                value={cRatioPercent.toNumber()}
                 step={5}
                 min={100}
                 max={250}
@@ -446,38 +454,76 @@ function RatioField({
                     if (typeof v !== "number") {
                         throw Error("expect number");
                     }
-                    setRatio(v);
+                    setCRatio(new BigNumber(v).times(new BigNumber("1e16")));
                 }}
-            />
-            <StyledTextField
-                value={ratio}
-                inputProps={{ min: 0, max: 12 }}
-                style={{ margin: "24px", width: "64px" }}
-                label="Ratio"
-                type="number"
-                onChange={
-                    (e) => setRatio(+e.target.value) /* cast to number with "+" */
-                }
             />
         </div>
     );
 }
 
+type UserStatSpec = {
+    walletAddress: string;
+    oldCollateral: BigNumber;
+    setOldCollateral: (a: BigNumber) => void;
+    oldCRatio: BigNumber;
+    setOldCRatio: (a: BigNumber) => void;
+    oldDebt: BigNumber;
+    setOldDebt: (a: BigNumber) => void;
+    synthPrice: BigNumber;
+    setSynthPrice: (a: BigNumber) => void;
+};
+
+
+// Wraps the business logic in a single hook
+function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
+    const {unit} = useContext(AppContext);
+    const { walletAddress } = useContext(AppContext);
+    const [oldCollateral, setOldCollateral] = useState(new BigNumber(0));
+    const [oldCRatio, setOldCRatio] = useState(new BigNumber(0));
+    const [oldDebt, setOldDebt] = useState(new BigNumber(0));
+    const [synthPrice, setSynthPrice] = useState(new BigNumber(0));
+    const {setCRatio, setCollateral, setDebt} = burnSpec;
+    useEffect(() => {
+        const getAndSetUserStat = async() => {
+            const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] = await loadUserOrderStat(walletAddress, 1);
+            // const cRatio = new BigNumber(bnCRatio).times(100).div(unit).toNumber();
+            // const collateral = new BigNumber(bnCollateral).div(unit).toNumber();
+            // const foo = ethers.utils.formatEther(new BigNumber(bnCRatio));
+            // const debt = new BigNumber(bnDebt).div(unit).toNumber();
+            const cRatio = new BigNumber(bnCRatio);
+            const collateral = new BigNumber(bnCollateral);
+            const debt = new BigNumber(bnDebt);
+            const synthPrice = new BigNumber(bnSynthPrice);
+            setOldCollateral(collateral);
+            setOldCRatio(cRatio);
+            setOldDebt(debt);
+            setCollateral(collateral);
+            setCRatio(cRatio);
+            setDebt(debt);
+            setSynthPrice(synthPrice);
+        };
+        if(walletAddress.length > 0) {
+            getAndSetUserStat();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [unit, walletAddress]);
+
+    return {
+        walletAddress,
+        oldCollateral, setOldCollateral,
+        oldCRatio, setOldCRatio,
+        oldDebt, setOldDebt,
+        synthPrice, setSynthPrice,
+    };
+}
+
 function SellForm({ instrument }: { instrument: Instrument }) {
     const { appData } = useContext(AppContext);
-    const { walletAddress } = useContext(AppContext);
-    const [collateral, setCollateral] = useState(BigNumber.from(0));
-    const [cRatio, setCRatio] = useState(BigNumber.from(0));
-    const [debt, setDebt] = useState(BigNumber.from(0));
 
-    const [oldCollateral, setOldCollateral] = useState(BigNumber.from(0));
-    const [oldCRatio, setOldCRatio] = useState(BigNumber.from(0));
-    const [oldDebt, setOldDebt] = useState(BigNumber.from(0));
-    const [synthPrice, setSynthPrice] = useState(BigNumber.from(0));
 
     //
     // useEffect(() => {
-    //     const [debt, setDebt] = useState(BigNumber.from(0));
+    //     const [debt, setDebt] = useState(new BigNumber(0));
     //     setDebtInWeiWithCollateral(collateral);
     // }, [collateral]);
     //
@@ -489,7 +535,6 @@ function SellForm({ instrument }: { instrument: Instrument }) {
     //     setCollateralInWeiWithCRatio(cRatio);
     // }, [cRatio]);
 
-    const {unit} = useContext(AppContext);
     const fakeLimits = {
         minRatio: 150,
         maxRatio: 200,
@@ -504,30 +549,13 @@ function SellForm({ instrument }: { instrument: Instrument }) {
     const SellSpec = useSellSpec(fakeLimits);
     const BurnSpec = useBurnSpec(origBurnSpecConfig);
 
-    useEffect(() => {
-        const getAndSetUserStat = async() => {
-            const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] = await loadUserOrderStat(walletAddress, 1);
-            // const cRatio = BigNumber.from(bnCRatio).mul(100).div(unit).toNumber();
-            // const collateral = BigNumber.from(bnCollateral).div(unit).toNumber();
-            // const foo = ethers.utils.formatEther(BigNumber.from(bnCRatio));
-            // const debt = BigNumber.from(bnDebt).div(unit).toNumber();
-            const cRatio = BigNumber.from(bnCRatio);
-            const collateral = BigNumber.from(bnCollateral);
-            const debt = BigNumber.from(bnDebt);
-            const synthPrice = BigNumber.from(bnSynthPrice);
-            setOldCollateral(collateral);
-            setOldCRatio(cRatio);
-            setOldDebt(debt);
-            setSynthPrice(synthPrice);
-        };
-        if(walletAddress.length > 0) {
-            getAndSetUserStat();
-        }
-    }, [unit, walletAddress]);
+    const UserStatSpec = useUserStatSpec(BurnSpec);
+    const {walletAddress, oldDebt, setOldDebt, oldCollateral,
+        setOldCollateral, oldCRatio, setOldCRatio, synthPrice, setSynthPrice} = UserStatSpec;
 
 
     const burnSynthPressed = async () => {
-        const burnSynthResponse = await burnSynth(walletAddress, "SynthTest1", oldDebt.sub(BurnSpec.debt));
+        const burnSynthResponse = await burnSynth(walletAddress, "SynthTest1", oldDebt.minus(BurnSpec.debt));
         console.log(burnSynthResponse);
     };
 
@@ -559,9 +587,9 @@ function SellForm({ instrument }: { instrument: Instrument }) {
                         display: "flex",
                         alignItems: "center",
                     }}>
-                    <OrigCountField count={oldCollateral} />
+                    <OrigCountField count={oldCollateral} isCRatio={false} />
                     <ArrowForwardIcon color="primary" vertical-align="middle" />
-                    <CollateralField {...BurnSpec} />
+                    <CollateralField burnSpec={BurnSpec} statSpec={UserStatSpec} />
                 </div>
 
                 <FieldLabel title="Change ratio" description="blah" />
@@ -570,9 +598,9 @@ function SellForm({ instrument }: { instrument: Instrument }) {
                         display: "flex",
                         alignItems: "center",
                     }}>
-                    <OrigCountField count={oldCRatio} />
+                    <OrigCountField count={oldCRatio} isCRatio />
                     <ArrowForwardIcon color="primary" vertical-align="middle" />
-                    <CRatioField {...BurnSpec} />
+                    <CRatioField burnSpec={BurnSpec} statSpec={UserStatSpec} />
                 </div>
 
                 <FieldLabel title="Change minted" description="blah" />
@@ -581,13 +609,13 @@ function SellForm({ instrument }: { instrument: Instrument }) {
                         display: "flex",
                         alignItems: "center",
                     }}>s
-                    <OrigCountField count={oldDebt} />
+                    <OrigCountField count={oldDebt} isCRatio={false} />
                     <ArrowForwardIcon color="primary" vertical-align="middle" />
-                    <DebtField {...BurnSpec} />
+                    <DebtField burnSpec={BurnSpec} statSpec={UserStatSpec} />
                 </div>
 
                 <FieldLabel title="Set ratio" description="blah" />
-                <RatioField {...SellSpec} {...fakeLimits} />
+                <RatioField {...BurnSpec} {...fakeLimits} />
             </div>
             <Button
                 style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}

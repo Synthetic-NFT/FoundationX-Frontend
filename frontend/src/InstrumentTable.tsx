@@ -91,7 +91,7 @@ export default function InstrumentTable({
             backgroundColor: theme.tableBackgroundColor,
             borderTopLeftRadius: "16px",
             borderTopRightRadius: "16px",
-            overflow: "hidden",
+            overflow: "scroll",
           }}
           stickyHeader
           aria-label="sticky table"

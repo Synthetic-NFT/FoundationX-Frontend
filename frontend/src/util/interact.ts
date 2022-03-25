@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber } from "bignumber.js";
 
 require("dotenv").config();
 // const { BigNumber } = require("@ethersproject");
@@ -6,7 +6,7 @@ require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 // eslint-disable-next-line import/order
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const BN = require('bn.js');
+// const BN = require('bn.js');
 
 // console.trace(alchemyKey);
 // const web3 = createAlchemyWeb3(alchemyKey);
@@ -53,10 +53,10 @@ export const mintSynth = async (address: string|null, synthName: string, amount:
                 "💡 Connect your Metamask wallet to update the message on the blockchain.",
         };
     }
-    const unit = BigNumber.from(10).pow(18);
+    const unit = new BigNumber(10).pow(18);
 
     // amount is in eth
-    const amountWei = BigNumber.from(amount).mul(unit);
+    const amountWei = new BigNumber(amount).times(unit);
     // eslint-disable-next-line
     console.log(web3.utils.toWei(new web3.utils.BN(amount), 'ether').toString());
 
@@ -68,14 +68,14 @@ export const mintSynth = async (address: string|null, synthName: string, amount:
         data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
     };
     const synthPrice = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call();
-    const bnSynthPrice = (new BN(synthPrice)).div((new BN(10)).pow(new BN(18)));
-    const bnrRatio = new BN(ratio);
+    const bnSynthPrice = (new BigNumber(synthPrice)).div(new BigNumber("1e18"));
+    const bnrRatio = new BigNumber(ratio);
 
-    const amountSynthInWei = (new BN(amountWei.toString())).div(bnrRatio).mul(new BN(100)).div(bnSynthPrice);
+    const amountSynthInWei = (new BigNumber(amountWei.toString())).div(bnrRatio).times(new BigNumber(100)).div(bnSynthPrice);
     const mintParameters = {
         to: FactoryAddress, // Required except during contract publications.
         from: address, // must match user's active address.
-        data: FactoryContract.methods.userMintSynth(synthName, BigNumber.from(amountSynthInWei.toString())).encodeABI(),
+        data: FactoryContract.methods.userMintSynth(synthName, new BigNumber(amountSynthInWei.toString())).encodeABI(),
     };
 
     // sign the transaction
@@ -152,7 +152,7 @@ export const loadSynthPrice = async (synthName:string) => {
 
 export const loadUserOrderStat = async (address:string, price:number) => {
     const synthPrice = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call();
-    const bnSynthPrice = BigNumber.from(synthPrice);
+    const bnSynthPrice = new BigNumber(synthPrice);
     const [collateral, cRatio, debt] = await Promise.all([
         ReserveContract.methods.getMinterDeposit(address).call(),
         ReserveContract.methods.getMinterCollateralRatio(address, bnSynthPrice).call(),
