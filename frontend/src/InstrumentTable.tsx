@@ -13,7 +13,7 @@ import instrumentTableColumns from "./instrumentTableColumns";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
 
-function SearchBar({
+export function SearchBar({
   onSearch,
 }: {
   onSearch: (searchTerm: string) => void;
@@ -46,7 +46,7 @@ function SearchBar({
 }
 
 // Very naive implementation of searching by substring.
-function simpleFilter(searchTerm: string, tradeData: TradeData): Instrument[] {
+export function simpleFilter(searchTerm: string, tradeData: TradeData): Instrument[] {
   if (searchTerm === "") {
     return tradeData.instruments;
   }
@@ -61,7 +61,7 @@ function simpleFilter(searchTerm: string, tradeData: TradeData): Instrument[] {
 
 // Renders the list of instruments available for trade.
 // How the instruments are rendered (i.e. columns) is defined in tableColumns.
-export default function InstrumentTable({
+export function InstrumentTable({
   onRowClick,
 }: {
   onRowClick: (instrument: Instrument) => void;
