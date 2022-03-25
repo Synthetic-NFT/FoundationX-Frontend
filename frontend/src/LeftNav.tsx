@@ -7,6 +7,7 @@ import React, { useCallback, useEffect } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 import { routes, defaultRoute } from "./routeRegistry";
+import logo from "./styles/images/logo.png";
 import theme from "./theme";
 
 const useStyles = makeStyles({
@@ -72,7 +73,14 @@ export default function LeftNav(): React.ReactElement {
 
   return (
     <div className={styles.root}>
-      <div className={styles.logo}>Nftsynth</div>
+      <div style={{display: "flex", flexDirection: "row"}}>
+        <div style={{display: "flex"}}>
+          <img src={logo} alt="Logo"/>
+        </div>
+        <div style={{display: "flex"}}>
+          <div className={styles.logo}>NFTSynth</div>
+        </div>
+      </div>
       <Divider />
       <List component="nav" aria-label="mailbox folders">
         {routes.map(({ path, label }) => (

@@ -1,5 +1,6 @@
 import React from "react";
 
+import SwapRouteContainer from "./SwapRouteContainer";
 import TradeRouteContainer from "./TradeRouteContainer";
 import WalletRouteContainer from "./WalletRouteContainer";
 
@@ -26,4 +27,9 @@ export const routes: Route[] = [
     label: "Trade",
     RouteContainer: TradeRouteContainer,
   },
+  {
+    path: "/swap",
+    label: "Swap",
+    RouteContainer: SwapRouteContainer,
+  }
 ];
