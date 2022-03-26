@@ -37,6 +37,7 @@ const Tab = styled(TabUnstyled)`
     background-color: white;
     color: black;
   }
+  
 `;
 
 const useStyles = makeStyles({
@@ -116,6 +117,9 @@ export default function InstrumentOrder(): React.ReactElement {
           maxHeight: "100%",
           paddingTop: "12px",
           overflow: "scroll",
+          maxWidth: "1144px",
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       >
         <Switch>

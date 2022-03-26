@@ -16,13 +16,13 @@ const web3 = new Web3('http://localhost:8545');
 
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
 const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
-const messageABI = require("../abi/contracts/message.json");
+// const messageABI = require("../abi/contracts/message.json");
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 
 const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
 const ReserveAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-const messageAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
+// const messageAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
 const synthAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
 
 //
@@ -36,10 +36,10 @@ export const ReserveContract = new web3.eth.Contract(
     ReserveAddress
 );
 
-export const messageContract = new web3.eth.Contract(
-    messageABI,
-    messageAddress
-);
+// export const messageContract = new web3.eth.Contract(
+//     messageABI,
+//     messageAddress
+// );
 
 export const synthContract = new web3.eth.Contract(
     SynthABI,
@@ -153,13 +153,20 @@ export const loadSynthPrice = async (synthName:string) => {
 export const loadUserOrderStat = async (address:string, price:number) => {
     const synthPrice = await FactoryContract.methods.getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853").call();
     const bnSynthPrice = new BigNumber(synthPrice);
-    const [collateral, cRatio, debt] = await Promise.all([
+    const [collateral, debt] = await Promise.all([
         ReserveContract.methods.getMinterDeposit(address).call(),
-        ReserveContract.methods.getMinterCollateralRatio(address, bnSynthPrice).call(),
+        // ReserveContract.methods.getMinterCollateralRatio(address, bnSynthPrice).call(),
         ReserveContract.methods.getMinterDebt(address).call(),
     ]);
-
-    return [collateral, cRatio, debt, synthPrice];
+    const bnCollateral = new BigNumber(collateral);
+    const bnDebt = new BigNumber(debt);
+    const bnSynthPriceBase10 = bnSynthPrice.div(new BigNumber("1e18"));
+    let cRatio = new BigNumber(0);
+    if (!bnCollateral.eq('0')) {
+        cRatio = bnCollateral.div(bnDebt.times(bnSynthPriceBase10));
+    }
+    const bnCRatio = cRatio.times(new BigNumber("1e18"));
+    return [bnCollateral, bnCRatio, bnDebt, bnSynthPrice];
 };
 
 

@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     flexGrow: 1,
     width: "100%",
     padding: "24px 24px 0px 24px",
-    overflowY: "auto",
+    overflowY: "scroll",
   },
 });
 

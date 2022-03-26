@@ -490,17 +490,14 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
             // const collateral = new BigNumber(bnCollateral).div(unit).toNumber();
             // const foo = ethers.utils.formatEther(new BigNumber(bnCRatio));
             // const debt = new BigNumber(bnDebt).div(unit).toNumber();
-            const cRatio = new BigNumber(bnCRatio);
-            const collateral = new BigNumber(bnCollateral);
-            const debt = new BigNumber(bnDebt);
-            const synthPrice = new BigNumber(bnSynthPrice);
-            setOldCollateral(collateral);
-            setOldCRatio(cRatio);
-            setOldDebt(debt);
-            setCollateral(collateral);
-            setCRatio(cRatio);
-            setDebt(debt);
-            setSynthPrice(synthPrice);
+
+            setOldCollateral(bnCollateral);
+            setOldCRatio(bnCRatio);
+            setOldDebt(bnDebt);
+            setCollateral(bnCollateral);
+            setCRatio(bnCRatio);
+            setDebt(bnDebt);
+            setSynthPrice(bnSynthPrice);
         };
         if(walletAddress.length > 0) {
             getAndSetUserStat();
@@ -581,7 +578,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
                     flexGrow: 1,
                 }}
             >
-                <FieldLabel title="Change collateral" description="blah" />
+                <FieldLabel title="Collateral" description="" />
                 <div
                     style={{
                         display: "flex",
@@ -592,7 +589,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
                     <CollateralField burnSpec={BurnSpec} statSpec={UserStatSpec} />
                 </div>
 
-                <FieldLabel title="Change ratio" description="blah" />
+                <FieldLabel title="Collateral Ratio (%)" description=""  />
                 <div
                     style={{
                         display: "flex",
@@ -603,12 +600,12 @@ function SellForm({ instrument }: { instrument: Instrument }) {
                     <CRatioField burnSpec={BurnSpec} statSpec={UserStatSpec} />
                 </div>
 
-                <FieldLabel title="Change minted" description="blah" />
+                <FieldLabel title="Minted" description="" />
                 <div
                     style={{
                         display: "flex",
                         alignItems: "center",
-                    }}>s
+                    }}>
                     <OrigCountField count={oldDebt} isCRatio={false} />
                     <ArrowForwardIcon color="primary" vertical-align="middle" />
                     <DebtField burnSpec={BurnSpec} statSpec={UserStatSpec} />
