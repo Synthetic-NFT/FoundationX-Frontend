@@ -1,8 +1,8 @@
 import TableCell from "@mui/material/TableCell";
 import React from "react";
 
-import {Instrument} from "./api";
-import {NFTIcons} from "./fakeData";
+import { Instrument } from "./api";
+import { NFTIcons } from "./fakeData";
 import theme from "./theme";
 
 type ColumnConfigWithoutRenderers = {
@@ -12,7 +12,7 @@ type ColumnConfigWithoutRenderers = {
   align?: "right";
 };
 
-type HeaderRendererProps = {
+export type HeaderRendererProps = {
   config: ColumnConfigWithoutRenderers;
 };
 
@@ -50,17 +50,24 @@ export const TABLE_CELL_STYLE = {
   borderColor: theme.tableBorderColor,
 };
 
-export function TickerCellRenderer({ row }: CellRendererProps): TableCellElement {
+export function TickerCellRenderer({
+  row,
+}: CellRendererProps): TableCellElement {
   return (
     <TableCell style={TABLE_CELL_STYLE}>
       <div style={{ display: "flex", alignItems: "center" }}>
         {/* This is just a placeholder. We need to replace this with img tag when we have
         the images for the tickers. */}
-        <img src={NFTIcons.get(row.ticker)} alt={row.ticker} width="32px" height="32px"/>
+        <img
+          src={NFTIcons.get(row.ticker)}
+          alt={row.ticker}
+          width="32px"
+          height="32px"
+        />
         <div
-            style={{
-              marginRight: "16px",
-            }}
+          style={{
+            marginRight: "16px",
+          }}
         />
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex" }}>

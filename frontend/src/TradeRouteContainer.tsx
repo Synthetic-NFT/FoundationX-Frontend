@@ -2,11 +2,11 @@ import React from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
 import InstrumentOrder from "./InstrumentOrder";
-import {InstrumentTable} from "./InstrumentTable";
+import { InstrumentTable } from "./InstrumentTable";
 
 export default function TradeRouteContainer(): React.ReactElement {
   const history = useHistory();
-  
+
   return (
     <Switch>
       {/* we need the exact here because we only want to match `/trade/`. Without it, this
