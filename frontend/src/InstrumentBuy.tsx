@@ -2,12 +2,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { Button } from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
-import { withStyles } from "@material-ui/core/styles";
-import { TextField } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { InputAdornment, TextField } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Instrument } from "./api";
 import { AppContext } from "./AppContext";
+import { NFTIcons } from "./fakeData";
 import theme from "./theme";
 
 function InstrumentCard({ instrument }: { instrument: Instrument }) {
@@ -32,8 +33,20 @@ function InstrumentCard({ instrument }: { instrument: Instrument }) {
       }}
     >
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <b>{instrument.ticker}</b>
-        {instrument.price}
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <img
+            src={NFTIcons.get(instrument.ticker)}
+            alt={instrument.ticker}
+            width="48px"
+            height="48px"
+          />
+          <div
+            style={{
+              marginRight: "16px",
+            }}
+          />
+          <b style={{ marginTop: "8px" }}>{instrument.ticker}</b>
+        </div>
         <div
           style={{
             color: theme.inactiveTextColor,
@@ -64,7 +77,7 @@ function InstrumentCard({ instrument }: { instrument: Instrument }) {
 
 type BuySpecConfig = {
   minRatio: number;
-  maxRatio: number;
+  safeRatio: number;
 };
 
 type BuySpec = {
@@ -79,14 +92,14 @@ type BuySpec = {
 function useBuySpec(config: BuySpecConfig): BuySpec {
   const [count, setCount] = useState(0);
   const [ratio, setRatio] = useState(
-    config.minRatio + (config.maxRatio - config.minRatio) / 2,
+    config.minRatio + (config.safeRatio - config.minRatio) / 2,
   );
   const [isValid, setIsValid] = useState(false);
 
   useEffect(
     () =>
       setIsValid(
-        count >= 0 && config.minRatio <= ratio && ratio <= config.maxRatio,
+        count >= 0 && config.minRatio <= ratio && ratio <= config.safeRatio,
       ),
     [count, ratio, config, setIsValid],
   );
@@ -165,7 +178,7 @@ function FieldLabel({
       <div style={{ fontSize: "16pt", color: theme.activeTextColor }}>
         <b>{title}</b>
       </div>
-      <div style={{ color: theme.inactiveTextColor }}>
+      <div style={{ fontSize: "8pt", color: theme.inactiveTextColor }}>
         <b>{description}</b>
       </div>
     </div>
@@ -196,7 +209,7 @@ const StyledSlider = withStyles({
 
 function RatioField({
   minRatio,
-  maxRatio,
+  safeRatio,
   ratio,
   setRatio,
 }: BuySpecConfig & BuySpec) {
@@ -214,14 +227,16 @@ function RatioField({
         step={5}
         min={100}
         max={250}
+        color={ratio > minRatio ? "primary" : "secondary"}
+        valueLabelDisplay="on"
         marks={[
           {
             value: minRatio,
-            label: "min",
+            label: `Min ${String(minRatio)} %`,
           },
           {
-            value: maxRatio,
-            label: "max",
+            value: safeRatio,
+            label: `Safe ${String(safeRatio)} %`,
           },
         ]}
         onChange={(_, v) => {
@@ -249,7 +264,7 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
   const { appData } = useContext(AppContext);
   const fakeLimits = {
     minRatio: 150,
-    maxRatio: 200,
+    safeRatio: 200,
   };
   const buySpec = useBuySpec(fakeLimits);
 
@@ -271,9 +286,20 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
           flexGrow: 1,
         }}
       >
-        <FieldLabel title="Set count" description="blah" />
+        <FieldLabel
+          title="Set Collateral"
+          description="Set the amount of collateral"
+        />
         <CountField {...buySpec} />
-        <FieldLabel title="Set ratio" description="blah" />
+        <FieldLabel
+          title="Set Collateral Ratio"
+          description="Position will be liquidated below the minimum colateral ratio"
+        />
+        <div
+          style={{
+            marginTop: "32px",
+          }}
+        />
         <RatioField {...buySpec} {...fakeLimits} />
       </div>
       <Button

@@ -46,7 +46,10 @@ export function SearchBar({
 }
 
 // Very naive implementation of searching by substring.
-export function simpleFilter(searchTerm: string, tradeData: TradeData): Instrument[] {
+export function simpleFilter(
+  searchTerm: string,
+  tradeData: TradeData,
+): Instrument[] {
   if (searchTerm === "") {
     return tradeData.instruments;
   }
