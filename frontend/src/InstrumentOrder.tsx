@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TabUnstyled from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { styled } from "@mui/system";
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Switch,
   Route,
@@ -17,7 +17,7 @@ import InstrumentBuy from "./InstrumentBuy";
 import InstrumentSell from "./InstrumentSell";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
-import {loadSynthPrice} from "./util/interact";
+import { loadSynthPrice } from "./util/interact";
 // Apart from `useStyles`, this shows an example of using styled for custom component, which
 // can be more flexible.
 const Tab = styled(TabUnstyled)`
@@ -37,7 +37,6 @@ const Tab = styled(TabUnstyled)`
     background-color: white;
     color: black;
   }
-  
 `;
 
 const useStyles = makeStyles({
@@ -71,7 +70,7 @@ export default function InstrumentOrder(): React.ReactElement {
       history.push(TRADE_URL);
     }
     const interval = setInterval(async () => {
-      const synthPrice = await loadSynthPrice('SynthTest1');
+      const synthPrice = await loadSynthPrice("SynthTest1");
       setSynthPrice(synthPrice);
     }, MINUTE_MS);
 

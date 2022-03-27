@@ -1,4 +1,4 @@
-import {BigNumber} from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import React from "react";
 
 export type AppData = {
@@ -20,7 +20,7 @@ export const AppContext = React.createContext<{
   setAppData: () => {},
   walletAddress: "",
   setWallet: () => {},
-  unit: new BigNumber("1e18")
+  unit: new BigNumber("1e18"),
 });
 
 export function AppContextProvider({
@@ -32,13 +32,13 @@ export function AppContextProvider({
   const [walletAddress, setWallet] = React.useState<string>("");
   const [unit] = React.useState<BigNumber>(new BigNumber("1e18"));
   return (
-    <AppContext.Provider value={{ appData, setAppData, walletAddress, setWallet, unit}}>
+    <AppContext.Provider
+      value={{ appData, setAppData, walletAddress, setWallet, unit }}
+    >
       {children}
     </AppContext.Provider>
   );
 }
 
 // Notice that you should NEVER use this to communicate with the blockchain!
-export function convertWeiToFloat() {
-
-}
+export function convertWeiToFloat() {}

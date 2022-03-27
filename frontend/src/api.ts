@@ -33,5 +33,3 @@ const fakeAPI = {
 };
 
 export default fakeAPI;
-
-

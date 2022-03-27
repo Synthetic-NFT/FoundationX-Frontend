@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     overflow: "hidden",
   },
   routeContainer: {
-    width: "100%",
+    width: "1024px",
     overflowY: "auto",
   },
   title: {

@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 export default function TopBar(): React.ReactElement {
   const { appData, setAppData } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
-  const {walletAddress, setWallet} = useContext(AppContext);
+  const { walletAddress, setWallet } = useContext(AppContext);
   const [status, setStatus] = useState("");
 
   const styles = useStyles();
@@ -45,8 +45,6 @@ export default function TopBar(): React.ReactElement {
       setStatus("Not installed");
     }
   }
-
-
 
   useEffect(() => {
     const setWalletAndStatus = async () => {
