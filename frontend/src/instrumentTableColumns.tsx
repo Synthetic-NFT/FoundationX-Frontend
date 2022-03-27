@@ -2,6 +2,7 @@ import TableCell from "@mui/material/TableCell";
 import React from "react";
 
 import { Instrument } from "./api";
+import { NFTIcons } from "./fakeData";
 import theme from "./theme";
 
 type ColumnConfigWithoutRenderers = {
@@ -11,22 +12,22 @@ type ColumnConfigWithoutRenderers = {
   align?: "right";
 };
 
-type HeaderRendererProps = {
+export type HeaderRendererProps = {
   config: ColumnConfigWithoutRenderers;
 };
 
-type CellRendererProps = {
+export type CellRendererProps = {
   row: Instrument;
 };
 
-type TableCellElement = React.ReactElement<typeof TableCell>;
+export type TableCellElement = React.ReactElement<typeof TableCell>;
 
-type ColumnConfig = ColumnConfigWithoutRenderers & {
+export type ColumnConfig = ColumnConfigWithoutRenderers & {
   cellRenderer: (props: CellRendererProps) => TableCellElement;
   headerRenderer: (props: HeaderRendererProps) => TableCellElement;
 };
 
-function DefaultHeaderRenderer({
+export function DefaultHeaderRenderer({
   config,
 }: HeaderRendererProps): TableCellElement {
   return (
@@ -44,22 +45,27 @@ function DefaultHeaderRenderer({
   );
 }
 
-const TABLE_CELL_STYLE = {
+export const TABLE_CELL_STYLE = {
   color: theme.tableRowPrimaryTextColor,
   borderColor: theme.tableBorderColor,
 };
 
-function TickerCellRenderer({ row }: CellRendererProps): TableCellElement {
+export function TickerCellRenderer({
+  row,
+}: CellRendererProps): TableCellElement {
   return (
     <TableCell style={TABLE_CELL_STYLE}>
       <div style={{ display: "flex", alignItems: "center" }}>
         {/* This is just a placeholder. We need to replace this with img tag when we have
         the images for the tickers. */}
+        <img
+          src={NFTIcons.get(row.ticker)}
+          alt={row.ticker}
+          width="32px"
+          height="32px"
+        />
         <div
           style={{
-            width: "32px",
-            height: "32px",
-            backgroundColor: "green",
             marginRight: "16px",
           }}
         />
