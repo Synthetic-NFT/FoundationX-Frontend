@@ -1,5 +1,6 @@
 const theme = {
   boarder: "#0f172a",
+  wallet: "#356ae1ff",
   topBar: "#1e293b",
   leftNav: "#1e293b",
   routeContainer: "#334155",

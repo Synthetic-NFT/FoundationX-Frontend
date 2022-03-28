@@ -1,58 +1,25 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import { Button } from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
-import { withStyles } from "@material-ui/core/styles";
-import { SvgIcon, TextField } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import {withStyles} from "@material-ui/core/styles";
+import {TextField} from "@mui/material";
+import React, {useContext, useEffect} from "react";
 
-import { Instrument } from "./api";
-import { AppContext } from "./AppContext";
+import {Instrument} from "./api";
+import {AppContext} from "./AppContext";
 // eslint-disable-next-line import/default
+import {NFTIcons} from "./fakeData";
 import InstrumentCard from "./InstrumentCard";
+import {MintContext, MintContextProvider} from "./MintContext";
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
-import { mintSynth } from "./util/interact";
+import {mintSynth} from "./util/interact";
 
 type BuySpecConfig = {
   minRatio: number;
   safeRatio: number;
 };
-
-type BuySpec = {
-  collateral: string;
-  setCollateral: (newCollateral: string) => void;
-  collateralValid: boolean;
-  ratio: string;
-  setRatio: (newRatio: string) => void;
-  ratioValid: boolean;
-};
-
-// Wraps the business logic in a single hook
-function useBuySpec(config: BuySpecConfig): BuySpec {
-  const [collateral, setCollateral] = useState("");
-  const [ratio, setRatio] = useState(
-    String(config.minRatio + (config.safeRatio - config.minRatio) / 2),
-  );
-  const [collateralValid, setCollateralValid] = useState(true);
-  const [ratioValid, setRatioValid] = useState(true);
-
-  useEffect(() => {
-    const collateralNum = +collateral;
-    const ratioNum = +ratio;
-    setCollateralValid(collateralNum >= 0);
-    setRatioValid(ratioNum >= 0);
-  }, [collateral, ratio, config, setCollateralValid, setRatioValid]);
-
-  return {
-    collateral,
-    setCollateral,
-    collateralValid,
-    ratio,
-    setRatio,
-    ratioValid,
-  };
-}
 
 // @See https://v4.mui.com/components/text-fields/#customized-inputs
 const StyledTextField = withStyles({
@@ -126,11 +93,9 @@ function FieldLabel({
   );
 }
 
-function CollateralField({
-  collateral,
-  setCollateral,
-  collateralValid,
-}: BuySpec) {
+function CollateralField({ instrument }: { instrument: Instrument }) {
+  const {collateral, collateralValid, setCollateral} = useContext(MintContext);
+
   return (
     <div
       style={{
@@ -140,15 +105,15 @@ function CollateralField({
         justifyContent: "center",
       }}
     >
-      <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
       <StyledTextField
         value={collateralValid ? collateral : ""}
         style={{ margin: "24px" }}
         label="Collateral"
         type="number"
         // We probably should do some validation on this
-        onChange={(e) => setCollateral(e.target.value)}
+        onChange={(e) => setCollateral(e.target.value, instrument.price)}
       />
+      <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
     </div>
   );
 }
@@ -165,10 +130,9 @@ const StyledSlider = withStyles({
 function RatioField({
   minRatio,
   safeRatio,
-  ratio,
-  setRatio,
-  ratioValid,
-}: BuySpecConfig & BuySpec) {
+                        instrument,
+}: BuySpecConfig & { instrument: Instrument }) {
+  const { ratio, ratioValid, setRatio} = useContext(MintContext);
   return (
     <div
       style={{
@@ -199,7 +163,7 @@ function RatioField({
           if (typeof v !== "number") {
             throw Error("expect number");
           }
-          setRatio(String(v));
+          setRatio(String(v), instrument.price);
         }}
       />
       <StyledTextField
@@ -208,28 +172,58 @@ function RatioField({
         style={{ margin: "24px", width: "64px" }}
         label="Ratio"
         type="number"
-        onChange={(e) => setRatio(e.target.value) /* cast to number with "+" */}
+        onChange={(e) => setRatio(e.target.value, instrument.price) /* cast to number with "+" */}
       />
     </div>
   );
 }
 
+function DebtField({ instrument }: { instrument: Instrument }) {
+  const {debt, debtValid, setDebt} = useContext(MintContext);
+
+  return (
+      <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+      >
+        <StyledTextField
+            value={ debtValid ? debt : ""}
+            style={{ margin: "24px" }}
+            label="Count"
+            type={instrument.ticker}
+            // We probably should do some validation on this
+            onChange={(e) => setDebt(e.target.value, instrument.price)}
+        />
+        <img src={NFTIcons.get(instrument.ticker)} alt={instrument.ticker} height="40px" width="40px" />
+      </div>
+);
+}
+
 function BuyForm({ instrument }: { instrument: Instrument }) {
-  const { appData } = useContext(AppContext);
   const { walletAddress } = useContext(AppContext);
   const fakeLimits = {
     minRatio: 150,
     safeRatio: 200,
   };
-  const buySpec = useBuySpec(fakeLimits);
+
+  const {collateral, ratio, collateralValid, ratioValid, setRatio } = useContext(MintContext);
+
+    useEffect(() => {
+        setRatio(fakeLimits.safeRatio.toString(), instrument.price);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [instrument.price]);
 
   const mintSynthPressed = async () => {
-    if (buySpec.collateralValid && buySpec.ratioValid) {
+    if (collateralValid && ratioValid) {
       const mintSynthResponse = await mintSynth(
         walletAddress,
         instrument.ticker,
-        +buySpec.collateral,
-        +buySpec.ratio,
+        +collateral,
+        +ratio,
       );
       console.log(mintSynthResponse);
     }
@@ -257,7 +251,7 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
           title="Set Collateral"
           description="Set the amount of collateral"
         />
-        <CollateralField {...buySpec} />
+        <CollateralField instrument={instrument} />
         <FieldLabel
           title="Set Collateral Ratio"
           description="Position will be liquidated below the minimum colateral ratio"
@@ -267,7 +261,13 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
             marginTop: "32px",
           }}
         />
-        <RatioField {...buySpec} {...fakeLimits} />
+        <RatioField {...fakeLimits} instrument={instrument} />
+        <div
+            style={{
+              marginTop: "32px",
+            }}
+        />
+        <DebtField instrument={instrument} />
       </div>
       <Button
         style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
@@ -291,7 +291,9 @@ export default function InstrumentBuy({
 }) {
   return (
     <div style={{ display: "flex", overflow: "scroll" }}>
-      <BuyForm instrument={instrument} />
+      <MintContextProvider>
+        <BuyForm instrument={instrument} />
+      </MintContextProvider>
       <InstrumentCard instrument={instrument} />
     </div>
   );
