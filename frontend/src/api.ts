@@ -5,8 +5,8 @@ export type Instrument = {
   ticker: string;
   fullName: string;
   id: string;
-  price: string;
-  fee: string;
+  price: number,
+  fee: number;
 };
 
 export type TradeData = {
