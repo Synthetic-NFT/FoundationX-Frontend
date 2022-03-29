@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
+import {BigNumber} from 'bignumber.js'
 import {Button} from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
 import {withStyles} from "@material-ui/core/styles";
@@ -111,7 +112,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
         label="Collateral"
         type="number"
         // We probably should do some validation on this
-        onChange={(e) => setCollateral(e.target.value, instrument.price)}
+        onChange={(e) => setCollateral(e.target.value, new BigNumber(instrument.price))}
       />
       <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
     </div>
@@ -163,7 +164,7 @@ function RatioField({
           if (typeof v !== "number") {
             throw Error("expect number");
           }
-          setRatio(String(v), instrument.price);
+          setRatio(String(v), new BigNumber(instrument.price));
         }}
       />
       <StyledTextField
@@ -172,7 +173,7 @@ function RatioField({
         style={{ margin: "24px", width: "64px" }}
         label="Ratio"
         type="number"
-        onChange={(e) => setRatio(e.target.value, instrument.price) /* cast to number with "+" */}
+        onChange={(e) => setRatio(e.target.value, new BigNumber(instrument.price)) /* cast to number with "+" */}
       />
     </div>
   );
@@ -196,7 +197,7 @@ function DebtField({ instrument }: { instrument: Instrument }) {
             label="Count"
             type={instrument.ticker}
             // We probably should do some validation on this
-            onChange={(e) => setDebt(e.target.value, instrument.price)}
+            onChange={(e) => setDebt(e.target.value, new BigNumber(instrument.price))}
         />
         <img src={NFTIcons.get(instrument.ticker)} alt={instrument.ticker} height="40px" width="40px" />
       </div>
@@ -213,7 +214,7 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
   const {collateral, ratio, collateralValid, ratioValid, setRatio } = useContext(MintContext);
 
     useEffect(() => {
-        setRatio(fakeLimits.safeRatio.toString(), instrument.price);
+        setRatio(fakeLimits.safeRatio.toString(), new BigNumber(instrument.price));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [instrument.price]);
 

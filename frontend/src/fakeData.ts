@@ -1,3 +1,4 @@
+import {BigNumber} from "bignumber.js";
 import Azuki from "./styles/images/Azuki.jpeg";
 import BoredApeYachtClub from "./styles/images/BoredApeYachtClub.png";
 import CryptoPunks from "./styles/images/CryptoPunks.png";
@@ -24,21 +25,21 @@ const fakeTradeData = {
       ticker: tickerBoredApeYachtClub,
       fullName: tickerBoredApeYachtClub,
       id: "1",
-      price: 2.0,
+      price: '2.0',
       fee: 1.15,
     },
     {
       ticker: tickerCryptoPunks,
       fullName: tickerCryptoPunks,
       id: "2",
-      price: 172.41,
+      price: '172.41',
       fee: 32.10,
     },
     {
       ticker: tickerAzuki,
       fullName: tickerAzuki,
       id: "3",
-      price: 11.4,
+      price: '11.4',
       fee: 0.4,
     },
   ],

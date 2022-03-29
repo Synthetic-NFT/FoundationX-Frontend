@@ -1,22 +1,24 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import { Button } from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
-import { withStyles } from "@material-ui/core/styles";
+import {withStyles} from "@material-ui/core/styles";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { TextField } from "@mui/material";
-import { BigNumber } from "bignumber.js";
-import { ethers } from "ethers";
-import React, { useContext, useEffect, useState } from "react";
+import {TextField} from "@mui/material";
+import {BigNumber} from "bignumber.js";
+import {ethers} from "ethers";
+import React, {useContext, useEffect, useState} from "react";
 
-import { Instrument } from "./api";
-import { AppContext } from "./AppContext";
+import {Instrument} from "./api";
+import {AppContext} from "./AppContext";
 // eslint-disable-next-line import/default
 import {NFTIcons} from "./fakeData";
 import InstrumentCard from "./InstrumentCard";
+import {ManageAction, ManageActionKind, ManageContext, ManageContextProvider} from "./MintContext";
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
-import { burnSynth, loadUserOrderStat } from "./util/interact";
+import {burnSynth, loadUserOrderStat} from "./util/interact";
+// import {MintContext} from "./MintContext";
 
 type SellSpecConfig = {
   minRatio: number;
@@ -52,6 +54,8 @@ function useBurnSpec(config: BurnSpecConfig): BurnSpec {
   const [collateralValid, setCollateralValid] = useState(true);
   const [cRatioValid, setCRatioValid] = useState(true);
   const [debtValid, setDebtValid] = useState(true);
+
+  // const [collateralValid, setCollateralValid] = useContext(MintContext);
 
   useEffect(
     () => {
@@ -362,9 +366,9 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
       setOldCollateral(bnCollateral);
       setOldCRatio(bnCRatio);
       setOldDebt(bnDebt);
-      setCollateral(bnCollateral.div(unit).toString());
-      setCRatio(bnCRatio.div(unit).toString());
-      setDebt(bnDebt.div(unit).toString());
+      // setCollateral(bnCollateral.div(unit).toString());
+      // setCRatio(bnCRatio.div(unit).toString());
+      // setDebt(bnDebt.div(unit).toString());
       setSynthPrice(bnSynthPrice);
     };
     if (walletAddress.length > 0) {
@@ -385,6 +389,22 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
     setSynthPrice,
   };
 }
+
+function UserInputField({type, price}: {type:ManageActionKind, price:BigNumber}) {
+  const synthPriceBase10 = price.div("1e18");
+  const {state, dispatch} = useContext(ManageContext);
+  return (
+      <StyledTextField
+          value={state[type]}
+          style={{ margin: "24px" }}
+          label="Count"
+          type="number"
+          // We probably should do some validation on this
+          onChange={(e) => dispatch({type, payload: e.target.value, price})}
+      />
+  );
+}
+
 
 function SellForm({ instrument }: { instrument: Instrument }) {
   const fakeLimits = {
@@ -452,7 +472,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
         >
           <OrigCollateralField count={oldCollateral} isCRatio={false} />
           <ArrowForwardIcon color="primary" vertical-align="middle" />
-          <CollateralField burnSpec={burnSpec} statSpec={UserStatSpec} />
+          <UserInputField type={ManageActionKind.COLLATERAL} price={synthPrice.div('1e18')} />
           <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
         </div>
 
@@ -465,7 +485,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
         >
           <OrigCollateralField count={oldCRatio} isCRatio />
           <ArrowForwardIcon color="primary" vertical-align="middle" />
-          <CRatioField burnSpec={burnSpec} statSpec={UserStatSpec} />
+          <UserInputField type={ManageActionKind.RATIO} price={synthPrice.div('1e18')} />
         </div>
 
         <FieldLabel title="Synthetic Tokens Minted" />
@@ -477,7 +497,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
         >
           <OrigCollateralField count={oldDebt} isCRatio={false} />
           <ArrowForwardIcon color="primary" vertical-align="middle" />
-          <DebtField burnSpec={burnSpec} statSpec={UserStatSpec} />
+          <UserInputField type={ManageActionKind.DEBT} price={synthPrice.div('1e18')} />
           <img src={NFTIcons.get(instrument.ticker)} alt={instrument.ticker} height="40px" width="40px" />
         </div>
 
@@ -506,7 +526,9 @@ export default function InstrumentSell({
 }) {
   return (
     <div style={{ display: "flex", overflow: "scroll" }}>
-      <SellForm instrument={instrument} />
+      <ManageContextProvider>
+        <SellForm instrument={instrument} />
+      </ManageContextProvider>
       <InstrumentCard instrument={instrument} />
     </div>
   );

@@ -14,7 +14,8 @@ export default function InstrumentCard({
     ["Fee", instrument.fee],
   ];
 
-  return (
+  // @ts-ignore
+    return (
     <div
       style={{
         color: theme.activeTextColor,
