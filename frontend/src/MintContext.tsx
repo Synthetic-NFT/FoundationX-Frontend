@@ -92,128 +92,197 @@ export function ManageContextProvider({children = null} : {children: React.React
         switch (type) {
             case ManageActionKind.COLLATERAL: {
                 const collateral = new BigNumber(payload);
-
-                switch (state.lastField) {
-                    case ManageActionKind.RATIO: {
-                        const ratio = new BigNumber(state.ratio).div(100);
-                        const debt = collateral.div(ratio).div(price);
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            ratio: ratio.times(100).toString(),
-                            debt: debt.toString(),
-                            collateralValid: collateral.gte(0),
-                            ratioValid: ratio.gte(0),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.COLLATERAL
-                        }
+                const debt = new BigNumber(state.debt);
+                if (debt.isNaN()) {
+                    return {
+                        ...state,
+                        collateral: collateral.toString(),
+                        collateralValid: collateral.gte(0),
                     }
-                    case ManageActionKind.DEBT: {
-                        const debt = new BigNumber(state.debt);
-                        const ratio = collateral.div(debt.times(price)).times(100);
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            ratio: ratio.times(100).toString(),
-                            debt: debt.toString(),
-                            collateralValid: collateral.gte(0),
-                            ratioValid: ratio.gte(0),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.COLLATERAL
-                        }
-                    }
-                    default:
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            collateralValid: collateral.gte(0),
-                            lastField: ManageActionKind.COLLATERAL
-                        }
                 }
+
+                const ratio = collateral.div(debt.times(price)).times(100);
+                return {
+                    ...state,
+                    collateral: collateral.toString(),
+                    ratio: ratio.toString(),
+                    debt: debt.toString(),
+                    collateralValid: collateral.gte(0),
+                    ratioValid: ratio.gte(0),
+                    debtValid: debt.gte(0),
+                }
+
             }
             case ManageActionKind.DEBT: {
+                const collateral = new BigNumber(state.collateral);
                 const debt = new BigNumber(payload);
-                switch (state.lastField) {
-                    case ManageActionKind.RATIO: {
-                        const ratio = new BigNumber(state.ratio).div(100);
-                        const collateral = debt.times(price).times(ratio);
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            ratio: ratio.times(100).toString(),
-                            debt: debt.toString(),
-                            collateralValid: collateral.gte(0),
-                            ratioValid: ratio.gte(0),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.DEBT
-                        }
+                if (collateral.isNaN()) {
+                    return {
+                        ...state,
+                        debt: debt.toString(),
+                        debtValid: debt.gte(0),
                     }
-                    case ManageActionKind.COLLATERAL: {
-                        const collateral = new BigNumber(state.collateral);
-                        const ratio = collateral.div(debt.times(price)).times(100);
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            ratio: ratio.times(100).toString(),
-                            debt: debt.toString(),
-                            collateralValid: collateral.gte(0),
-                            ratioValid: ratio.gte(0),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.DEBT
-                        }
-                    }
-                    default:
-                        return {
-                            ...state,
-                            debt: debt.toString(),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.DEBT
-                        }
+                }
+                const ratio = collateral.div(debt.times(price)).times(100);
+                return {
+                    ...state,
+                    collateral: collateral.toString(),
+                    ratio: ratio.toString(),
+                    debt: debt.toString(),
+                    collateralValid: collateral.gte(0),
+                    ratioValid: ratio.gte(0),
+                    debtValid: debt.gte(0),
                 }
             }
             case ManageActionKind.RATIO: {
-                const ratio = new BigNumber(payload).div(100);
-                switch (state.lastField) {
-                    case ManageActionKind.DEBT: {
-                        const debt = new BigNumber(state.debt);
-                        const collateral = debt.times(price).times(ratio);
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            ratio: ratio.times(100).toString(),
-                            debt: debt.toString(),
-                            collateralValid: collateral.gte(0),
-                            ratioValid: ratio.gte(0),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.RATIO
-                        }
+                const debt = new BigNumber(state.debt);
+                const ratio = new BigNumber(payload);
+                if (debt.isNaN()) {
+                    return {
+                        ...state,
+                        ratio: ratio.toString(),
+                        ratioValid: ratio.gte(0),
                     }
-                    case ManageActionKind.COLLATERAL: {
-                        const collateral = new BigNumber(state.collateral);
-                        const debt = collateral.div(ratio).div(price)
-                        return {
-                            ...state,
-                            collateral: collateral.toString(),
-                            ratio: ratio.times(100).toString(),
-                            debt: debt.toString(),
-                            collateralValid: collateral.gte(0),
-                            ratioValid: ratio.gte(0),
-                            debtValid: debt.gte(0),
-                            lastField: ManageActionKind.RATIO
-                        }
-                    }
-                    default:
-                        return {
-                            ...state,
-                            ratio: ratio.times(100).toString(),
-                            ratioValid: ratio.gte(0),
-                            lastField: ManageActionKind.RATIO
-                        }
+                }
+                const collateral = debt.times(price).times(ratio.div(100));
+                return {
+                    ...state,
+                    collateral: collateral.toString(),
+                    ratio: ratio.toString(),
+                    debt: debt.toString(),
+                    collateralValid: collateral.gte(0),
+                    ratioValid: ratio.gte(0),
+                    debtValid: debt.gte(0),
                 }
             }
             default:
                 return state;
         }
+        // switch (type) {
+        //     case ManageActionKind.COLLATERAL: {
+        //         const collateral = new BigNumber(payload);
+        //
+        //         switch (state.lastField) {
+        //             case ManageActionKind.RATIO: {
+        //                 const ratio = new BigNumber(state.ratio).div(100);
+        //                 const debt = collateral.div(ratio).div(price);
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     ratio: ratio.times(100).toString(),
+        //                     debt: debt.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     ratioValid: ratio.gte(0),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.COLLATERAL
+        //                 }
+        //             }
+        //             case ManageActionKind.DEBT: {
+        //                 const debt = new BigNumber(state.debt);
+        //                 const ratio = collateral.div(debt.times(price)).times(100);
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     ratio: ratio.times(100).toString(),
+        //                     debt: debt.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     ratioValid: ratio.gte(0),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.COLLATERAL
+        //                 }
+        //             }
+        //             default:
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     lastField: ManageActionKind.COLLATERAL
+        //                 }
+        //         }
+        //     }
+        //     case ManageActionKind.DEBT: {
+        //         const debt = new BigNumber(payload);
+        //         switch (state.lastField) {
+        //             case ManageActionKind.RATIO: {
+        //                 const ratio = new BigNumber(state.ratio).div(100);
+        //                 const collateral = debt.times(price).times(ratio);
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     ratio: ratio.times(100).toString(),
+        //                     debt: debt.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     ratioValid: ratio.gte(0),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.DEBT
+        //                 }
+        //             }
+        //             case ManageActionKind.COLLATERAL: {
+        //                 const collateral = new BigNumber(state.collateral);
+        //                 const ratio = collateral.div(debt.times(price)).times(100);
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     ratio: ratio.times(100).toString(),
+        //                     debt: debt.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     ratioValid: ratio.gte(0),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.DEBT
+        //                 }
+        //             }
+        //             default:
+        //                 return {
+        //                     ...state,
+        //                     debt: debt.toString(),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.DEBT
+        //                 }
+        //         }
+        //     }
+        //     case ManageActionKind.RATIO: {
+        //         const ratio = new BigNumber(payload).div(100);
+        //         switch (state.lastField) {
+        //             case ManageActionKind.DEBT: {
+        //                 const debt = new BigNumber(state.debt);
+        //                 const collateral = debt.times(price).times(ratio);
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     ratio: ratio.times(100).toString(),
+        //                     debt: debt.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     ratioValid: ratio.gte(0),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.RATIO
+        //                 }
+        //             }
+        //             case ManageActionKind.COLLATERAL: {
+        //                 const collateral = new BigNumber(state.collateral);
+        //                 const debt = collateral.div(ratio).div(price)
+        //                 return {
+        //                     ...state,
+        //                     collateral: collateral.toString(),
+        //                     ratio: ratio.times(100).toString(),
+        //                     debt: debt.toString(),
+        //                     collateralValid: collateral.gte(0),
+        //                     ratioValid: ratio.gte(0),
+        //                     debtValid: debt.gte(0),
+        //                     lastField: ManageActionKind.RATIO
+        //                 }
+        //             }
+        //             default:
+        //                 return {
+        //                     ...state,
+        //                     ratio: ratio.times(100).toString(),
+        //                     ratioValid: ratio.gte(0),
+        //                     lastField: ManageActionKind.RATIO
+        //                 }
+        //         }
+        //     }
+        //     default:
+        //         return state;
+        // }
     }
     const [state, dispatch] = useReducer(reducer, initManageState);
 
