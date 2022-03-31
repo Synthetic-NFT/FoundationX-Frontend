@@ -14,7 +14,7 @@ import {AppContext} from "./AppContext";
 // eslint-disable-next-line import/default
 import {NFTIcons} from "./fakeData";
 import InstrumentCard from "./InstrumentCard";
-import {ManageAction, ManageActionKind, ManageContext, ManageContextProvider} from "./MintContext";
+import {ManageActionKind, ManageContext, ManageContextProvider} from "./MintContext";
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
 import {burnSynth, loadUserOrderStat} from "./util/interact";
@@ -354,14 +354,18 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
   const [oldDebt, setOldDebt] = useState(new BigNumber(0));
   const [synthPrice, setSynthPrice] = useState(new BigNumber(0));
   const { setCRatio, setCollateral, setDebt } = burnSpec;
+  const {state, dispatch} = useContext(ManageContext);
+
   useEffect(() => {
     const getAndSetUserStat = async () => {
       const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
         await loadUserOrderStat(walletAddress);
-      // const cRatio = new BigNumber(bnCRatio).times(100).div(unit).toNumber();
-      // const collateral = new BigNumber(bnCollateral).div(unit).toNumber();
-      // const foo = ethers.utils.formatEther(new BigNumber(bnCRatio));
-      // const debt = new BigNumber(bnDebt).div(unit).toNumber();
+
+      const ratio = new BigNumber(bnCRatio).div(unit).times(100).toString();
+      const collateral = new BigNumber(bnCollateral).div(unit).toString();
+      const debt = new BigNumber(bnDebt).div(unit).toString();
+
+      dispatch({type: ManageActionKind.SET, newRatio: ratio, newCollateral: collateral, newDebt: debt, price: bnSynthPrice});
 
       setOldCollateral(bnCollateral);
       setOldCRatio(bnCRatio);
@@ -393,12 +397,16 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
 function UserInputField({type, price}: {type:ManageActionKind, price:BigNumber}) {
   const synthPriceBase10 = price.div("1e18");
   const {state, dispatch} = useContext(ManageContext);
+  if (type === ManageActionKind.SET) {
+    return <StyledTextField />;
+  }
   return (
       <StyledTextField
           value={state[type]}
           style={{ margin: "24px" }}
           label="Count"
           type="number"
+          disabled={new BigNumber(state.debt).lte(0)}
           // We probably should do some validation on this
           onChange={(e) => dispatch({type, payload: e.target.value, price})}
       />
@@ -416,6 +424,9 @@ function SellForm({ instrument }: { instrument: Instrument }) {
     maxRatio: 200,
   };
   const burnSpec = useBurnSpec(origBurnSpecConfig);
+
+  const {state, dispatch} = useContext(ManageContext);
+
 
   const UserStatSpec = useUserStatSpec(burnSpec);
   const {
