@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 
+BigNumber.config({ DECIMAL_PLACES: 19 });
+
 require("dotenv").config();
 // const { BigNumber } = require("@ethersproject");
 
@@ -45,8 +47,8 @@ export const synthContract = new web3.eth.Contract(SynthABI, synthAddress);
 export const mintSynth = async (
   address: string | null,
   synthName: string,
-  amount: number,
-  ratio: number,
+  amount: string,
+  ratio: string,
 ) => {
   // input error handling
   if (!(window as any).ethereum || address === null) {
@@ -60,13 +62,13 @@ export const mintSynth = async (
   // amount is in eth
   const amountWei = new BigNumber(amount).times(unit);
   // eslint-disable-next-line
-  console.log(web3.utils.toWei(new web3.utils.BN(amount), "ether").toString());
+  console.log(web3.utils.toWei(amount, "ether").toString());
 
   // set up transaction parameters
   const depositParameters = {
     to: FactoryAddress, // Required except during contract publications.
     from: address, // must match user's active address.
-    value: web3.utils.toHex(amountWei.toString()),
+    value: web3.utils.toHex(web3.utils.toWei(amount, "ether")),
     data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
   };
   const synthPrice = await FactoryContract.methods
@@ -79,11 +81,16 @@ export const mintSynth = async (
     .div(bnrRatio)
     .times(new BigNumber(100))
     .div(bnSynthPrice);
+  const amountSynth = new BigNumber(amount)
+      .div(bnrRatio)
+      .times(new BigNumber(100))
+      .div(bnSynthPrice);
+
   const mintParameters = {
     to: FactoryAddress, // Required except during contract publications.
     from: address, // must match user's active address.
     data: FactoryContract.methods
-      .userMintSynth(synthName, new BigNumber(amountSynthInWei.toString()))
+      .userMintSynth(synthName, web3.utils.toWei(amountSynth.toString(), "ether"))
       .encodeABI(),
   };
 
