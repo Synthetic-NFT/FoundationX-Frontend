@@ -1,7 +1,5 @@
 import {BigNumber} from 'bignumber.js'
-import React, {useState, useReducer, useEffect, useContext} from "react";
-import {loadUserOrderStat} from "./util/interact";
-import {AppContext} from "./AppContext";
+import React, {useReducer} from "react";
 
 enum LastChangedField {
     COLLATERAL = "COLLATERAL",

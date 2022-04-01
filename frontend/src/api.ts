@@ -1,6 +1,5 @@
-import {BigNumber} from 'bignumber.js'
-import { AppData } from "./AppContext";
-import { fakeAppData, fakeTradeData } from "./fakeData";
+import {AppData} from "./AppContext";
+import {fakeAppData, fakeTradeData} from "./fakeData";
 
 export type Instrument = {
   ticker: string;

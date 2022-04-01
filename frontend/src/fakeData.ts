@@ -1,4 +1,3 @@
-import {BigNumber} from "bignumber.js";
 import Azuki from "./styles/images/Azuki.jpeg";
 import BoredApeYachtClub from "./styles/images/BoredApeYachtClub.png";
 import CryptoPunks from "./styles/images/CryptoPunks.png";

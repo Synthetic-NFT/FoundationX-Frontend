@@ -20,10 +20,10 @@ const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.jso
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 
-const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
-const ReserveAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+const FactoryAddress = "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE";
+const ReserveAddress = "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e";
 // const messageAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
-const synthAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
+const synthAddress = "0x0B306BF915C4d645ff596e518fAf3F9669b97016";
 
 //
 export const FactoryContract = new web3.eth.Contract(
