@@ -96,11 +96,11 @@ export default function TopBar(): React.ReactElement {
           //   {appData?.userName ?? "Not Connected"}
           // </Button>
           <Button
-              variant="contained"
-              style={{
-                color: "white",
-                backgroundColor: theme.wallet,
-              }}
+            variant="contained"
+            style={{
+              color: "white",
+              backgroundColor: theme.wallet,
+            }}
             id="walletButton"
             onClick={connectWalletPressed}
           >

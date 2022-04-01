@@ -1,11 +1,11 @@
-import {AppData} from "./AppContext";
-import {fakeAppData, fakeTradeData} from "./fakeData";
+import { AppData } from "./AppContext";
+import { fakeAppData, fakeTradeData } from "./fakeData";
 
 export type Instrument = {
   ticker: string;
   fullName: string;
   id: string;
-  price: string,
+  price: string;
   fee: number;
 };
 
