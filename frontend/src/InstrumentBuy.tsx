@@ -1,21 +1,25 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import {Button} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
-import {withStyles} from "@material-ui/core/styles";
-import {TextField} from "@mui/material";
-import {BigNumber} from 'bignumber.js'
-import React, {useContext, useEffect} from "react";
+import { withStyles } from "@material-ui/core/styles";
+import { TextField } from "@mui/material";
+import { BigNumber } from "bignumber.js";
+import React, { useContext, useEffect } from "react";
 
-import {Instrument} from "./api";
-import {AppContext} from "./AppContext";
+import { Instrument } from "./api";
+import { AppContext } from "./AppContext";
 // eslint-disable-next-line import/default
-import {NFTIcons} from "./fakeData";
+import { NFTIcons } from "./fakeData";
 import InstrumentCard from "./InstrumentCard";
-import {MintContext, MintContextProvider, ManageActionKind} from "./MintContext";
+import {
+  MintContext,
+  MintContextProvider,
+  ManageActionKind,
+} from "./MintContext";
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
-import {mintSynth} from "./util/interact";
+import { mintSynth } from "./util/interact";
 
 type BuySpecConfig = {
   minRatio: number;
@@ -26,7 +30,7 @@ type BuySpecConfig = {
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input.MuiInput-input.Mui-disabled": {
-        "-webkit-text-fill-color": "rgba(0,0,0, 0.6)" // (default alpha is 0.38)
+      "-webkit-text-fill-color": "rgba(0,0,0, 0.6)", // (default alpha is 0.38)
     },
     "& label": {
       color: theme.tradeFormOutline,
@@ -98,7 +102,7 @@ function FieldLabel({
 }
 
 function CollateralField({ instrument }: { instrument: Instrument }) {
-  const {state, dispatch} = useContext(MintContext);
+  const { state, dispatch } = useContext(MintContext);
 
   return (
     <div
@@ -115,7 +119,15 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
         label="Collateral"
         type="number"
         // We probably should do some validation on this
-        onChange={(e) => dispatch({type: ManageActionKind.COLLATERAL, newRatio: '', newCollateral: e.target.value, newDebt: '', price: new BigNumber(instrument.price)})}
+        onChange={(e) =>
+          dispatch({
+            type: ManageActionKind.COLLATERAL,
+            newRatio: "",
+            newCollateral: e.target.value,
+            newDebt: "",
+            price: new BigNumber(instrument.price),
+          })
+        }
       />
       <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
     </div>
@@ -134,9 +146,9 @@ const StyledSlider = withStyles({
 function RatioField({
   minRatio,
   safeRatio,
-                        instrument,
+  instrument,
 }: BuySpecConfig & { instrument: Instrument }) {
-  const { state, dispatch} = useContext(MintContext);
+  const { state, dispatch } = useContext(MintContext);
   return (
     <div
       style={{
@@ -167,7 +179,13 @@ function RatioField({
           if (typeof v !== "number") {
             throw Error("expect number");
           }
-          dispatch({type: ManageActionKind.RATIO, newRatio: String(v), newCollateral: '', newDebt: '', price: new BigNumber(instrument.price)})
+          dispatch({
+            type: ManageActionKind.RATIO,
+            newRatio: String(v),
+            newCollateral: "",
+            newDebt: "",
+            price: new BigNumber(instrument.price),
+          });
         }}
       />
       <StyledTextField
@@ -176,35 +194,48 @@ function RatioField({
         style={{ margin: "24px", width: "64px" }}
         label="Ratio"
         type="number"
-        onChange={(e) => dispatch({type: ManageActionKind.RATIO, newRatio: e.target.value, newCollateral: '', newDebt: '', price: new BigNumber(instrument.price)})}
+        onChange={(e) =>
+          dispatch({
+            type: ManageActionKind.RATIO,
+            newRatio: e.target.value,
+            newCollateral: "",
+            newDebt: "",
+            price: new BigNumber(instrument.price),
+          })
+        }
       />
     </div>
   );
 }
 
 function DebtField({ instrument }: { instrument: Instrument }) {
-  const {state, dispatch} = useContext(MintContext);
+  const { state, dispatch } = useContext(MintContext);
 
   return (
-      <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-      >
-        <StyledTextField
-            value={ state.debtValid ? state.debt : ""}
-            style={{ margin: "24px" }}
-            label="Count"
-            type={instrument.ticker}
-            // We probably should do some validation on this
-            disabled
-        />
-        <img src={NFTIcons.get(instrument.ticker)} alt={instrument.ticker} height="40px" width="40px" />
-      </div>
-);
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <StyledTextField
+        value={state.debtValid ? state.debt : ""}
+        style={{ margin: "24px" }}
+        label="Count"
+        type={instrument.ticker}
+        // We probably should do some validation on this
+        disabled
+      />
+      <img
+        src={NFTIcons.get(instrument.ticker)}
+        alt={instrument.ticker}
+        height="40px"
+        width="40px"
+      />
+    </div>
+  );
 }
 
 function BuyForm({ instrument }: { instrument: Instrument }) {
@@ -214,12 +245,12 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
     safeRatio: 200,
   };
 
-  const {state, dispatch} = useContext(MintContext);
+  const { state, dispatch } = useContext(MintContext);
 
-    // useEffect(() => {
-    //     setRatio(fakeLimits.safeRatio.toString(), new BigNumber(instrument.price));
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [instrument.price]);
+  // useEffect(() => {
+  //     setRatio(fakeLimits.safeRatio.toString(), new BigNumber(instrument.price));
+  //     // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [instrument.price]);
 
   const mintSynthPressed = async () => {
     if (state.collateralValid && state.ratioValid) {
@@ -267,9 +298,9 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
         />
         <RatioField {...fakeLimits} instrument={instrument} />
         <div
-            style={{
-              marginTop: "32px",
-            }}
+          style={{
+            marginTop: "32px",
+          }}
         />
         <DebtField instrument={instrument} />
       </div>
