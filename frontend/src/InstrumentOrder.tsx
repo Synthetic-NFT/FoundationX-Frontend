@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TabUnstyled from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { styled } from "@mui/system";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Switch,
   Route,
@@ -14,9 +14,10 @@ import {
 } from "react-router-dom";
 
 import InstrumentBuy from "./InstrumentBuy";
+import InstrumentSell from "./InstrumentSell";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
-
+import { loadSynthPrice } from "./util/interact";
 // Apart from `useStyles`, this shows an example of using styled for custom component, which
 // can be more flexible.
 const Tab = styled(TabUnstyled)`
@@ -58,6 +59,9 @@ export default function InstrumentOrder(): React.ReactElement {
   const history = useHistory();
   const ticker = new URLSearchParams(location.search).get("ticker");
   const styles = useStyles();
+  const [synthPrice, setSynthPrice] = useState(0);
+
+  const MINUTE_MS = 600000;
 
   useEffect(() => {
     // Expect a ticker in the URL like "/trade/order/buy?ticker=NFT"
@@ -65,6 +69,12 @@ export default function InstrumentOrder(): React.ReactElement {
     if (ticker == null) {
       history.push(TRADE_URL);
     }
+    const interval = setInterval(async () => {
+      const synthPrice = await loadSynthPrice("SynthTest1");
+      setSynthPrice(synthPrice);
+    }, MINUTE_MS);
+
+    return () => clearInterval(interval);
   }, [ticker, history]);
 
   const { tradeData } = useContext(TradeContext);
@@ -75,11 +85,9 @@ export default function InstrumentOrder(): React.ReactElement {
   const instrument = tradeData?.instruments.find(
     (instrument) => instrument.ticker === ticker,
   );
-
   if (tradeData == null || instrument == null) {
     return <div />;
   }
-
   const onSwitch = (targetURL: string) => {
     if (targetURL === match?.url) {
       return;
@@ -106,8 +114,11 @@ export default function InstrumentOrder(): React.ReactElement {
         style={{
           position: "relative",
           maxHeight: "100%",
-          overflow: "scroll",
           paddingTop: "12px",
+          overflow: "scroll",
+          maxWidth: "1144px",
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
       >
         <Switch>
@@ -116,7 +127,7 @@ export default function InstrumentOrder(): React.ReactElement {
             <InstrumentBuy instrument={instrument} />
           </Route>
           <Route path="/trade/order/sell" exact>
-            <div className={styles.currentTicker}>Sell</div>
+            <InstrumentSell instrument={instrument} />
           </Route>
         </Switch>
       </div>

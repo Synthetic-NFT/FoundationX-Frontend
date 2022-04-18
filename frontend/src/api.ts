@@ -6,7 +6,7 @@ export type Instrument = {
   fullName: string;
   id: string;
   price: string;
-  fee: string;
+  fee: number;
 };
 
 export type TradeData = {
