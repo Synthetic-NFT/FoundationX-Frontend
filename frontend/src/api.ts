@@ -7,6 +7,9 @@ export type Instrument = {
   id: string;
   price: string;
   fee: number;
+  long: number;
+  short: number;
+  premium: number;
 };
 
 export type TradeData = {

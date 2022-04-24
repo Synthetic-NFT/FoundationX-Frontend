@@ -19,6 +19,9 @@ const theme = {
 
   tableBorderColor: "#0f172a",
 
+  tableLinkColor: "#66adff",
+  tableHoverColor: "rgba(0, 0, 0, 0.04)",
+
   instrumentCardBackgroundColor: "#0f172a",
   tradeFormBackgroundColor: "#1e293b",
   tradeFormOutline: "#94a3b8",

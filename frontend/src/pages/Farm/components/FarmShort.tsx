@@ -9,20 +9,20 @@ import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "./api";
-import { AppContext } from "./AppContext";
+import { Instrument } from "../../../api";
+import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
-import { NFTIcons } from "./fakeData";
-import InstrumentCard from "./InstrumentCard";
+import { NFTIcons } from "../../../fakeData";
+import InstrumentCard from "../../../InstrumentCard";
 import {
   ManageActionKind,
   ManageContext,
   ManageContextProvider,
   MintContext,
-} from "./MintContext";
-import Ethereum from "./styles/images/Ethereum.svg";
-import theme from "./theme";
-import { burnSynth, loadUserOrderStat } from "./util/interact";
+} from "../../../MintContext";
+import Ethereum from "../../../styles/images/Ethereum.svg";
+import theme from "../../../theme";
+import { burnSynth, loadUserOrderStat } from "../../../util/interact";
 
 type SellSpecConfig = {
   minRatio: number;
@@ -415,7 +415,7 @@ function UserInputField({
   );
 }
 
-function SellForm({ instrument }: { instrument: Instrument }) {
+function ShortForm({ instrument }: { instrument: Instrument }) {
   const fakeLimits = {
     minRatio: 150,
     safeRatio: 200,
@@ -544,15 +544,15 @@ function SellForm({ instrument }: { instrument: Instrument }) {
 
 // Rendered in the `/trade/order/buy` and contains business logic related to placing a
 // order for an instrument.
-export default function InstrumentSell({
+export default function FarmShort({
   instrument,
 }: {
   instrument: Instrument;
 }) {
   return (
-    <div style={{ display: "flex", overflow: "scroll" }}>
+    <div style={{ display: "flex", overflow: "hidden" }}>
       <ManageContextProvider>
-        <SellForm instrument={instrument} />
+        <ShortForm instrument={instrument} />
       </ManageContextProvider>
       <InstrumentCard instrument={instrument} />
     </div>

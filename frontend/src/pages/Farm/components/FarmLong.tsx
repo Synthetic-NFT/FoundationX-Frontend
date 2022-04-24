@@ -1,25 +1,26 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import { Button } from "@material-ui/core";
+import { Button, Select, MenuItem  } from "@material-ui/core";
 import Slider from "@material-ui/core/Slider";
 import { withStyles } from "@material-ui/core/styles";
 import { TextField } from "@mui/material";
 import { BigNumber } from "bignumber.js";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "./api";
-import { AppContext } from "./AppContext";
+import { Instrument } from "../../../api";
+import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
-import { NFTIcons } from "./fakeData";
-import InstrumentCard from "./InstrumentCard";
+import { NFTIcons } from "../../../fakeData";
+import InstrumentCard from "../../../InstrumentCard";
 import {
   MintContext,
   MintContextProvider,
   ManageActionKind,
-} from "./MintContext";
-import Ethereum from "./styles/images/Ethereum.svg";
-import theme from "./theme";
-import { mintSynth } from "./util/interact";
+} from "../../../MintContext";
+import Ethereum from "../../../styles/images/Ethereum.svg";
+import theme from "../../../theme";
+import { TradeContext } from "../../../TradeContext";
+import { mintSynth } from "../../../util/interact";
 
 type BuySpecConfig = {
   minRatio: number;
@@ -238,19 +239,15 @@ function DebtField({ instrument }: { instrument: Instrument }) {
   );
 }
 
-function BuyForm({ instrument }: { instrument: Instrument }) {
+function LongForm({ instrument, handleChange }: { instrument: Instrument, handleChange: Function }) {
   const { walletAddress } = useContext(AppContext);
   const fakeLimits = {
     minRatio: 150,
     safeRatio: 200,
   };
 
+  const { tradeData } = useContext(TradeContext);
   const { state, dispatch } = useContext(MintContext);
-
-  // useEffect(() => {
-  //     setRatio(fakeLimits.safeRatio.toString(), new BigNumber(instrument.price));
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [instrument.price]);
 
   const mintSynthPressed = async () => {
     if (state.collateralValid && state.ratioValid) {
@@ -283,26 +280,27 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
         }}
       >
         <FieldLabel
-          title="Set Collateral"
-          description="Set the amount of collateral"
+          title={`Provide ${  instrument.fullName}`}
+          description="can be BOUGHT or BORROWED"
         />
-        <CollateralField instrument={instrument} />
-        <FieldLabel
-          title="Set Collateral Ratio"
-          description="Position will be liquidated below the minimum colateral ratio"
-        />
-        <div
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={instrument.id}
+          label="Asset"
+          onChange={(e) => handleChange(e.target.value)}
           style={{
-            marginTop: "32px",
+            marginTop: "16px",
+            marginLeft: "24px",
+            display: "flex",
+            flexGrow: 1,
+            flexDirection: "column",
           }}
-        />
-        <RatioField {...fakeLimits} instrument={instrument} />
-        <div
-          style={{
-            marginTop: "32px",
-          }}
-        />
-        <DebtField instrument={instrument} />
+        >
+          {tradeData?.instruments.map((row) => (
+              <MenuItem value={row.id}>{row.fullName}</MenuItem>
+            ))}
+        </Select>
       </div>
       <Button
         style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
@@ -319,17 +317,23 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
 
 // Rendered in the `/trade/order/buy` and contains business logic related to placing a
 // order for an instrument.
-export default function InstrumentBuy({
+export default function FarmLong({
   instrument,
 }: {
   instrument: Instrument;
 }) {
+  const [inst, setInst] = useState(instrument);
+  const { tradeData } = useContext(TradeContext);
+  function handleChange(id:string) {
+    const inst:Instrument|undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
+    setInst(inst)
+  }
   return (
-    <div style={{ display: "flex", overflow: "scroll" }}>
+    <div style={{ display: "flex", overflow: "hidden" }}>
       <MintContextProvider>
-        <BuyForm instrument={instrument} />
+        <LongForm instrument={inst} handleChange={(id: string) => handleChange(id)}/>
       </MintContextProvider>
-      <InstrumentCard instrument={instrument} />
+      <InstrumentCard instrument={inst} />
     </div>
   );
 }

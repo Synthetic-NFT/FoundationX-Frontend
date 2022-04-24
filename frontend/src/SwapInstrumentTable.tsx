@@ -7,11 +7,16 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Instrument } from "./api";
 import { SearchBar, simpleFilter } from "./InstrumentTable";
+import instrumentTableColumns from "./instrumentTableColumns";
 import swapInstrumenttableColumns from "./SwapInstrumenttableColumns";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
 
-export default function SwapInstrumentTable(): React.ReactElement {
+export default function SwapInstrumentTable({
+    onRowClick,
+}: {
+    onRowClick: (instrument: Instrument) => void;
+}): React.ReactElement {
   const { tradeData } = useContext(TradeContext);
   // instruments to be rendered, after accounting for filtering.
   const [instruments, setInstruments] = useState<Instrument[] | null>(null);
@@ -53,10 +58,10 @@ export default function SwapInstrumentTable(): React.ReactElement {
 
           <TableBody>
             {instruments.map((row) => (
-              <TableRow hover key={row.id}>
+              <TableRow hover key={row.id} onClick={() => onRowClick(row)}>
                 {swapInstrumenttableColumns.map((column) => {
-                  const Renderer = column.cellRenderer;
-                  return <Renderer key={column.id} row={row} />;
+                    const Renderer = column.cellRenderer;
+                    return <Renderer key={column.id} row={row} />;
                 })}
               </TableRow>
             ))}

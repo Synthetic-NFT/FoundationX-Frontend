@@ -7,13 +7,16 @@ import theme from "./theme";
 const useStyles = makeStyles({
   root: {
     display: "flex",
+    overflowX: "hidden",
     alignItems: "center",
     flexDirection: "column",
-    overflow: "hidden",
+    height: "fit-content",
+    overflowY: "auto",
+    marginBottom: "32px",
   },
   routeContainer: {
     width: "1024px",
-    overflowY: "auto",
+    overflowY: "hidden",
   },
   title: {
     color: theme.activeTextColor,
