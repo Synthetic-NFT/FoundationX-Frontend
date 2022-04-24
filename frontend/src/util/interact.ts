@@ -71,36 +71,37 @@ export const mintSynth = async (
     value: web3.utils.toHex(web3.utils.toWei(amount, "ether")),
     data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
   };
-  const synthPrice = await FactoryContract.methods
-    .getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853")
+  const synthPrice = await synthContract.methods
+    .getSynthPriceToEth()
     .call();
   const bnSynthPrice = new BigNumber(synthPrice).div(new BigNumber("1e18"));
-  const bnrRatio = new BigNumber(ratio);
+  const bnCRatio = new BigNumber(ratio).times("1e18");
 
   const amountSynthInWei = new BigNumber(amountWei.toString())
-    .div(bnrRatio)
+    .div(bnCRatio)
     .times(new BigNumber(100))
     .div(bnSynthPrice);
   const amountSynth = new BigNumber(amount)
-      .div(bnrRatio)
+      .div(bnCRatio)
       .times(new BigNumber(100))
       .div(bnSynthPrice);
 
   const mintParameters = {
     to: FactoryAddress, // Required except during contract publications.
     from: address, // must match user's active address.
+    value: web3.utils.toHex(web3.utils.toWei(amount, "ether")), // how much the user is depositing
     data: FactoryContract.methods
-      .userMintSynth(synthName, web3.utils.toWei(amountSynth.toString(), "ether"))
+      .userMintSynth(synthName, bnCRatio.toString())
       .encodeABI(),
   };
 
   // sign the transaction
   try {
-    const depositHash = await (window as any).ethereum.request({
-      method: "eth_sendTransaction",
-      params: [depositParameters],
-    });
-    console.log(depositHash);
+    // const depositHash = await (window as any).ethereum.request({
+    //   method: "eth_sendTransaction",
+    //   params: [depositParameters],
+    // });
+    // console.log(depositHash);
     const mintHash = await (window as any).ethereum.request({
       method: "eth_sendTransaction",
       params: [mintParameters],
@@ -108,7 +109,7 @@ export const mintSynth = async (
     console.log(mintHash);
     return {
       status: "success",
-      depositHash,
+      // depositHash,
       mintHash,
     };
   } catch (error) {
@@ -165,16 +166,67 @@ export const burnSynth = async (
   }
 };
 
-export const loadSynthPrice = async (synthName: string) => {
-  const synthPrice = FactoryContract.methods
-    .getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853")
+export const manageSynth = async (
+    address: string | null,
+    synthName: string,
+    targetCRatio: string,
+    targetDeposit: string
+) => {
+  // input error handling
+  if (!(window as any).ethereum || address === null) {
+    return {
+      status:
+          "💡 Connect your Metamask wallet to update the message on the blockchain.",
+    };
+  }
+  const bnTargetCRatio = new BigNumber(targetCRatio).times('1e18').toString();
+  const bnTargetDeposit = new BigNumber(targetDeposit).times('1e18').toString();
+  const manageParameters = {
+    to: FactoryAddress, // Required except during contract publications.
+    from: address, // must match user's active address.
+    data: FactoryContract.methods.userManageSynth(synthName, bnTargetCRatio, bnTargetDeposit).encodeABI(),
+  };
+  // const approveParameters = {
+  //   to: synthAddress, // Required except during contract publications.
+  //   from: address, // must match user's active address.
+  //   data: synthContract.methods.approve(FactoryAddress, amount).encodeABI(),
+  // };
+
+  // userManageSynth(string memory synthName, uint targetCollateralRatio, uint targetDeposit)
+  // sign the transaction
+  try {
+    // const approveHash = await (window as any).ethereum.request({
+    //   method: "eth_sendTransaction",
+    //   params: [approveParameters],
+    // });
+    // console.log(approveHash);
+    const manageHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [manageParameters],
+    });
+    console.log(manageHash);
+    return {
+      status: "success",
+      // approveHash,
+      manageHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+};
+
+export const loadSynthPrice = async (synthAddr: string) => {
+  const synthPrice = await synthContract.methods
+    .getSynthPriceToEth()
     .call();
   return synthPrice;
 };
 
 export const loadUserOrderStat = async (address: string) => {
-  const synthPrice = await FactoryContract.methods
-    .getSynthPriceToEth("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853")
+  const synthPrice = await synthContract.methods
+    .getSynthPriceToEth()
     .call();
   const bnSynthPrice = new BigNumber(synthPrice);
   const [collateral, debt] = await Promise.all([

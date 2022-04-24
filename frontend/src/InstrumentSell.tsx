@@ -400,6 +400,7 @@ function UserInputField({type, price}: {type:ManageActionKind, price:BigNumber})
   if (type === ManageActionKind.SET) {
     return <StyledTextField />;
   }
+
   return (
       <StyledTextField
           value={state[type]}
@@ -445,7 +446,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
     const burnSynthResponse = await burnSynth(
       walletAddress,
       instrument.ticker,
-      oldDebt.minus(burnSpec.debt),
+      oldDebt.minus(new BigNumber(state.debt).times('1e18')),
     );
     console.log(burnSynthResponse);
   };

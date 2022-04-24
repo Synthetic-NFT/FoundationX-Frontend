@@ -226,8 +226,8 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
       const mintSynthResponse = await mintSynth(
         walletAddress,
         instrument.ticker,
-        +state.collateral,
-        +state.ratio,
+        state.collateral,
+        state.ratio,
       );
       console.log(mintSynthResponse);
     }

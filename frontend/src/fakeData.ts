@@ -4,7 +4,9 @@ import BoredApeYachtClub from "./styles/images/BoredApeYachtClub.png";
 import CryptoPunks from "./styles/images/CryptoPunks.png";
 
 const tickerAzuki = "Azuki";
-const tickerBoredApeYachtClub = "BoredApeYachtClub";
+// const tickerBoredApeYachtClub = "BoredApeYachtClub";
+const tickerBoredApeYachtClub = "SynthTest1";
+
 const tickerCryptoPunks = "CryptoPunks";
 
 const NFTIcons = new Map<string, string>([

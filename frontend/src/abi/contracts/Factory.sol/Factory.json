@@ -158,6 +158,71 @@
   },
   {
     "inputs": [],
+    "name": "ERR_BURNING_EXCEED_DEBT",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ERR_INVALID_TARGET_COLLATERAL_RATIO",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ERR_INVALID_TARGET_DEPOSIT",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ERR_NOT_ENOUGH_SYNTH_TO_MINT",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ERR_SYNTH_NOT_AVAILABLE",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "ERR_USER_UNDER_COLLATERALIZED",
     "outputs": [
       {
@@ -185,35 +250,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "minter",
-        "type": "address"
-      },
-      {
-        "internalType": "contract Synth",
-        "name": "synth",
-        "type": "address"
-      },
-      {
-        "internalType": "contract Reserve",
-        "name": "reserve",
-        "type": "address"
-      }
-    ],
-    "name": "getMinterInvCollateralRatio",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "invCollateralRatio",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -225,25 +261,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract Synth",
-        "name": "synth",
-        "type": "address"
-      }
-    ],
-    "name": "getSynthPriceToEth",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "synthPrice",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -329,35 +346,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "minter",
-        "type": "address"
-      },
-      {
-        "internalType": "contract Synth",
-        "name": "synth",
-        "type": "address"
-      },
-      {
-        "internalType": "contract Reserve",
-        "name": "reserve",
-        "type": "address"
-      }
-    ],
-    "name": "remainingMintableSynth",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -455,21 +443,10 @@
         "internalType": "string",
         "name": "synthName",
         "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       }
     ],
     "name": "userBurnSynth",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "payable",
     "type": "function"
   },
@@ -479,25 +456,6 @@
         "internalType": "string",
         "name": "synthName",
         "type": "string"
-      }
-    ],
-    "name": "userDepositEther",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract Synth",
-        "name": "synth",
-        "type": "address"
       },
       {
         "internalType": "address",
@@ -530,18 +488,35 @@
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "targetCollateralRatio",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetDeposit",
+        "type": "uint256"
+      }
+    ],
+    "name": "userManageSynth",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "synthName",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetCollateralRatio",
         "type": "uint256"
       }
     ],
     "name": "userMintSynth",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "payable",
     "type": "function"
   },

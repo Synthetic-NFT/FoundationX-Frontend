@@ -56,7 +56,7 @@ const initManageState: ManageState = {
     lastField: null
 }
 
-type ManageState = {
+export type ManageState = {
     collateral: string,
     ratio: string,
     debt: string,
@@ -79,6 +79,7 @@ export type ManageAction = {
     newDebt:BigNumber,
     newRatio: BigNumber,
     price: BigNumber,
+    payload: BigNumber,
 }
 
 export const ManageContext = React.createContext<{
@@ -109,7 +110,8 @@ export const MintContext = React.createContext<{
 
 export function ManageContextProvider({children = null} : {children: React.ReactElement | null}) {
     function reducer(state: ManageState, action: ManageAction) {
-        const {type, newCollateral, newRatio, newDebt, price} = action;
+        // eslint-disable-next-line prefer-const
+        let {type, newCollateral, newRatio, newDebt, payload, price} = action;
         switch (type) {
             case ManageActionKind.SET: {
                 const collateral = new BigNumber(newCollateral);
@@ -125,7 +127,10 @@ export function ManageContextProvider({children = null} : {children: React.React
                     debtValid: debt.gte(0),
                 }
             }
+
             case ManageActionKind.COLLATERAL: {
+                newCollateral = payload
+
                 const collateral = new BigNumber(newCollateral);
                 // let debt = new BigNumber(state.debt);
                 // let ratio = collateral.div(debt.times(price)).times(100);
@@ -155,7 +160,12 @@ export function ManageContextProvider({children = null} : {children: React.React
 
             }
             case ManageActionKind.DEBT: {
+                newDebt = payload;
                 const debt = new BigNumber(newDebt);
+
+                if (debt.isZero()) {
+                    return state;
+                }
                 // let collateral = new BigNumber(state.collateral);
                 // let ratio = new BigNumber(state.ratio);
 
@@ -187,6 +197,8 @@ export function ManageContextProvider({children = null} : {children: React.React
                 }
             }
             case ManageActionKind.RATIO: {
+                newRatio = payload;
+
                 const ratio = new BigNumber(newRatio);
                 // let debt = new BigNumber(state.debt);
                 // let collateral = new BigNumber(state.collateral);
