@@ -22,11 +22,14 @@ const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.jso
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 
-const FactoryAddress = "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE";
-const ReserveAddress = "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e";
+const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
+const ReserveAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 // const messageAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
-const synthAddress = "0x0B306BF915C4d645ff596e518fAf3F9669b97016";
-
+const synthAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
+// Liquidation deployed to: 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
+// Oracle deployed to: 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+// Synth deployed to: 0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
+// Factory deployed to: 0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
 //
 export const FactoryContract = new web3.eth.Contract(
   FactoryABI,
@@ -65,17 +68,17 @@ export const mintSynth = async (
   console.log(web3.utils.toWei(amount, "ether").toString());
 
   // set up transaction parameters
-  const depositParameters = {
-    to: FactoryAddress, // Required except during contract publications.
-    from: address, // must match user's active address.
-    value: web3.utils.toHex(web3.utils.toWei(amount, "ether")),
-    data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
-  };
+  // const depositParameters = {
+  //   to: FactoryAddress, // Required except during contract publications.
+  //   from: address, // must match user's active address.
+  //   value: web3.utils.toHex(web3.utils.toWei(amount, "ether")),
+  //   data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
+  // };
   const synthPrice = await synthContract.methods
     .getSynthPriceToEth()
     .call();
   const bnSynthPrice = new BigNumber(synthPrice).div(new BigNumber("1e18"));
-  const bnCRatio = new BigNumber(ratio).times("1e18");
+  const bnCRatio = new BigNumber(ratio).times("1e18").div('100');
 
   const amountSynthInWei = new BigNumber(amountWei.toString())
     .div(bnCRatio)
@@ -170,7 +173,9 @@ export const manageSynth = async (
     address: string | null,
     synthName: string,
     targetCRatio: string,
-    targetDeposit: string
+    targetDeposit: string,
+    originalDebt: string,
+    targetDebt: string,
 ) => {
   // input error handling
   if (!(window as any).ethereum || address === null) {
@@ -179,27 +184,34 @@ export const manageSynth = async (
           "💡 Connect your Metamask wallet to update the message on the blockchain.",
     };
   }
-  const bnTargetCRatio = new BigNumber(targetCRatio).times('1e18').toString();
-  const bnTargetDeposit = new BigNumber(targetDeposit).times('1e18').toString();
+  const bnTargetCRatio = new BigNumber(targetCRatio).times('1e18').div('100').toFixed(0).toString();
+  const bnTargetDeposit = new BigNumber(targetDeposit).times('1e18').toFixed(0).toString();
+  const bnTargetDebt = new BigNumber(targetDebt).times('1e18').toFixed(0).toString();
+  const bnApproveAmount = new BigNumber(originalDebt).times('1e18').minus(new BigNumber(targetDebt).times('1e18'))
+
   const manageParameters = {
     to: FactoryAddress, // Required except during contract publications.
     from: address, // must match user's active address.
-    data: FactoryContract.methods.userManageSynth(synthName, bnTargetCRatio, bnTargetDeposit).encodeABI(),
+    data: FactoryContract.methods.userManageSynth(synthName, bnTargetCRatio, bnTargetDebt).encodeABI(),
   };
-  // const approveParameters = {
-  //   to: synthAddress, // Required except during contract publications.
-  //   from: address, // must match user's active address.
-  //   data: synthContract.methods.approve(FactoryAddress, amount).encodeABI(),
-  // };
+
 
   // userManageSynth(string memory synthName, uint targetCollateralRatio, uint targetDeposit)
   // sign the transaction
   try {
-    // const approveHash = await (window as any).ethereum.request({
-    //   method: "eth_sendTransaction",
-    //   params: [approveParameters],
-    // });
-    // console.log(approveHash);
+    if (bnApproveAmount.gte(0)) {
+      const approveParameters = {
+        to: synthAddress, // Required except during contract publications.
+        from: address, // must match user's active address.
+        data: synthContract.methods.approve(FactoryAddress, bnApproveAmount.toString()).encodeABI(),
+      };
+      const approveHash = await (window as any).ethereum.request({
+        method: "eth_sendTransaction",
+        params: [approveParameters],
+      });
+      console.log(approveHash);
+
+    }
     const manageHash = await (window as any).ethereum.request({
       method: "eth_sendTransaction",
       params: [manageParameters],

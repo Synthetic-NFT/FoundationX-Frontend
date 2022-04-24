@@ -95,22 +95,13 @@ export function ManageContextProvider({children = null} : {children: React.React
 
             case ManageActionKind.COLLATERAL: {
                 newCollateral = payload
-
                 const collateral = new BigNumber(newCollateral);
-                // let debt = new BigNumber(state.debt);
-                // let ratio = collateral.div(debt.times(price)).times(100);
-                // if (debt.isNaN() && ratio.isNaN()) {
-                //     return {
-                //         ...state,
-                //         collateral: collateral.toString(),
-                //         collateralValid: collateral.gte(0),
-                //     }
-                // }
-                // if (debt.isNaN()) {
-                //     debt = collateral.div(ratio).times(100).div(price);
-                // } else {
-                //     ratio = collateral.div(debt.times(price)).times(100);
-                // }
+                if (collateral.isNaN() || collateral.isZero()) {
+                    return {
+                        ...state,
+                        collateralValid: false,
+                    }
+                }
                 const debt = new BigNumber(state.debt);
                 const ratio = collateral.div(debt.times(price)).times(100);
                 return {
@@ -127,30 +118,27 @@ export function ManageContextProvider({children = null} : {children: React.React
             case ManageActionKind.DEBT: {
                 newDebt = payload;
                 const debt = new BigNumber(newDebt);
-
-                if (debt.isZero()) {
-                    return state;
+                if (debt.isNaN()) {
+                    return {
+                        ...state,
+                        debt: "",
+                        debtValid: false,
+                    }
                 }
-                // let collateral = new BigNumber(state.collateral);
-                // let ratio = new BigNumber(state.ratio);
+                if (debt.isZero()) {
+                    return {
+                        ...state,
+                        collateral: "0",
+                        collateralValid: true,
+                        debt: "0",
+                        debtValid: true,
+                    }
+                }
 
-                // if (collateral.isNaN() && ratio.isNaN()) {
-                //     return {
-                //         ...state,
-                //         debt: debt.toString(),
-                //         debtValid: debt.gte(0),
-                //     }
-                // }
-                //
-                // if (collateral.isNaN()) {
-                //     collateral = debt.times(price).times(ratio).div(100);
-                // } else {
-                //     ratio = collateral.div(debt.times(price)).times(100);
-                // }
 
-                const collateral = new BigNumber(state.collateral);
-                const ratio = collateral.div(debt.times(price)).times(100);
-
+                // const ratio = collateral.div(debt.times(price)).times(100);
+                const collateral = debt.times(price).times(state.ratio).div(100);
+                const ratio = new BigNumber(state.ratio);
                 return {
                     ...state,
                     collateral: collateral.toString(),
@@ -165,21 +153,12 @@ export function ManageContextProvider({children = null} : {children: React.React
                 newRatio = payload;
 
                 const ratio = new BigNumber(newRatio);
-                // let debt = new BigNumber(state.debt);
-                // let collateral = new BigNumber(state.collateral);
-                //
-                // if (debt.isNaN() && collateral.isNaN()) {
-                //     return {
-                //         ...state,
-                //         ratio: ratio.toString(),
-                //         ratioValid: ratio.gte(0),
-                //     }
-                // }
-                // if (debt.isNaN()) {
-                //     debt = collateral.div(ratio).times(100).div(price);
-                // } else {
-                //     collateral = debt.times(price).times(ratio.div(100));
-                // }
+                if (ratio.isZero() || ratio.isNaN()) {
+                    return {
+                        ...state,
+                        ratioValid: false,
+                    }
+                }
                 const debt = new BigNumber(state.debt);
                 const collateral = debt.times(price).times(ratio.div(100));
                 return {
