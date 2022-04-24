@@ -22,7 +22,7 @@ import {
 } from "./MintContext";
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
-import { burnSynth, loadUserOrderStat } from "./util/interact";
+import {burnSynth, loadUserOrderStat, manageSynth} from "./util/interact";
 
 type SellSpecConfig = {
   minRatio: number;
@@ -345,29 +345,27 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
   const { setCRatio, setCollateral, setDebt } = burnSpec;
   const { state, dispatch } = useContext(ManageContext);
 
+
+
   useEffect(() => {
     const getAndSetUserStat = async () => {
       const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
         await loadUserOrderStat(walletAddress);
+        const ratio = new BigNumber(bnCRatio).div(unit).times(100).toString();
+        const collateral = new BigNumber(bnCollateral).div(unit).toString();
+        const debt = new BigNumber(bnDebt).div(unit).toString();
 
-      const ratio = new BigNumber(bnCRatio).div(unit).times(100).toString();
-      const collateral = new BigNumber(bnCollateral).div(unit).toString();
-      const debt = new BigNumber(bnDebt).div(unit).toString();
-
-      dispatch({
-        type: ManageActionKind.SET,
-        newRatio: ratio,
-        newCollateral: collateral,
-        newDebt: debt,
-        price: bnSynthPrice,
-      });
+        dispatch({
+          type: ManageActionKind.SET,
+          newRatio: ratio,
+          newCollateral: collateral,
+          newDebt: debt,
+          price: bnSynthPrice,
+        });
 
       setOldCollateral(bnCollateral);
       setOldCRatio(bnCRatio);
       setOldDebt(bnDebt);
-      // setCollateral(bnCollateral.div(unit).toString());
-      // setCRatio(bnCRatio.div(unit).toString());
-      // setDebt(bnDebt.div(unit).toString());
       setSynthPrice(bnSynthPrice);
     };
     if (walletAddress.length > 0) {
@@ -408,7 +406,7 @@ function UserInputField({
       style={{ margin: "24px" }}
       label="Count"
       type="number"
-      disabled={new BigNumber(state.debt).lte(0)}
+      // disabled={new BigNumber(state.debt).lte(0)}
       // We probably should do some validation on this
       onChange={(e) => dispatch({ type, payload: e.target.value, price })}
     />
@@ -442,13 +440,39 @@ function SellForm({ instrument }: { instrument: Instrument }) {
   } = UserStatSpec;
 
   const burnSynthPressed = async () => {
-    const burnSynthResponse = await burnSynth(
-      walletAddress,
-      instrument.ticker,
-      oldDebt.minus(new BigNumber(state.debt).times('1e18')),
+    const burnSynthResponse = await manageSynth(
+        walletAddress,
+        instrument.ticker,
+        state.ratio,
+        state.collateral,
+        oldDebt.div('1e18').toString(),
+        state.debt,
     );
-    console.log(burnSynthResponse);
+    const getAndSetUserStat = async () => {
+      const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
+          await loadUserOrderStat(walletAddress);
+      const ratio = new BigNumber(bnCRatio).div('1e18').times(100).toString();
+      const collateral = new BigNumber(bnCollateral).div('1e18').toString();
+      const debt = new BigNumber(bnDebt).div('1e18').toString();
+
+      dispatch({
+        type: ManageActionKind.SET,
+        newRatio: ratio,
+        newCollateral: collateral,
+        newDebt: debt,
+        price: bnSynthPrice,
+      });
+
+      setOldCollateral(bnCollateral);
+      setOldCRatio(bnCRatio);
+      setOldDebt(bnDebt);
+      setSynthPrice(bnSynthPrice);
+    };
+    if (walletAddress.length > 0) {
+      getAndSetUserStat();
+    }
   };
+
 
   const Icon = NFTIcons.get(instrument.ticker);
 

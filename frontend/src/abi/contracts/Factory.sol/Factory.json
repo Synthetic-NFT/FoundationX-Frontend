@@ -493,7 +493,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "targetDeposit",
+        "name": "targetDebt",
         "type": "uint256"
       }
     ],
