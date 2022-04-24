@@ -28,6 +28,9 @@ const fakeTradeData = {
       id: "1",
       price: "2.0",
       fee: 1.15,
+      long: 10,
+      short: 0.9,
+      premium: 0.8,
     },
     {
       ticker: tickerCryptoPunks,
@@ -35,6 +38,9 @@ const fakeTradeData = {
       id: "2",
       price: "172.41",
       fee: 32.1,
+      long: 11,
+      short: 0.19,
+      premium: 1.8,
     },
     {
       ticker: tickerAzuki,
@@ -42,6 +48,9 @@ const fakeTradeData = {
       id: "3",
       price: "11.4",
       fee: 0.4,
+      long: 21,
+      short: 1.19,
+      premium: 2.8,
     },
   ],
 };

@@ -7,10 +7,10 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Instrument } from "./api";
 import { SearchBar, simpleFilter } from "./InstrumentTable";
+import instrumentTableColumns from "./instrumentTableColumns";
 import swapInstrumenttableColumns from "./SwapInstrumenttableColumns";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
-import instrumentTableColumns from "./instrumentTableColumns";
 
 export default function SwapInstrumentTable({
     onRowClick,

@@ -30,7 +30,7 @@ export default function LoadingButton(props: any) {
         disabled={loading || !valid}
         type="submit"
         onClick={onClick}
-        {...other}
+        // {...other}
       >
         {children}
       </Button>

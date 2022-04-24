@@ -3,6 +3,7 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import React from "react";
 
+import FarmRouteContainer from "./pages/Farm/FarmRouteContainer";
 import SwapRouteContainer from "./SwapRouteContainer";
 import TradeRouteContainer from "./TradeRouteContainer";
 
@@ -39,5 +40,11 @@ export const routes: Route[] = [
     label: "Swap",
     icon: CurrencyExchangeIcon,
     RouteContainer: SwapRouteContainer,
+  },  
+  {
+    path: "/farm",
+    label: "Farm",
+    icon: CurrencyExchangeIcon,
+    RouteContainer: FarmRouteContainer,
   },
 ];
