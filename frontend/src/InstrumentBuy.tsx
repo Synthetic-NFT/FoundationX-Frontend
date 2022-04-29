@@ -325,7 +325,7 @@ export default function InstrumentBuy({
   instrument: Instrument;
 }) {
   return (
-    <div style={{ display: "flex", overflow: "scroll" }}>
+    <div style={{ display: "flex", overflow: "auto", height: "max-content" }}>
       <MintContextProvider>
         <BuyForm instrument={instrument} />
       </MintContextProvider>
