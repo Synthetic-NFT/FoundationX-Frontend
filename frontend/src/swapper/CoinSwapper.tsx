@@ -11,6 +11,8 @@ import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import React, { useEffect } from "react";
 
 import LoadingButton from "../components/LoadingButton";
+import {AUTONITYCoins, GÖRLICoins} from "../constants/coins";
+import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
@@ -56,13 +58,18 @@ function CoinSwapper(props: any) : React.ReactElement{
   const [dialog2Open, setDialog2Open] = React.useState(false);
   const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
+  interface CoinInterface {
+    address: string|undefined;
+    symbol: string|undefined;
+    balance: number|undefined;
+  }
   // Stores data about their respective coin
-  const [coin1, setCoin1] = React.useState({
+  const [coin1, setCoin1] = React.useState<CoinInterface>({
     address: undefined,
     symbol: undefined,
     balance: undefined,
   });
-  const [coin2, setCoin2] = React.useState({
+  const [coin2, setCoin2] = React.useState<CoinInterface>({
     address: undefined,
     symbol: undefined,
     balance: undefined,
@@ -137,10 +144,60 @@ function CoinSwapper(props: any) : React.ReactElement{
     });
   })
 
+  const onToken1Selected = (address: string, name: string) => {
+    // Close the dialog window
+    setDialog1Open(false);
+
+    // If the user inputs the same token, we want to switch the data in the fields
+    if (address === coin2.address) {
+      switchFields();
+    }
+    // We only update the values if the user provides a token
+    else if (address) {
+      // Getting some token data is async, so we need to wait for the data to return, hence the promise
+      setCoin1({
+        address,
+        symbol: name,
+        balance: 1000,
+      });
+    }
+  };
+
+  const onToken2Selected = (address: string, name: string) => {
+    // Close the dialog window
+    setDialog2Open(false);
+
+    // If the user inputs the same token, we want to switch the data in the fields
+    if (address === coin1.address) {
+      switchFields();
+    }
+    // We only update the values if the user provides a token
+    else if (address) {
+      // Getting some token data is async, so we need to wait for the data to return, hence the promise
+      setCoin2({
+        address,
+        symbol: name,
+        balance: 1000,
+      });
+    }
+  };
+
   // @ts-ignore
   return (
     <div>
-      
+      {/* Dialog Windows */}
+      <CoinDialog
+        open={dialog1Open}
+        onClose={onToken1Selected}
+        coins={AUTONITYCoins}
+        signer="placeholder"
+      />
+      <CoinDialog
+        open={dialog2Open}
+        onClose={onToken2Selected}
+        coins={GÖRLICoins}
+        signer="placeholder"
+      />
       {/* Coin Swapper */}
       <Container maxWidth="xs">
         <Paper className={classes.paperContainer}>

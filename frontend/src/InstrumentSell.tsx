@@ -574,7 +574,7 @@ export default function InstrumentSell({
   instrument: Instrument;
 }) {
   return (
-    <div style={{ display: "flex", overflow: "scroll" }}>
+    <div style={{ display: "flex", overflow: "auto", height: "max-content"}}>
       <ManageContextProvider>
         <SellForm instrument={instrument} />
       </ManageContextProvider>

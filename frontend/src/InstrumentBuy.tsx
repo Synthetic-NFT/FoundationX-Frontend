@@ -29,8 +29,8 @@ type BuySpecConfig = {
 // @See https://v4.mui.com/components/text-fields/#customized-inputs
 const StyledTextField = withStyles({
   root: {
-    "& .MuiInputBase-input.MuiInput-input.Mui-disabled": {
-      "-webkit-text-fill-color": "rgba(0,0,0, 0.6)", // (default alpha is 0.38)
+    "& .Mui-disabled": {
+      "-webkit-text-fill-color": "rgba(255, 255, 255, 0.6) !important", // (default alpha is 0.38)
     },
     "& label": {
       color: theme.tradeFormOutline,

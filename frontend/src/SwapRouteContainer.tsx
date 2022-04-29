@@ -1,6 +1,7 @@
 import React from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
 
+import ReturnButton from './components/ReturnButton';
 import InstrumentOrder from "./InstrumentOrder";
 import {InstrumentTable} from "./InstrumentTable";
 import SwapInstrumentTable from "./SwapInstrumentTable";
@@ -32,9 +33,10 @@ export default function SwapRouteContainer(): React.ReactElement {
                     }}
                 />
             </Route>
-             <Route path="/swap/order">
+              <Route path="/swap/order">
+                <ReturnButton onClick={() => history.push('/trade')} textValue="Back" />
                 <CoinSwapper instrument />
-             </Route>
+              </Route>
         </Switch>
     );
 }

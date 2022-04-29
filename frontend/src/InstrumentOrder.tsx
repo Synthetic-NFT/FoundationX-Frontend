@@ -13,11 +13,13 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import ReturnButton from './components/ReturnButton';
 import InstrumentBuy from "./InstrumentBuy";
 import InstrumentSell from "./InstrumentSell";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
 import { loadSynthPrice } from "./util/interact";
+
 // Apart from `useStyles`, this shows an example of using styled for custom component, which
 // can be more flexible.
 const Tab = styled(TabUnstyled)`
@@ -98,6 +100,7 @@ export default function InstrumentOrder(): React.ReactElement {
 
   return (
     <>
+      <ReturnButton onClick={() => history.push('/trade')} textValue="Back" />
       <Box
         sx={{
           borderBottom: 1,
@@ -113,9 +116,9 @@ export default function InstrumentOrder(): React.ReactElement {
       <div
         style={{
           position: "relative",
-          maxHeight: "100%",
+          height: "max-content",
           paddingTop: "12px",
-          overflow: "scroll",
+          overflow: "auto",
           maxWidth: "1144px",
           left: "50%",
           transform: "translateX(-50%)",
