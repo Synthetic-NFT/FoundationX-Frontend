@@ -243,7 +243,7 @@ function OrigCollateralField({
       label="Count"
       type="number"
       disabled
-      // We probably should do some validation on this
+    // We probably should do some validation on this
     />
   );
 }
@@ -272,7 +272,7 @@ function RatioField({
       }}
     >
       <StyledSlider
-        style={{ width: "364px" }}
+        style={{ width: "364px", marginTop:"30px" }}
         value={state.ratioValid ? +state.ratio : 0}
         step={5}
         min={100}
@@ -392,9 +392,11 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
 function UserInputField({
   type,
   price,
+  label = 'Count'
 }: {
   type: ManageActionKind;
   price: BigNumber;
+  label: String;
 }) {
   const synthPriceBase10 = price.div("1e18");
   const { state, dispatch } = useContext(ManageContext);
@@ -406,7 +408,7 @@ function UserInputField({
     <StyledTextField
       value={state[type]}
       style={{ margin: "24px" }}
-      label="Count"
+      label={label}
       type="number"
       disabled={new BigNumber(state.debt).lte(0)}
       // We probably should do some validation on this
@@ -481,29 +483,16 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
             alignItems: "center",
           }}
         >
-          <OrigCollateralField count={oldCollateral} isCRatio={false} />
-          <ArrowForwardIcon color="primary" vertical-align="middle" />
           <UserInputField
             type={ManageActionKind.COLLATERAL}
             price={synthPrice.div("1e18")}
+            label="Count"
           />
           <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
         </div>
 
-        <FieldLabel title="Collateral Ratio (%)" />
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <OrigCollateralField count={oldCRatio} isCRatio />
-          <ArrowForwardIcon color="primary" vertical-align="middle" />
-          <UserInputField
-            type={ManageActionKind.RATIO}
-            price={synthPrice.div("1e18")}
-          />
-        </div>
+        <FieldLabel title="Set Collateral ratio" />
+        <RatioField {...fakeLimits} instrument={instrument} />
 
         <FieldLabel title="Synthetic Tokens Minted" />
         <div
@@ -512,11 +501,10 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
             alignItems: "center",
           }}
         >
-          <OrigCollateralField count={oldDebt} isCRatio={false} />
-          <ArrowForwardIcon color="primary" vertical-align="middle" />
           <UserInputField
             type={ManageActionKind.DEBT}
             price={synthPrice.div("1e18")}
+            label="Count"
           />
           <img
             src={NFTIcons.get(instrument.ticker)}
@@ -526,8 +514,20 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
           />
         </div>
 
-        <FieldLabel title="Set Collateral ratio" />
-        <RatioField {...fakeLimits} instrument={instrument} />
+        <FieldLabel title="Confirm Returned UST" />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <UserInputField
+            type={ManageActionKind.DEBT}
+            price={synthPrice.div("1e18")}
+            label="Returned UST"
+          />
+        </div>
+
       </div>
       <Button
         style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
