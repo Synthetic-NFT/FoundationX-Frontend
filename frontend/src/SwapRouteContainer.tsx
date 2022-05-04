@@ -38,10 +38,8 @@ export default function SwapRouteContainer(): React.ReactElement {
                 />
             </Route>
               <Route path="/swap/order">
-                <div style={{ overflow: "auto", height: "max-content"}}>
-                  <ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/swap');}} textValue="Back" />
-                  <CoinSwapper instrument={selectedInstrument} />
-                </div>
+                <ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/swap');}} textValue="Back" />
+                <CoinSwapper instrument={selectedInstrument} />
               </Route>
         </Switch>
     );
