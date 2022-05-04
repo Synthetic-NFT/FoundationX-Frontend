@@ -25,6 +25,10 @@ const theme = {
   instrumentCardBackgroundColor: "#0f172a",
   tradeFormBackgroundColor: "#1e293b",
   tradeFormOutline: "#94a3b8",
+
+  myPageBackground: "#2d2d2e",
+  myPageButtonBackgroundColor: "#1c1c1c",  
+  myPageColor: "#66adff,"
 };
 
 export type Theme = typeof theme;

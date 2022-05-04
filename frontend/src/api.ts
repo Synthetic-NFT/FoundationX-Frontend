@@ -1,5 +1,5 @@
 import { AppData } from "./AppContext";
-import { fakeAppData, fakeTradeData } from "./fakeData";
+import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
 
 export type Instrument = {
   ticker: string;
@@ -11,6 +11,54 @@ export type Instrument = {
   short: number;
   premium: number;
 };
+
+export type MyPageData = {
+  total: string;
+  ust: string;
+  holding: string;
+  borrowing: string;
+  totalClaimableRewards: {
+    mir: string;
+    ust: string;
+    mriPrice: string;
+  };
+  data: {
+    holding: HoldingData[],
+    borrowing: BorrowingData[],
+  };
+}
+
+export type HoldingData = {
+  ticker: string;
+  poolPrice: string;
+  balance: string;
+  value: string;
+}
+
+export type BorrowingData = {
+  ticker: string;
+  oraclePrice: string;
+  borrowed: {
+    meth: string;
+    ust: string;
+  },
+  collateral: string;
+  collateralRatio: string;
+}
+
+export type MyPageTableData = {
+  ticker: string;
+  oraclePrice: string;
+  borrowed: {
+    meth: string;
+    ust: string;
+  },
+  collateral: string;
+  collateralRatio: string;
+  poolPrice: string;
+  balance: string;
+  value: string;
+}
 
 export type TradeData = {
   instruments: Instrument[];
@@ -31,6 +79,11 @@ const fakeAPI = {
   async loadInstruments(): Promise<TradeData> {
     return new Promise((resolve) => {
       setTimeout(() => resolve(fakeTradeData), 100);
+    });
+  },
+  async loadMyPageData(): Promise<MyPageData> {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(fakeMyPageData), 100);
     });
   },
 };

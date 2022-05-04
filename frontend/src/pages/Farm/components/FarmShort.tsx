@@ -480,7 +480,9 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
         <div
           style={{
             display: "flex",
+            flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center"
           }}
         >
           <UserInputField
@@ -498,7 +500,9 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
         <div
           style={{
             display: "flex",
+            flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center"
           }}
         >
           <UserInputField
@@ -518,7 +522,9 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
         <div
           style={{
             display: "flex",
+            flexDirection: "row",
             alignItems: "center",
+            justifyContent: "right"
           }}
         >
           <UserInputField
