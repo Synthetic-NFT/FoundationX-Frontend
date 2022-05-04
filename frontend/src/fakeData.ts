@@ -31,6 +31,7 @@ const fakeTradeData = {
       long: 10,
       short: 0.9,
       premium: 0.8,
+      address: "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
     },
     {
       ticker: tickerCryptoPunks,
@@ -41,6 +42,7 @@ const fakeTradeData = {
       long: 11,
       short: 0.19,
       premium: 1.8,
+      address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
     },
     {
       ticker: tickerAzuki,
@@ -51,6 +53,7 @@ const fakeTradeData = {
       long: 21,
       short: 1.19,
       premium: 2.8,
+      address: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
     },
   ],
 };

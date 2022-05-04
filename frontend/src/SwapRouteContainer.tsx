@@ -1,6 +1,7 @@
 import React from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
 
+import { Instrument } from "./api";
 import ReturnButton from './components/ReturnButton';
 import InstrumentOrder from "./InstrumentOrder";
 import {InstrumentTable} from "./InstrumentTable";
@@ -14,7 +15,9 @@ export default function SwapRouteContainer(): React.ReactElement {
   //   </Route>
   // );
 
+
     const history = useHistory();
+    const [selectedInstrument, setSelectedInstrument] = React.useState<Instrument|undefined>(undefined);
 
     return (
         <Switch>
@@ -29,13 +32,16 @@ export default function SwapRouteContainer(): React.ReactElement {
                         // insturment being clicked.
                         // <CoinSwapper instrument={instrument} />
                         history.push("/swap/order", instrument);
+                        setSelectedInstrument(instrument);
                         // history.push(`/trade/order/buy?ticker=${instrument.ticker}`);
                     }}
                 />
             </Route>
               <Route path="/swap/order">
-                <ReturnButton onClick={() => history.push('/trade')} textValue="Back" />
-                <CoinSwapper instrument />
+                <div style={{ overflow: "auto", height: "max-content"}}>
+                  <ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/swap');}} textValue="Back" />
+                  <CoinSwapper instrument={selectedInstrument} />
+                </div>
               </Route>
         </Switch>
     );

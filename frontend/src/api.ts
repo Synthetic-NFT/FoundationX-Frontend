@@ -10,6 +10,19 @@ export type Instrument = {
   long: number;
   short: number;
   premium: number;
+  address: string;
+};
+
+export const defaultInstrument: Instrument = {
+  ticker: "",
+  fullName: "",
+  id: "",
+  price: "",
+  fee: 0,
+  long: 0,
+  short: 0,
+  premium: 0,
+  address: "",
 };
 
 export type TradeData = {

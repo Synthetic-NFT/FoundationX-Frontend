@@ -1,6 +1,6 @@
-import * as chains from './chains';
+// This file should give way to fakeData.ts because the data there is more detailed. 
+// This coin file only exists as the refactoring is not yet complete.
 
-// If you add coins for a new network, make sure Weth address (for the router you are using) is the first entry
 
 export const AUTONITYCoins = [
   {
@@ -50,5 +50,23 @@ export const GÖRLICoins = [
     name: "Tether USD",
     abbr: "USDT",
     address: "0x509ee0d083ddf8ac028f2a56731412edd63223b9",
+  },
+];
+
+export const DummyCoins = [
+  {
+    name: "Azuki",
+    abbr: "Azuki",
+    address: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", 
+  },
+  {
+    name: "SynthTest1",
+    abbr: "SynthTest1",
+    address: "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+  },
+  {
+    name: "CryptoPunks",
+    abbr: "CryptoPunks",
+    address: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
   },
 ];

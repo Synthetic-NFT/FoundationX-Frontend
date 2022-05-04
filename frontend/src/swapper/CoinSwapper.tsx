@@ -10,10 +10,13 @@ import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import React, { useEffect } from "react";
 
+import { defaultInstrument } from "../api";
 import LoadingButton from "../components/LoadingButton";
-import {AUTONITYCoins, GÖRLICoins} from "../constants/coins";
+import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../constants/coins";
+import { fakeTradeData } from "../fakeData";
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
+import SwapperCard from "./SwapperCard";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -52,6 +55,11 @@ const useStyles = makeStyles(styles);
 
 function CoinSwapper(props: any) : React.ReactElement{
   const classes = useStyles();
+
+  const { instrument } = props;
+
+  const availbleCoinIn = DummyCoins;
+  const availbleCoinOut = DummyCoins;
 
   // Stores a record of whether their respective dialog window is open
   const [dialog1Open, setDialog1Open] = React.useState(false);
@@ -132,6 +140,22 @@ function CoinSwapper(props: any) : React.ReactElement{
     );
   };
 
+  useEffect(() => {
+    const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
+    if (initCoin !== undefined) {
+      setCoin1({
+        address: initCoin.address,
+        symbol: initCoin.name,
+        balance: 1000,
+      });
+    } else {
+      setCoin1({
+        address: undefined,
+        symbol: undefined,
+        balance: undefined,
+      });
+    }
+  }, [availbleCoinIn, instrument]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
@@ -142,7 +166,7 @@ function CoinSwapper(props: any) : React.ReactElement{
 
       return () => clearTimeout(coinTimeout);
     });
-  })
+  });
 
   const onToken1Selected = (address: string, name: string) => {
     // Close the dialog window
@@ -182,6 +206,9 @@ function CoinSwapper(props: any) : React.ReactElement{
     }
   };
 
+  const getCurrentInstrument = () => fakeTradeData.instruments.find((instrument) => instrument.ticker === coin1.symbol)
+    || defaultInstrument;
+
   // @ts-ignore
   return (
     <div>
@@ -189,94 +216,97 @@ function CoinSwapper(props: any) : React.ReactElement{
       <CoinDialog
         open={dialog1Open}
         onClose={onToken1Selected}
-        coins={AUTONITYCoins}
+        coins={availbleCoinIn}
         signer="placeholder"
       />
       <CoinDialog
         open={dialog2Open}
         onClose={onToken2Selected}
-        coins={GÖRLICoins}
+        coins={availbleCoinOut}
         signer="placeholder"
       />
+      <div style={{ display: "flex", flexDirection: "row", height: "max-content"}}>
       {/* Coin Swapper */}
-      <Container maxWidth="xs">
-        <Paper className={classes.paperContainer}>
-          <Typography variant="h5" className={classes.title}>
-            Swap Coins
-          </Typography>
+        <Container style={{ display: "flex", margin: 0, padding: 0}}>
+          <Paper style={{ flex: 1 }} className={classes.paperContainer}>
+            <Typography variant="h5" className={classes.title}>
+              Swap Coins
+            </Typography>
 
-          <Grid container direction="column" alignItems="center" spacing={2}>
-            <Grid item xs={12} className={classes.fullWidth}>
-              <CoinField
-                activeField
-                value={field1Value}
-                onClick={() => setDialog1Open(true)}
-                onChange={handleChange.field1}
-                symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
-              />
-            </Grid>
-
-            <IconButton onClick={switchFields} className={classes.switchButton}>
-              <SwapVerticalCircleIcon fontSize="medium" />
-            </IconButton>
-
-            <Grid item xs={12} className={classes.fullWidth}>
-              <CoinField
-                activeField={false}
-                value={field2Value}
-                onClick={() => setDialog2Open(true)}
-                symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
-              />
-            </Grid>
-
-            <hr className={classes.hr} />
-
-            {/* Balance Display */}
-            <Typography variant="h6">Your Balances</Typography>
-            <Grid container direction="row" justifyContent="space-between">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatBalance(coin1.balance, coin1.symbol)}
-                </Typography>
+            <Grid container direction="column" alignItems="center" spacing={2}>
+              <Grid item xs={12} className={classes.fullWidth}>
+                <CoinField
+                  activeField
+                  value={field1Value}
+                  onClick={() => setDialog1Open(true)}
+                  onChange={handleChange.field1}
+                  symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
+                />
               </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatBalance(coin2.balance, coin2.symbol)}
-                </Typography>
+
+              <IconButton onClick={switchFields} className={classes.switchButton}>
+                <SwapVerticalCircleIcon fontSize="medium" />
+              </IconButton>
+
+              <Grid item xs={12} className={classes.fullWidth}>
+                <CoinField
+                  activeField={false}
+                  value={field2Value}
+                  onClick={() => setDialog2Open(true)}
+                  symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
+                />
               </Grid>
+
+              <hr className={classes.hr} />
+
+              {/* Balance Display */}
+              <Typography variant="h6">Your Balances</Typography>
+              <Grid container direction="row" justifyContent="space-between">
+                <Grid item xs={6}>
+                  <Typography variant="body1" className={classes.balance}>
+                    {formatBalance(coin1.balance, coin1.symbol)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body1" className={classes.balance}>
+                    {formatBalance(coin2.balance, coin2.symbol)}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <hr className={classes.hr} />
+
+              {/* Reserves Display */}
+              <Typography variant="h6">Reserves</Typography>
+              <Grid container direction="row" justifyContent="space-between">
+                <Grid item xs={6}>
+                  <Typography variant="body1" className={classes.balance}>
+                    {formatReserve(reserves[0], coin1.symbol)}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body1" className={classes.balance}>
+                    {formatReserve(reserves[1], coin2.symbol)}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <hr className={classes.hr} />
+
+              <LoadingButton
+                loading={loading}
+                valid={isButtonEnabled()}
+                success={false}
+                fail={false}
+              >
+                <LoopIcon />
+                Swap
+              </LoadingButton>
             </Grid>
-
-            <hr className={classes.hr} />
-
-            {/* Reserves Display */}
-            <Typography variant="h6">Reserves</Typography>
-            <Grid container direction="row" justifyContent="space-between">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatReserve(reserves[0], coin1.symbol)}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatReserve(reserves[1], coin2.symbol)}
-                </Typography>
-              </Grid>
-            </Grid>
-
-            <hr className={classes.hr} />
-
-            <LoadingButton
-              loading={loading}
-              valid={isButtonEnabled()}
-              success={false}
-              fail={false}
-            >
-              <LoopIcon />
-              Swap
-            </LoadingButton>
-          </Grid>
-        </Paper>
-      </Container>
+          </Paper>
+          <SwapperCard cardWidth="1" instrument={getCurrentInstrument()} />
+        </Container>
+      </div>
 
       <Grid
         container

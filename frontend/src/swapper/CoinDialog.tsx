@@ -146,25 +146,10 @@ function CoinDialog(props: any) {
       maxWidth="sm"
       classes={{ paper: classes.dialogContainer }}
     >
+
       <DialogTitle onClose={() => exit(undefined, undefined)}>Select Coin</DialogTitle>
-
-      <hr className={classes.hr} />
-
       <div className={classes.coinContainer}>
         <Grid container direction="column" spacing={1} alignContent="center">
-          <TextField
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            variant="outlined"
-            placeholder="Paste Address"
-            error={error !== ""}
-            helperText={error}
-            fullWidth
-            className={classes.address}
-          />
-
-          <hr className={classes.hr} />
-
           <Grid item className={classes.coinList}>
             <Grid container direction="column">
               {/* Maps all of the tokens in the constants file to buttons */}
@@ -181,14 +166,6 @@ function CoinDialog(props: any) {
           </Grid>
         </Grid>
       </div>
-
-      <hr className={classes.hr} />
-
-      <DialogActions>
-        <Button autoFocus onClick={submit} color="primary">
-          Enter
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }
