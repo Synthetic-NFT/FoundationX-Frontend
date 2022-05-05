@@ -23,7 +23,7 @@ export function SearchBar({
       style={{
         backgroundColor: theme.tableSearchBarBackgroundColor,
         display: "flex",
-        margin: "0px 12px 12px 12px",
+        margin: "0px 0px 6px 0px",
         borderRadius: "6px",
       }}
     >
@@ -85,14 +85,16 @@ export function FarmTable(): React.ReactElement {
         <Table
           style={{
             backgroundColor: theme.tableBackgroundColor,
-            borderTopLeftRadius: "16px",
-            borderTopRightRadius: "16px",
+            borderTopLeftRadius: "6px",
+            borderTopRightRadius: "6px",
             overflow: "hidden",
           }}
           stickyHeader
           aria-label="sticky table"
         >
-          <TableHead>
+          <TableHead style={{
+              height: "40px"
+            }}>
             <TableRow>
               {FarmTableColumns.map((column) => {
                 const Renderer = column.headerRenderer;

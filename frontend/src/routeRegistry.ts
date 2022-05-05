@@ -1,9 +1,13 @@
+
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import React from "react";
 
 import FarmRouteContainer from "./pages/Farm/FarmRouteContainer";
+import MyPageRouteContainer from "./pages/MyPage/MyPageRouteContainer";
 import SwapRouteContainer from "./SwapRouteContainer";
 import TradeRouteContainer from "./TradeRouteContainer";
 
@@ -15,9 +19,10 @@ type Route = {
 };
 
 const tradeRoute = "/trade";
+const myPageRoute = "/myPage";
 
 // automatically nav to defaultRoute when loading "/"
-export const defaultRoute = tradeRoute;
+export const defaultRoute = myPageRoute;
 
 // The available top level routes of this app. Each route may have secondary routes
 // (e.g. the trade route has `/trade/buy` and `/trade/sell`). The RouteContainer is rendered
@@ -29,6 +34,12 @@ export const routes: Route[] = [
   //   icon: AccountBalanceWalletIcon,
   //   RouteContainer: WalletRouteContainer,
   // },
+  {
+    path: myPageRoute,
+    label: "My Page",
+    icon: ManageAccountsIcon,
+    RouteContainer: MyPageRouteContainer,
+  },
   {
     path: tradeRoute,
     label: "Trade",
@@ -44,7 +55,7 @@ export const routes: Route[] = [
   {
     path: "/farm",
     label: "Farm",
-    icon: CurrencyExchangeIcon,
+    icon: SwapHorizontalCircleIcon,
     RouteContainer: FarmRouteContainer,
   },
 ];

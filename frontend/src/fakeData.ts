@@ -74,8 +74,42 @@ const fakeTradeData = {
   ],
 };
 
+const fakeMyPageData = {
+  total: "88.00",
+  ust: "62.67",
+  holding: "17.02",
+  borrowing: "8.30",
+  totalClaimableRewards: {
+    mir: "0.000000",
+    ust: "0.00",
+    mriPrice: "1.05"
+  },
+  data: {
+    holding: [
+      {
+        ticker: tickerBoredApeYachtClub,
+        poolPrice: "3266.33",
+        balance: "0.005213",
+        value: "17.02",
+      }
+    ],
+    borrowing: [
+      {
+        ticker: tickerBoredApeYachtClub,
+        oraclePrice: "2845.01",
+        borrowed: {
+          meth: "0.002000",
+          ust: "5.69",
+        },
+        collateral: "14.00",
+        collateralRatio: "246.04",
+      }
+    ],
+  }
+};
+
 const fakeAppData = {
   userName: "Test User",
 };
 
-export { NFTIcons, fakeTradeData, fakeAppData, fakeSynthAddresses };
+export { NFTIcons, fakeTradeData, fakeAppData, fakeSynthAddresses, fakeMyPageData };
