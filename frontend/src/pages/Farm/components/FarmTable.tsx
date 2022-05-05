@@ -51,14 +51,15 @@ export function simpleFilter(
   tradeData: TradeData,
 ): Instrument[] {
   if (searchTerm === "") {
-    return tradeData.instruments;
+    return tradeData.instruments.filter((instrument) => instrument.ticker !== "Ethereum");
   }
   const loweredSearchTerm = searchTerm.toLowerCase();
 
   return tradeData.instruments.filter(
     (instrument) =>
-      instrument.ticker.toLowerCase().includes(loweredSearchTerm) ||
-      instrument.fullName.toLowerCase().includes(loweredSearchTerm),
+      instrument.ticker !== "Ethereum" && 
+      (instrument.ticker.toLowerCase().includes(loweredSearchTerm) ||
+      instrument.fullName.toLowerCase().includes(loweredSearchTerm)),
   );
 }
 

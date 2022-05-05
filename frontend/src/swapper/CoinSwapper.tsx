@@ -141,20 +141,19 @@ function CoinSwapper(props: any) : React.ReactElement{
   };
 
   useEffect(() => {
+    const ethCoin = DummyCoins.find((coin) => coin.name === "Ethereum");
+    setCoin1({
+      address: ethCoin?.address || undefined,
+      symbol: ethCoin?.name || undefined,
+      balance: 1000,
+    });
+
     const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
-    if (initCoin !== undefined) {
-      setCoin1({
-        address: initCoin.address,
-        symbol: initCoin.name,
-        balance: 1000,
-      });
-    } else {
-      setCoin1({
-        address: undefined,
-        symbol: undefined,
-        balance: undefined,
-      });
-    }
+    setCoin2({
+      address: initCoin?.address || undefined,
+      symbol: initCoin?.name || undefined,
+      balance: initCoin? 1000 : undefined,
+    });
   }, [availbleCoinIn, instrument]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
@@ -206,8 +205,15 @@ function CoinSwapper(props: any) : React.ReactElement{
     }
   };
 
-  const getCurrentInstrument = () => fakeTradeData.instruments.find((instrument) => instrument.ticker === coin1.symbol)
-    || defaultInstrument;
+  const getCurrentInstrument = () => {
+    let currInstrument;
+    if (coin1.symbol !== "Ethereum") {
+      currInstrument = fakeTradeData.instruments.find((instrument) => instrument.ticker === coin1.symbol) || defaultInstrument;
+    } else {
+      currInstrument = fakeTradeData.instruments.find((instrument) => instrument.ticker === coin2.symbol) || defaultInstrument;
+    }
+    return currInstrument;
+  }
 
   // @ts-ignore
   return (
