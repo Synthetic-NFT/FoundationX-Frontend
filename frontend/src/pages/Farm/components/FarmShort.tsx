@@ -22,7 +22,7 @@ import {
 } from "../../../MintContext";
 import Ethereum from "../../../styles/images/Ethereum.svg";
 import theme from "../../../theme";
-import { burnSynth, loadUserOrderStat } from "../../../util/interact";
+import {burnSynth, loadUserOrderStat, manageSynth} from "../../../util/interact";
 
 type SellSpecConfig = {
   minRatio: number;
@@ -335,7 +335,7 @@ type UserStatSpec = {
 };
 
 // Wraps the business logic in a single hook
-function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
+function useUserStatSpec(burnSpec: BurnSpec, instrument: Instrument): UserStatSpec {
   const { unit } = useContext(AppContext);
   const { walletAddress } = useContext(AppContext);
   const [oldCollateral, setOldCollateral] = useState(new BigNumber(0));
@@ -348,7 +348,7 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
   useEffect(() => {
     const getAndSetUserStat = async () => {
       const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
-        await loadUserOrderStat(walletAddress);
+        await loadUserOrderStat(walletAddress, instrument.ticker);
 
       const ratio = new BigNumber(bnCRatio).div(unit).times(100).toString();
       const collateral = new BigNumber(bnCollateral).div(unit).toString();
@@ -430,7 +430,7 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
 
   const { state, dispatch } = useContext(ManageContext);
 
-  const UserStatSpec = useUserStatSpec(burnSpec);
+  const UserStatSpec = useUserStatSpec(burnSpec, instrument);
   const {
     walletAddress,
     oldDebt,
@@ -444,13 +444,39 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
   } = UserStatSpec;
 
   const burnSynthPressed = async () => {
-    const burnSynthResponse = await burnSynth(
-      walletAddress,
-      instrument.ticker,
-      oldDebt.minus(new BigNumber(state.debt).times('1e18')),
+    const burnSynthResponse = await manageSynth(
+        walletAddress,
+        instrument.ticker,
+        state.ratio,
+        state.collateral,
+        oldDebt.div('1e18').toString(),
+        state.debt,
     );
-    console.log(burnSynthResponse);
+    const getAndSetUserStat = async () => {
+      const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
+          await loadUserOrderStat(walletAddress, instrument.ticker);
+      const ratio = new BigNumber(bnCRatio).div('1e18').times(100).toString();
+      const collateral = new BigNumber(bnCollateral).div('1e18').toString();
+      const debt = new BigNumber(bnDebt).div('1e18').toString();
+
+      dispatch({
+        type: ManageActionKind.SET,
+        newRatio: ratio,
+        newCollateral: collateral,
+        newDebt: debt,
+        price: bnSynthPrice,
+      });
+
+      setOldCollateral(bnCollateral);
+      setOldCRatio(bnCRatio);
+      setOldDebt(bnDebt);
+      setSynthPrice(bnSynthPrice);
+    };
+    if (walletAddress.length > 0) {
+      getAndSetUserStat();
+    }
   };
+
 
   const Icon = NFTIcons.get(instrument.ticker);
 

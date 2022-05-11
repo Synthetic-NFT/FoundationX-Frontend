@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 
+import ContractAddress from "./ContractAddress";
+
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
 require("dotenv").config();
@@ -18,38 +20,50 @@ const web3 = new Web3("http://localhost:8545");
 
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
 const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
-// const messageABI = require("../abi/contracts/message.json");
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
+const OracleABI = require("../abi/contracts/mocks/MockOracle.sol/MockOracle.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
+const VaultABI = require("../abi/contracts/Vault.sol/Vault.json");
 
-const FactoryAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
-const ReserveAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-// const messageAddress = "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570";
-const synthAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
-// Liquidation deployed to: 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
-// Oracle deployed to: 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
-// Synth deployed to: 0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
-// Factory deployed to: 0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
-//
+const FactoryAddress = ContractAddress.factory;
+const OracleAddress = ContractAddress.oracle;
+const ReserveAddress: { [key: string]: any } = {};
+const SynthAddress: { [key: string]: any } = {};
+const VaultAddress: { [key: string]: any } = {};
+
+const ReserveContract: { [key: string]: any } = {};
+const SynthContract: { [key: string]: any } = {};
+const VaultContract: { [key: string]: any } = {};
+
+for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
+  const { name } = ContractAddress.tokens[i];
+  ReserveAddress[name] = ContractAddress.tokens[i].reserve;
+  SynthAddress[name] = ContractAddress.tokens[i].synth;
+  VaultAddress[name] = ContractAddress.tokens[i].vault;
+
+  ReserveContract[name] = new web3.eth.Contract(ReserveABI, ContractAddress.tokens[i].reserve);
+  SynthContract[name] = new web3.eth.Contract(SynthABI, ContractAddress.tokens[i].synth);
+  VaultContract[name] = new web3.eth.Contract(VaultABI, ContractAddress.tokens[i].vault);
+}
+
 export const FactoryContract = new web3.eth.Contract(
   FactoryABI,
   FactoryAddress,
 );
-
-export const ReserveContract = new web3.eth.Contract(
-  ReserveABI,
-  ReserveAddress,
+const OracleContract = new web3.eth.Contract(
+    OracleABI,
+    ContractAddress.oracle,
 );
 
-// export const messageContract = new web3.eth.Contract(
-//     messageABI,
-//     messageAddress
-// );
+export const loadActiveTokens = async () => {
+  const res = await FactoryContract.methods.getAllActiveTokens().call();
+  console.log(res)
+  return res;
+}
 
-export const synthContract = new web3.eth.Contract(SynthABI, synthAddress);
 export const mintSynth = async (
   address: string | null,
-  synthName: string,
+  tickerID: string,
   amount: string,
   ratio: string,
 ) => {
@@ -60,41 +74,16 @@ export const mintSynth = async (
         "💡 Connect your Metamask wallet to update the message on the blockchain.",
     };
   }
-  const unit = new BigNumber(10).pow(18);
-
-  // amount is in eth
-  const amountWei = new BigNumber(amount).times(unit);
   // eslint-disable-next-line
-  console.log(web3.utils.toWei(amount, "ether").toString());
 
-  // set up transaction parameters
-  // const depositParameters = {
-  //   to: FactoryAddress, // Required except during contract publications.
-  //   from: address, // must match user's active address.
-  //   value: web3.utils.toHex(web3.utils.toWei(amount, "ether")),
-  //   data: FactoryContract.methods.userDepositEther(synthName).encodeABI(),
-  // };
-  const synthPrice = await synthContract.methods
-    .getSynthPriceToEth()
-    .call();
-  const bnSynthPrice = new BigNumber(synthPrice).div(new BigNumber("1e18"));
   const bnCRatio = new BigNumber(ratio).times("1e18").div('100');
 
-  const amountSynthInWei = new BigNumber(amountWei.toString())
-    .div(bnCRatio)
-    .times(new BigNumber(100))
-    .div(bnSynthPrice);
-  const amountSynth = new BigNumber(amount)
-      .div(bnCRatio)
-      .times(new BigNumber(100))
-      .div(bnSynthPrice);
-
   const mintParameters = {
-    to: FactoryAddress, // Required except during contract publications.
+    to: VaultAddress[tickerID], // Required except during contract publications.
     from: address, // must match user's active address.
     value: web3.utils.toHex(web3.utils.toWei(amount, "ether")), // how much the user is depositing
-    data: FactoryContract.methods
-      .userMintSynth(synthName, bnCRatio.toString())
+    data: VaultContract[tickerID].methods
+      .userMintSynthETH(bnCRatio.toString())
       .encodeABI(),
   };
 
@@ -124,8 +113,9 @@ export const mintSynth = async (
 
 export const burnSynth = async (
   address: string | null,
-  synthName: string,
   amount: BigNumber,
+  tickerID: string,
+  synthAddress: string,
 ) => {
   // input error handling
   if (!(window as any).ethereum || address === null) {
@@ -137,12 +127,12 @@ export const burnSynth = async (
   const burnParameters = {
     to: FactoryAddress, // Required except during contract publications.
     from: address, // must match user's active address.
-    data: FactoryContract.methods.userBurnSynth(synthName, amount).encodeABI(),
+    data: VaultContract[tickerID].methods.userBurnSynthETH().encodeABI(),
   };
   const approveParameters = {
     to: synthAddress, // Required except during contract publications.
     from: address, // must match user's active address.
-    data: synthContract.methods.approve(FactoryAddress, amount).encodeABI(),
+    data: SynthContract[tickerID].methods.approve(FactoryAddress, amount).encodeABI(),
   };
 
   // sign the transaction
@@ -171,7 +161,7 @@ export const burnSynth = async (
 
 export const manageSynth = async (
     address: string | null,
-    synthName: string,
+    tickerID: string,
     targetCRatio: string,
     targetDeposit: string,
     originalDebt: string,
@@ -192,7 +182,7 @@ export const manageSynth = async (
   const manageParameters = {
     to: FactoryAddress, // Required except during contract publications.
     from: address, // must match user's active address.
-    data: FactoryContract.methods.userManageSynth(synthName, bnTargetCRatio, bnTargetDebt).encodeABI(),
+    data: VaultContract[tickerID].methods.userManageSynth(bnTargetCRatio, bnTargetDeposit).encodeABI(),
   };
 
 
@@ -201,9 +191,9 @@ export const manageSynth = async (
   try {
     if (bnApproveAmount.gte(0)) {
       const approveParameters = {
-        to: synthAddress, // Required except during contract publications.
+        to: SynthAddress[tickerID], // Required except during contract publications.
         from: address, // must match user's active address.
-        data: synthContract.methods.approve(FactoryAddress, bnApproveAmount.toString()).encodeABI(),
+        data: SynthContract[tickerID].methods.approve(FactoryAddress, bnApproveAmount.toString()).encodeABI(),
       };
       const approveHash = await (window as any).ethereum.request({
         method: "eth_sendTransaction",
@@ -229,23 +219,19 @@ export const manageSynth = async (
   }
 };
 
-export const loadSynthPrice = async (synthAddr: string) => {
-  const synthPrice = await synthContract.methods
-    .getSynthPriceToEth()
+export const loadSynthPrice = async (tickerID: string) => {
+  const synthPrice = await OracleContract.methods
+    .getAssetPrice(tickerID)
     .call();
   return synthPrice;
 };
 
-export const loadUserOrderStat = async (address: string) => {
-  const synthPrice = await synthContract.methods
-    .getSynthPriceToEth()
-    .call();
+export const loadUserOrderStat = async (address: string, tickerID: string) => {
+  const synthPrice = await loadSynthPrice(tickerID);
   const bnSynthPrice = new BigNumber(synthPrice);
-  const [collateral, debt] = await Promise.all([
-    ReserveContract.methods.getMinterDeposit(address).call(),
-    // ReserveContract.methods.getMinterCollateralRatio(address, bnSynthPrice).call(),
-    ReserveContract.methods.getMinterDebt(address).call(),
-  ]);
+  const res = await FactoryContract.methods.listUserDebtDeposit(address, [tickerID]).call();
+  const debt = res.debts[0];
+  const collateral = res.deposits[0];
   const bnCollateral = new BigNumber(collateral);
   const bnDebt = new BigNumber(debt);
   const bnSynthPriceBase10 = bnSynthPrice.div(new BigNumber("1e18"));

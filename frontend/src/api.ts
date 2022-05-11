@@ -1,5 +1,6 @@
 import { AppData } from "./AppContext";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
+import {loadActiveTokens} from "./util/interact";
 
 export type Instrument = {
   ticker: string;
@@ -10,7 +11,9 @@ export type Instrument = {
   long: number;
   short: number;
   premium: number;
+  vaultAddress: string;
   address: string;
+  reserveAddress: string;
 };
 
 export const defaultInstrument: Instrument = {
@@ -22,7 +25,9 @@ export const defaultInstrument: Instrument = {
   long: 0,
   short: 0,
   premium: 0,
+  vaultAddress: "",
   address: "",
+  reserveAddress: "",
 };
 
 export type MyPageData = {
@@ -76,6 +81,16 @@ export type MyPageTableData = {
 export type TradeData = {
   instruments: Instrument[];
 };
+
+export const blockchainAPI = {
+  async loadInstruments(): Promise<TradeData> {
+    const activeTokens = await loadActiveTokens();
+
+    return new Promise((resolve) => {
+      resolve(activeTokens);
+    });
+  },
+}
 
 // Simulates real API calls which are likely returning the response as a Promise.
 const fakeAPI = {
