@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import type { TradeData } from "./api";
-import api from "./api";
+import api, {Instrument} from "./api";
 
 export const TradeContext = React.createContext<{
   tradeData: TradeData | null;
@@ -9,6 +9,20 @@ export const TradeContext = React.createContext<{
 }>({
   tradeData: null,
   setTradeData: () => {},
+});
+
+export type TokenAddress = {
+  address: string;
+  vaultAddress: string;
+  reserveAddress: string;
+};
+
+export const OnChainAddressContext = React.createContext<{
+  tokenAddresses: Map<string, TokenAddress> | null;
+  setTokenAddresses: (_: Map<string, TokenAddress>  | null) => void;
+}>({
+  tokenAddresses: null,
+  setTokenAddresses: () => {},
 });
 
 // Provides the data of the instruments available for trade.
