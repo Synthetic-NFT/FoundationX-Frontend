@@ -82,12 +82,6 @@ function Nav({
 export default function LeftNav(): React.ReactElement {
   const styles = useStyles();
   const history = useHistory();
-  const match = useRouteMatch({ path: "/", exact: true });
-  useEffect(() => {
-    if (match != null) {
-      history.push(defaultRoute);
-    }
-  }, [history, match]);
 
   return (
     <div className={styles.root}>
