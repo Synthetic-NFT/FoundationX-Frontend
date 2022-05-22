@@ -43,6 +43,8 @@ export default function SwapInstrumentTable({
             borderTopLeftRadius: "16px",
             borderTopRightRadius: "16px",
             overflow: "hidden",
+            background: "inherit",
+            borderStyle:"none",
           }}
           stickyHeader
           aria-label="sticky table"

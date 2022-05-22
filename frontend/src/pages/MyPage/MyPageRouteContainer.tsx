@@ -10,16 +10,16 @@ import React, { useContext, useEffect, useState }  from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
 import api, {MyPageData} from "../../api";
+import CreditCard from "../../styles/images/CreditCard.png";
 import theme from "../../theme";
 import MyPageTable from "./components/MyPageTable";
 import {holdingTableColumns, borrowingTableColumns} from "./components/tableColumns";
 
 const useStyles = makeStyles({
   loginGroup: {
-    backgroundColor: theme.tableSearchBarBackgroundColor,
+    backgroundColor: "inherit",
     display: "flex",
     flexDirection: "column",
-    margin: "0px 12px 12px 12px",
     borderRadius: "6px",
     height: "400px",
     alignItems: "center",
@@ -31,13 +31,24 @@ const useStyles = makeStyles({
     marginBottom: "0px",
   },
   button: {
-    margin: "32px 0px !important", 
-    width: "60%", 
-    alignSelf: "center",
+    margin: "58px 0px !important", 
+    alignSelf: "flex-start",
     display: "flex",
     justifyContent: "space-between !important",
-    borderRadius: "8px",
-    height: "64px",
+    background: "linear-gradient(101.05deg, #1368E8 -5.36%, #0C3B72 29.46%, #1B2138 56.03%, #030F16 81.92%)",
+    borderRadius: "6px",
+    width: "810px",
+    height: "92px",
+    padding: "28px 66px !important"
+  },
+  buttonTitle: {
+    height: "36px",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
   },
   cardGroup: {
     display: "flex",
@@ -322,8 +333,8 @@ export default function MyPageRouteContainer(): React.ReactElement {
       {
         !loginSuccess &&
         <div className={styles.loginGroup} >
-          <div className={styles.title}>Connect to a wallet</div>
-          <Button
+          {/* <div className={styles.title}>Connect to a wallet</div> */}
+          {/* <Button
             className={styles.button}
             size="large"
             variant="contained"
@@ -331,16 +342,18 @@ export default function MyPageRouteContainer(): React.ReactElement {
             onClick={() => login()}
           >
             View an address
-          </Button>
+          </Button> */}
           <Button
             className={styles.button}
             size="large"
             variant="contained"
-            endIcon={<AccountBalanceWallet />}
+            endIcon={<img src={CreditCard} alt={CreditCard} height="20px" width="20px" />}
             onClick={() => login()}
           >
-            Wallet Connect
-          </Button>
+            <span className={styles.buttonTitle}>
+              Wallet Connect
+            </span>
+           </Button>
         </div>
       }
       {

@@ -8,24 +8,41 @@ import React, { useCallback, useEffect } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 import { routes, defaultRoute } from "./routeRegistry";
-import logo from "./styles/images/logo.png";
+import logo from "./styles/images/logo.svg";
 import theme from "./theme";
 
 const useStyles = makeStyles({
   root: {
-    background: theme.leftNav,
-    borderRight: `2px solid ${theme.boarder}`,
-    width: "200px",
+    background: "inherit",
+    width: "420px",
     display: "flex",
     flexDirection: "column",
   },
   active: {
-    color: theme.activeTextColor,
-    fontSize: "24pt",
+    width: "260px",
+    height: "56px",
+    background: "linear-gradient(101.05deg, #951FBE -5.36%, #044695 29.46%, #440495 56.03%, #025FCD 81.92%)",
+    borderRadius: "6px",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 500,
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
+    padding: "16px 26px",
+    margin: "8px 0px",
   },
   inactive: {
-    color: theme.inactiveTextColor,
-    fontSize: "16pt",
+    maxWidth: "260px",
+    height: "36px",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 500,
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
+    padding: "16px 26px",
+    margin: "16px 0px",
   },
   logo: {
     cursor: "pointer",
@@ -43,7 +60,7 @@ function Nav({
 }: {
   path: string;
   label: string;
-  icon: OverridableComponent<any>;
+  icon: string;
 }): React.ReactElement {
   const styles = useStyles();
 
@@ -56,24 +73,27 @@ function Nav({
   }, [history, path]);
 
   return (
-    <ListItem button onClick={onNav}>
-      <div className={match != null ? styles.active : styles.inactive}>
+    <ListItem 
+      button 
+      onClick={onNav} 
+      className={match != null ? styles.active : styles.inactive}
+      style={{marginTop: label === "Legal Docs" ? "100px" : "0px"}}
+      >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
+      >
+        <img src={Icon} alt={Icon} height="20px" width="20px" />
         <div
           style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
+            marginRight: "26px",
           }}
-        >
-          <Icon />
-          <div
-            style={{
-              marginRight: "16px",
-            }}
-          />
-          <div>{label}</div>
-        </div>
+        />
+        <div>{label}</div>
       </div>
     </ListItem>
   );
@@ -95,20 +115,18 @@ export default function LeftNav(): React.ReactElement {
         style={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          paddingTop: "52px",
+          paddingLeft: "76px",
         }}
       >
-        <img src={logo} alt="Logo" height="40px" width="40px" />
-        <div className={styles.logo}>NFTSynth</div>
+        <img src={logo} alt="Logo" height="100px" width="100px" />
+        {/* <div className={styles.logo}>NFTSynth</div> */}
       </div>
-      <Divider />
-      <div
-        style={{
-          marginTop: "64px",
-        }}
-      />
-      <List component="nav" aria-label="mailbox folders">
+      <List component="nav" aria-label="mailbox folders" style={{
+          padding: "72px 80px",
+        }}>
         {routes.map(({ path, label, icon }) => (
           <Nav key={path} path={path} label={label} icon={icon} />
         ))}

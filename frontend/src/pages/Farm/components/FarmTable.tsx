@@ -23,7 +23,7 @@ export function SearchBar({
       style={{
         backgroundColor: theme.tableSearchBarBackgroundColor,
         display: "flex",
-        margin: "0px 0px 6px 0px",
+        margin: "32px 0px 72px 0px",
         borderRadius: "6px",
       }}
     >
@@ -36,6 +36,7 @@ export function SearchBar({
           color: theme.activeTextColor,
           display: "flex",
           flexGrow: 1,
+          height: "56px",
         }}
         // This is called on every key stroke, which is fine for now but we might want to
         // add some debouncing.
@@ -84,7 +85,7 @@ export function FarmTable(): React.ReactElement {
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table
           style={{
-            backgroundColor: theme.tableBackgroundColor,
+            backgroundColor: "inherit",
             borderTopLeftRadius: "6px",
             borderTopRightRadius: "6px",
             overflow: "hidden",

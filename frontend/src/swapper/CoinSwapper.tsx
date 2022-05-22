@@ -20,9 +20,11 @@ import SwapperCard from "./SwapperCard";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
-    borderRadius: theme.spacing(2),
     padding: theme.spacing(1),
     paddingBottom: theme.spacing(3),
+    background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
+    borderRadius: "20px",
+    border: "1px solid #ffffff",
   },
   switchButton: {
     zIndex: 1,

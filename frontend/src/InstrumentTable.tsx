@@ -23,7 +23,7 @@ export function SearchBar({
       style={{
         backgroundColor: theme.tableSearchBarBackgroundColor,
         display: "flex",
-        margin: "0px 12px 12px 12px",
+        margin: "32px 0px 72px 0px",
         borderRadius: "6px",
       }}
     >
@@ -36,6 +36,7 @@ export function SearchBar({
           color: theme.activeTextColor,
           display: "flex",
           flexGrow: 1,
+          height: "56px",
         }}
         // This is called on every key stroke, which is fine for now but we might want to
         // add some debouncing.
@@ -96,6 +97,8 @@ export function InstrumentTable({
             borderTopLeftRadius: "16px",
             borderTopRightRadius: "16px",
             overflow: "scroll",
+            background: "inherit",
+            borderStyle:"none",
           }}
           stickyHeader
           aria-label="sticky table"

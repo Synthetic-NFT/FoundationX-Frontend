@@ -8,22 +8,30 @@ const useStyles = makeStyles({
   root: {
     display: "flex",
     overflowX: "hidden",
-    alignItems: "center",
+    alignItems: "flex-start",
     flexDirection: "column",
     height: "fit-content",
     overflowY: "auto",
-    marginBottom: "32px",
   },
   routeContainer: {
     width: "1024px",
     overflowY: "hidden",
   },
   title: {
-    color: theme.activeTextColor,
-    fontSize: "36pt",
-    marginBottom: "32px",
+    height: "60px",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: "40px",
+    lineHeight: "60px",
+    color: "#FFFFFF",
   },
 });
+// title: {
+//   color: theme.activeTextColor,
+//   fontSize: "36pt",
+//   marginBottom: "32px",
+// },
 
 // This renders the container based on the current route.
 // The routes are defined in routeRegistry.

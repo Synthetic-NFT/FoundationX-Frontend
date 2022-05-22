@@ -40,9 +40,10 @@ export function DefaultHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
         color: theme.tableHeaderTextColor,
         borderColor: theme.tableBorderColor,
+        backgroundColor: "inherit",
+        border: "none",
       }}
     >
       <div
@@ -67,9 +68,10 @@ function TooltipHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
         color: theme.tableHeaderTextColor,
         borderColor: theme.tableBorderColor,
+        backgroundColor: "inherit",
+        border: "none",
       }}
     >
       <div
@@ -102,6 +104,7 @@ function TooltipHeaderRenderer({
 export const TABLE_CELL_STYLE = {
   color: theme.tableRowPrimaryTextColor,
   borderColor: theme.tableBorderColor,
+  border: "none",
 };
 
 export const TABLE_CELL_STYLE_HOVER = {

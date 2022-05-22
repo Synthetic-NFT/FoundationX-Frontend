@@ -49,9 +49,10 @@ function AddressHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
+        backgroundColor: "inherit",
         color: theme.tableHeaderTextColor,
         borderColor: theme.tableBorderColor,
+        border: "none",
       }}
     >
       <div
