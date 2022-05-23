@@ -18,15 +18,22 @@ const Web3 = require("web3");
 
 const web3 = new Web3("http://localhost:8545");
 
+const SwapFactoryABI = require("../abi/contracts/core/UniswapV2Factory.sol/UniswapV2Factory.json");
+const LpPairABI = require("../abi/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json");
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
 const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
-const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const OracleABI = require("../abi/contracts/mocks/MockOracle.sol/MockOracle.json");
+const RouterABI = require("../abi/contracts/periphery/UniswapV2Router02.sol/UniswapV2Router02.json");
+const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 const VaultABI = require("../abi/contracts/Vault.sol/Vault.json");
 
+const WETHAddress = ContractAddress.weth;
 const FactoryAddress = ContractAddress.factory;
 const OracleAddress = ContractAddress.oracle;
+const SwapFactoryAddress = ContractAddress.swapFactory;
+const RouterAddress = ContractAddress.router;
+
 const ReserveAddress: { [key: string]: any } = {};
 const SynthAddress: { [key: string]: any } = {};
 const VaultAddress: { [key: string]: any } = {};
@@ -34,6 +41,8 @@ const VaultAddress: { [key: string]: any } = {};
 const ReserveContract: { [key: string]: any } = {};
 const SynthContract: { [key: string]: any } = {};
 const VaultContract: { [key: string]: any } = {};
+const LpPairContract: { [key: string]: any } = {};
+
 
 for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
   const { name } = ContractAddress.tokens[i];
@@ -44,6 +53,7 @@ for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
   ReserveContract[name] = new web3.eth.Contract(ReserveABI, ContractAddress.tokens[i].reserve);
   SynthContract[name] = new web3.eth.Contract(SynthABI, ContractAddress.tokens[i].synth);
   VaultContract[name] = new web3.eth.Contract(VaultABI, ContractAddress.tokens[i].vault);
+  LpPairContract[name] = new web3.eth.Contract(LpPairABI, ContractAddress.tokens[i].lp);
 }
 
 export const FactoryContract = new web3.eth.Contract(
@@ -54,11 +64,108 @@ const OracleContract = new web3.eth.Contract(
     OracleABI,
     ContractAddress.oracle,
 );
+const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
+const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
 export const loadActiveTokens = async () => {
   const res = await FactoryContract.methods.getAllActiveTokens().call();
   console.log(res)
   return res;
+}
+
+export const getLpReserve = async(tickerID: string) => {
+  const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
+  return lpReserve;
+}
+
+export const getAmountSynthOut = async(tickerID: string, amountETH: string) => {
+  const bnAmountETH = new BigNumber(amountETH).times("1e18");
+  const amountsOut = RouterContract.methods.getAmountsOut(bnAmountETH, [WETHAddress, SynthAddress[tickerID]]);
+  return amountsOut[1];
+}
+
+export const getAmountETHOut = async(tickerID: string, amountSynth: string) => {
+  const bnAmountSynth = new BigNumber(amountSynth).times("1e18");
+  const amountsOut = RouterContract.methods.getAmountsOut(bnAmountSynth, [SynthAddress[tickerID], WETHAddress]);
+  return amountsOut;
+}
+
+export const swapExactETHForTokens = async(amountIn: string, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: Date) => {
+  const bnAmountOutMin = new BigNumber(amountOutMin).times("1e18");
+  const swapParameters = {
+    to: RouterAddress, // Required except during contract publications.
+    from: addressFrom, // must match user's active address.
+    value: web3.utils.toHex(web3.utils.toWei(amountIn, "ether")), // how much the user is depositing
+    data: RouterContract.methods
+        .swapExactETHForTokens(bnAmountOutMin, [WETHAddress, SynthAddress[tickerID]], addressTo, deadline)
+        .encodeABI(),
+  };
+  try {
+    const swapHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [swapParameters],
+    });
+    return {
+      status: "success",
+      swapHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+}
+
+export const approveToken = async(amount: string, tickerID: string, userAddress: string, callerAddress: string) => {
+  const bnAmount = new BigNumber(amount).times("1e18");
+  const approveParameters = {
+    to: SynthAddress[tickerID], // Required except during contract publications.
+    from: userAddress, // must match user's active address.
+    data: SynthContract[tickerID].methods.approve(callerAddress, bnAmount).encodeABI(),
+  };
+
+  // sign the transaction
+  try {
+    const approveHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [approveParameters],
+    });
+    return {
+      status: "success",
+      approveHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+}
+
+export const swapExactTokensForETH = async(amountIn: string, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: Date) => {
+  const bnAmountOutMin = new BigNumber(amountOutMin).times("1e18");
+  const bnAmountIn = new BigNumber(amountIn).times("1e18");
+  const swapParameters = {
+    to: RouterAddress, // Required except during contract publications.
+    from: addressFrom, // must match user's active address.
+    data: RouterContract.methods
+        .swapExactTokensForETH(bnAmountIn, bnAmountOutMin,[SynthAddress[tickerID], WETHAddress], addressTo, deadline)
+        .encodeABI(),
+  };
+  try {
+    const approveStatus = approveToken(amountIn, tickerID, addressFrom, ContractAddress.router);
+    const swapHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [swapParameters],
+    });
+    return {
+      status: "success",
+      swapHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
 }
 
 export const mintSynth = async (
@@ -89,11 +196,6 @@ export const mintSynth = async (
 
   // sign the transaction
   try {
-    // const depositHash = await (window as any).ethereum.request({
-    //   method: "eth_sendTransaction",
-    //   params: [depositParameters],
-    // });
-    // console.log(depositHash);
     const mintHash = await (window as any).ethereum.request({
       method: "eth_sendTransaction",
       params: [mintParameters],
