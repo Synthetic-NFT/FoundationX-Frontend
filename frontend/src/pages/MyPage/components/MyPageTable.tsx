@@ -15,13 +15,14 @@ export default function MyPageTable(props: any): React.ReactElement {
   const { tableColumns, data, Header, Radius } = props;
   return (
     <>
-      {/* {Header} */}
+      {Header}
       {tableColumns && <TableContainer sx={{ maxHeight: 440 }}>
         <Table
           style={{
             background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
-            borderRadius: Radius,
-            overflow: "hidden"
+            borderRadius: "0.83rem",
+            overflow: "hidden",
+            marginBottom: "3rem",
           }}
           stickyHeader
           aria-label="sticky table"
@@ -30,7 +31,7 @@ export default function MyPageTable(props: any): React.ReactElement {
             <TableRow 
               style={{
                 background: "linear-gradient(160.35deg, #1465B0 13.15%, #1D2995 93.23%)",
-                height: "76px",
+                height: "3.17rem",
               }}>
               {tableColumns.map((column:any) => {
                 const Renderer = column.headerRenderer;
@@ -38,10 +39,7 @@ export default function MyPageTable(props: any): React.ReactElement {
               })}
             </TableRow>
           </TableHead>
-          <TableBody 
-            style={{
-              minHeight: "140px",
-            }}>
+          <TableBody >
             {data && data.length > 0 && data.map((row:any) => (
               <TableRow hover key={row.id} >
                 {tableColumns.map((column:any) => {
@@ -53,7 +51,7 @@ export default function MyPageTable(props: any): React.ReactElement {
             {data && data.length === 0 &&
               <TableRow hover 
                 style={{
-                  height: "140px",
+                  height: "3.67rem",
                 }}>
                 {tableColumns.map((column:any) => (
                   <TableCell align="right" key={column.id}> </TableCell>

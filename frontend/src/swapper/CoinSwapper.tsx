@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
+import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 
 import { defaultInstrument } from "../api";
@@ -20,15 +21,16 @@ import SwapperCard from "./SwapperCard";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
-    padding: theme.spacing(1),
+    // padding: theme.spacing(1),
     paddingBottom: theme.spacing(3),
     background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
-    borderRadius: "20px",
-    border: "1px solid #ffffff",
+    borderRadius: "0.83rem",
+    border: "1px solid #ffffff",    
+    padding: "1.67rem 2.17rem",
   },
   switchButton: {
     zIndex: 1,
-    margin: "-16px",
+    margin: "-0.67rem",
     padding: theme.spacing(0.5),
   },
   fullWidth: {
@@ -36,8 +38,13 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   },
   title: {
     textAlign: "center",
-    padding: theme.spacing(0.5),
-    marginBottom: theme.spacing(1),
+    // padding: theme.spacing(0.5),
+    // marginBottom: theme.spacing(1),
+    fontWeight: 600,
+    fontSize: "1.25rem",
+    lineHeight: "1.875rem",
+    color: "#FFFFFF",
+    marginBottom: "1.75rem",
   },
   hr: {
     width: "100%",
@@ -48,8 +55,15 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     textAlign: "center",
   },
   footer: {
-    marginTop: "285px",
+    marginTop: "11.875rem",
   },
+  from: {
+    fontWeight: 400,
+    fontSize: "0.58rem",
+    lineHeight: "1rem",
+    color: "#FFFFFF",
+    marginLeft: "0.33rem",
+  }
 });
 
 // @ts-ignore
@@ -233,10 +247,82 @@ function CoinSwapper(props: any) : React.ReactElement{
         coins={availbleCoinOut}
         signer="placeholder"
       />
-      <div style={{ display: "flex", flexDirection: "row", height: "max-content"}}>
-      {/* Coin Swapper */}
+      <div style={{ display: "flex", flexDirection: "row", height: "max-content", width: "21.75rem"}}>
         <Container style={{ display: "flex", margin: 0, padding: 0}}>
           <Paper style={{ flex: 1 }} className={classes.paperContainer}>
+            <Typography variant="h5" className={classes.title}>
+              Token Swap
+            </Typography>
+
+            <Grid container direction="column" spacing={2}>
+              <div className={classes.from}>From</div>
+              <Grid item xs={12} className={classes.fullWidth}>
+                <CoinField
+                  activeField
+                  value={field1Value}
+                  onClick={() => setDialog1Open(true)}
+                  onChange={handleChange.field1}
+                  symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
+                />
+              </Grid>
+
+              <IconButton onClick={switchFields} className={classes.switchButton}>
+                <SwapVerticalCircleIcon fontSize="medium" style={{fill: "#ffffff"}}/>
+              </IconButton>
+              <div className={classes.from}>To</div>
+              <Grid item xs={12} className={classes.fullWidth}>
+                <CoinField
+                  activeField={false}
+                  value={field2Value}
+                  onClick={() => setDialog2Open(true)}
+                  symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
+                />
+              </Grid>
+
+              <div style={{
+                  marginLeft: "1rem",
+                }}>
+                <div style={{
+                  fontWeight: 600,
+                  fontSize: "0.83rem",
+                  lineHeight: "1.25rem",
+                  color: "#FFFFFF",
+                  marginTop: "2rem",
+                }}>
+                  Crypto Punks
+                </div>
+                <div style={{
+                  fontWeight: 400,
+                  fontSize: "0.58rem",
+                  lineHeight: "0.875rem",
+                  color: "#FFFFFF",
+                  marginTop: "0.42rem",
+                  marginBottom: "2rem",
+                }}>
+                  {getCurrentInstrument().address}
+                </div>
+              </div>
+
+              <Button
+                size="large"
+                variant="text"
+                style={{
+                  background: "linear-gradient(97.27deg, #2F038C 44.35%, #0837A5 70.76%)",
+                  borderRadius: "0.42rem",
+                  fontWeight: 600,
+                  fontSize: "0.83rem",
+                  lineHeight: "1rem",
+                  color: "#FFFFFF",
+                  height: "3rem",
+                  marginLeft: "0.33rem",
+                }}
+              >
+              Swap Now
+              </Button>
+            </Grid>
+          </Paper>
+
+          {/* <Paper style={{ flex: 1 }} className={classes.paperContainer}>
             <Typography variant="h5" className={classes.title}>
               Swap Coins
             </Typography>
@@ -267,7 +353,6 @@ function CoinSwapper(props: any) : React.ReactElement{
 
               <hr className={classes.hr} />
 
-              {/* Balance Display */}
               <Typography variant="h6">Your Balances</Typography>
               <Grid container direction="row" justifyContent="space-between">
                 <Grid item xs={6}>
@@ -284,7 +369,6 @@ function CoinSwapper(props: any) : React.ReactElement{
 
               <hr className={classes.hr} />
 
-              {/* Reserves Display */}
               <Typography variant="h6">Reserves</Typography>
               <Grid container direction="row" justifyContent="space-between">
                 <Grid item xs={6}>
@@ -311,12 +395,12 @@ function CoinSwapper(props: any) : React.ReactElement{
                 Swap
               </LoadingButton>
             </Grid>
-          </Paper>
-          <SwapperCard cardWidth="1" instrument={getCurrentInstrument()} />
+          </Paper> */}
+          {/* <SwapperCard cardWidth="1" instrument={getCurrentInstrument()} /> */}
         </Container>
       </div>
 
-      <Grid
+      {/* <Grid
         container
         className={classes.footer}
         direction="row"
@@ -327,7 +411,7 @@ function CoinSwapper(props: any) : React.ReactElement{
         Alternative Uniswap Interface | Get AUT for use in the bakerloo testnet{" "}
           <a href="https://faucet.bakerloo.autonity.network/">here</a>
         </p>
-      </Grid>
+      </Grid> */}
     </div>
   );
 };

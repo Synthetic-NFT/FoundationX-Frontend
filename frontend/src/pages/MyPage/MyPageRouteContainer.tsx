@@ -11,6 +11,8 @@ import { Switch, Route, useHistory } from "react-router-dom";
 
 import api, {MyPageData} from "../../api";
 import CreditCard from "../../styles/images/CreditCard.png";
+import Send from "../../styles/images/send.svg";
+import Star from "../../styles/images/star.svg";
 import theme from "../../theme";
 import MyPageTable from "./components/MyPageTable";
 import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./components/tableColumns";
@@ -20,68 +22,68 @@ const useStyles = makeStyles({
     backgroundColor: "inherit",
     display: "flex",
     flexDirection: "column",
-    borderRadius: "6px",
-    height: "400px",
+    borderRadius: "0.25rem",
+    height: "16.67rem",
     alignItems: "center",
   },
   title: {
     color: theme.activeTextColor,
     fontSize: "24pt",
-    marginTop: "32px",
-    marginBottom: "0px",
+    marginTop: "1.33rem",
+    marginBottom: "0",
   },
   button: {
-    margin: "58px 0px !important", 
+    margin: "2.41rem 0 !important", 
     alignSelf: "flex-start",
     display: "flex",
     justifyContent: "space-between !important",
     background: "linear-gradient(101.05deg, #1368E8 -5.36%, #0C3B72 29.46%, #1B2138 56.03%, #030F16 81.92%)",
-    borderRadius: "6px",
-    width: "810px",
-    height: "92px",
-    padding: "28px 66px !important"
+    borderRadius: "0.25rem",
+    width: "33.75rem",
+    height: "3.83rem",
+    padding: "1rem 2.75rem !important",
   },
   buttonTitle: {
-    height: "36px",
+    height: "1.5rem",
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
-    fontSize: "24px",
-    lineHeight: "36px",
+    lineHeight: "1.5rem",
     color: "#FFFFFF",
+    fontSize: "1rem",
   },
   cardGroup: {
     display: "flex",
-    marginTop: "96px",
-    marginBottom: "64px",
+    marginTop: "4rem",
+    marginBottom: "2.67rem",
   },
   card: {
     color: theme.activeTextColor,
-    borderRadius: "6px",
+    borderRadius: "0.25rem",
     display: "flex",
     fontSize: "14pt",
-    padding: "16px",
-    width: "522px",
-    height: "294px",
+    padding: "0.67rem",
+    width: "21.75rem",
+    height: "12.25rem",
     flexDirection: "column",
-    marginRight: "24px",
+    marginRight: "1rem",
     backgroundColor: theme.instrumentCardBackgroundColor,
   },
   cardLeft: {
     color: theme.activeTextColor,
     display: "flex",
     fontSize: "14pt",
-    padding: "26px 40px",
-    width: "522px",
-    height: "294px",
+    padding: "1rem 1.67rem",
+    width: "21.75rem",
+    height: "12.25rem",
     flexDirection: "column",
-    marginRight: "14px",
-    marginLeft: "4px",
+    marginRight: "0.58rem",
+    marginLeft: "0.17rem",
     // background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
     border: "solid 1px transparent",
     // borderImage: "linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0)) 1",
-    borderRadius: "20px",
-    clipPath: "inset(0 round 20px)",
+    borderRadius: "0.83rem",
+    clipPath: "inset(0 round 0.83rem)",
     backgroundClip: "padding-box, border-box",
     backgroundOrigin: "padding-box, border-box",
     backgroundImage: "linear-gradient(160.35deg, #25283C 93.23%, rgba(31, 30, 35, 0.6) 13.15%), linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0))",
@@ -90,149 +92,150 @@ const useStyles = makeStyles({
     color: theme.activeTextColor,
     display: "flex",
     fontSize: "14pt",
-    padding: "26px 40px",
-    width: "522px",
-    height: "294px",
+    padding: "1rem 1.67rem",
+    width: "21.75rem",
+    height: "12.25rem",
     flexDirection: "column",
-    marginLeft: "14px",
-    marginRight: "4px",
+    marginLeft: "0.58rem",
+    marginRight: "0.17rem",
     background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
-    borderRadius: "20px",
+    borderRadius: "0.83rem",
   },
   titleGroup: {
     display: "flex",
     justifyContent: "space-between !important",
   },
   cardButton: {
-    width: "106px", 
+    width: "7rem", 
     display: "flex",
     justifyContent: "space-between !important",
-    height: "34px",
+    height: "1.42rem",
     background: "linear-gradient(94.8deg, #072CB2 2.99%, #4B3CA8 57.25%, #440495 98.64%, #0C3666 138.99%)",
-    borderRadius: "50px !important",
+    borderRadius: "2.08rem !important",
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
-    fontSize: "12px",
-    lineHeight: "18px",
-    color: "#FFFFFF",
+    fontSize: "0.5rem !important",
+    lineHeight: "0.75rem",
+    color: "#FFFFFF !important",
   },
   chartContainer: {
     display: "flex",
     justifyContent: "space-between",
-    height: "200px",
-    fontSize: "12px",
+    height: "8.33rem",
+    fontSize: "0.5rem",
     width: "100%",
-    marginTop: "28px",
+    marginTop: "1rem",
   },
   chart: {
-    border: "0px solid red",
+    border: "0 solid red",
   },
   chartLegend: {
-    border: "0px solid red",
-    minWidth: "200px",
-    width: "300px",
+    border: "0 solid red",
+    minWidth: "8.33rem",
+    width: "12.5rem",
     display: "flex",
     flexWrap: "wrap",
   },
   ust: {
     display: "inline-block",
-    paddingLeft: "14px",
+    paddingLeft: "0.58rem",
     position: "relative",
-    marginRight: "36px",
-    marginLeft: "12px",
-    marginBottom: "26px",
-    width: "100px",
+    marginRight: "1.5rem",
+    marginLeft: "0.5rem",
+    marginBottom: "1rem",
+    width: "4.17rem",
     "&::after": {
         content: "''",
-        width: "12px",
-        height: "39px",
-        borderRadius: "6px",
+        width: "0.5rem",
+        height: "1.67rem",
+        borderRadius: "0.25rem",
         backgroundColor: "#2B87E3",
         position: "absolute",
-        top: "6px",
-        left: "-12px",
-        right: "0px",
+        top: "0.25rem",
+        left: "-0.5rem",
+        right: "0",
     }
   },
   holding: {
     display: "inline-block",
-    paddingLeft: "14px",
+    paddingLeft: "0.58rem",
     position: "relative",
-    width: "100px",
-    marginBottom: "26px",
+    width: "4.17rem",
+    marginBottom: "1rem",
     "&::after": {
         content: "''",
-        width: "12px",
-        height: "39px",
-        borderRadius: "6px",
+        width: "0.5rem",
+        height: "1.67rem",
+        borderRadius: "0.25rem",
         backgroundColor: "#43CCC4",
         position: "absolute",
-        top: "6px",
-        left: "-12px",
-        right: "0px",
+        top: "0.25rem",
+        left: "-0.5rem",
+        right: "0",
     }
   },
   borrowing: {
     display: "inline-block",
-    paddingLeft: "14px",
+    paddingLeft: "0.58rem",
     position: "relative",
-    marginLeft: "12px",
-    width: "100px",
-    marginBottom: "26px",
+    marginLeft: "0.5rem",
+    width: "4.17rem",
+    marginBottom: "1rem",
     "&::after": {
         content: "''",
-        width: "12px",
-        height: "39px",
-        borderRadius: "6px",
+        width: "0.5rem",
+        height: "1.67rem",
+        borderRadius: "0.25rem",
         backgroundColor: "#072CB2",
         position: "absolute",
-        top: "6px",
-        left: "-12px",
-        right: "0px",
+        top: "0.25rem",
+        left: "-0.5rem",
+        right: "0",
     }
   },
   priceLabel: {
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
-    fontSize: "16px",
-    lineHeight: "24px",
+    fontSize: "0.67rem",
+    lineHeight: "1rem",
     color: "#FFFFFF",
   },
   price: {
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
-    fontSize: "16px",
-    lineHeight: "24px",
+    fontSize: "0.67rem",
+    lineHeight: "1rem",
     color: "#FFFFFF",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
-    marginTop: "24px",
-    borderTopLeftRadius: "16px",
-    borderTopRightRadius: "16px",
-    backgroundColor: "#0099FF",
-    padding: "0 16px",    
-    height: "64px",
+    // marginTop: "1rem",
+    // borderTopLeftRadius: "0.67rem",
+    // borderTopRightRadius: "0.67rem",
+    // backgroundColor: "#0099FF",
+    padding: "0 0.67rem",    
+    height: "2.67rem",
     alignItems: "center",
+    color: "#ffffff",
   },
   totalValueTitle: {
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 500,
-    fontSize: "24px",
-    lineHeight: "36px",
+    fontSize: "1rem",
+    lineHeight: "1.5rem",
     color: "#FFFFFF",
   },
   totalValue: {
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
-    fontSize: "24px",
-    lineHeight: "36px",
+    fontSize: "1rem",
+    lineHeight: "1.5rem",
     color: "#FFFFFF",
   }
 });
@@ -305,7 +308,7 @@ export default function MyPageRouteContainer(): React.ReactElement {
           </IconButton>
         </Tooltip>
       </div>
-      <div>
+      {/* <div>
         ≈ {myPageData?.data.holding[0].value} UST
         <Tooltip title={<h4>value tooltip</h4>}>
           <IconButton>
@@ -314,7 +317,7 @@ export default function MyPageRouteContainer(): React.ReactElement {
             />
           </IconButton>
         </Tooltip>
-      </div>
+      </div> */}
     </div>
   )
 
@@ -330,7 +333,7 @@ export default function MyPageRouteContainer(): React.ReactElement {
           </IconButton>
         </Tooltip>
       </div>
-      <div>
+      {/* <div>
         <span>
           Borrowed ≈ {myPageData?.data.borrowing[0].borrowed.ust} UST
           <Tooltip title={<h4>Borrowed tooltip</h4>}>
@@ -351,13 +354,13 @@ export default function MyPageRouteContainer(): React.ReactElement {
             </IconButton>
           </Tooltip>
         </span>
-      </div>
+      </div> */}
     </div>
   )
 
   
   const GovernHeader = (
-    <div className={styles.header} style={{borderRadius: "16px"}}>
+    <div className={styles.header} style={{borderRadius: "0.67rem"}}>
       <div>
         Govern
         <Tooltip title={<h4>Govern tooltip</h4>}>
@@ -390,7 +393,7 @@ export default function MyPageRouteContainer(): React.ReactElement {
             className={styles.button}
             size="large"
             variant="contained"
-            endIcon={<img src={CreditCard} alt={CreditCard} height="20px" width="20px" />}
+            endIcon={<img src={CreditCard} alt={CreditCard} style={{height:"0.83rem", width:"0.83rem"}} />}
             onClick={() => login()}
           >
             <span className={styles.buttonTitle}>
@@ -474,7 +477,7 @@ export default function MyPageRouteContainer(): React.ReactElement {
                     className={styles.cardButton}
                     size="large"
                     variant="text"
-                    endIcon={<SendIcon />}
+                    endIcon={<img src={Send} alt={Send} style={{height:"0.83rem", width:"0.83rem"}} />}
                     onClick={() => setLoginSuccess(true)}
                   >
                     Send
@@ -483,16 +486,16 @@ export default function MyPageRouteContainer(): React.ReactElement {
                 <ReactEcharts
                   className={styles.chart}
                   style={{
-                    height: "200px",
-                    width: "200px",
-                    marginTop: "-26px",
+                    height: "8.33rem",
+                    width: "8.33rem",
+                    marginTop: "-1rem",
                   }}
                   option={getOption()}
                 />
               </div>
             </div>
             <div className={styles.cardRight} >
-              <div className={styles.titleGroup} style={{width: "280px"}}>
+              <div className={styles.titleGroup} style={{width: "11.67rem"}}>
                 <div className={styles.totalValueTitle} style={{display: "flex", alignItems: "center"}}>
                   Total Claimable Rewards
                   {/* <Tooltip title={<h4>Total Claimable Rewards</h4>}>
@@ -504,43 +507,43 @@ export default function MyPageRouteContainer(): React.ReactElement {
                   </Tooltip> */}
                 </div>
               </div>
-              <div className={styles.price} style={{marginTop: "32px",}}>
+              <div className={styles.price} style={{marginTop: "1.33rem",}}>
                 {myPageData?.totalClaimableRewards.mir} MIR
               </div>
               <div className={styles.priceLabel}>
                 {myPageData?.totalClaimableRewards.ust} UST
               </div>
-              <div className={styles.price} style={{marginTop: "32px",}}>
+              <div className={styles.price} style={{marginTop: "1.33rem",}}>
                 <div className={styles.priceLabel}>Mri Price</div>
                 {myPageData?.totalClaimableRewards.mriPrice}
               </div>
               <Button
                 style={{ 
-                  width: "220px", 
-                  height: "34px",
+                  width: "14rem", 
+                  height: "1.42rem",
                   alignSelf: "flex-end", 
                   background: "linear-gradient(94.8deg, #072CB2 2.99%, #4B3CA8 57.25%, #440495 98.64%, #0C3666 138.99%)",
-                  borderRadius: "50px",
+                  borderRadius: "2.08rem",
                   fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  fontSize: "12px",
-                  lineHeight: "18px",
+                  fontSize: "0.5rem",
+                  lineHeight: "0.75rem",
                   color: "#FFFFFF",
                 }}
                 size="large"
                 variant="contained"
                 disabled
-                endIcon={<SendIcon />}
+                endIcon={<img src={Star} alt={Star} style={{height:"0.83rem", width:"0.83rem"}} />}
               >
                 Claim All Rewards
               </Button>
             </div>
           </div>
-          <div style={{margin: "0 4px 54px 4px"}}>
-            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="20px 20px 0px 0px" />
-            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={BorrowingHeader} Radius="0px 0px 0px 0px"/>
-            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader}  Radius="0px 0px 20px 20px"/>
+          <div style={{margin: "0 0.17rem 2.25rem 0.17rem"}}>
+            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
+            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={BorrowingHeader} Radius="0 0 0 0"/>
+            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader}  Radius="0 0 0.83rem 0.83rem"/>
           </div>
         </>
       }

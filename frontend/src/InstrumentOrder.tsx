@@ -29,10 +29,10 @@ const Tab = styled(TabUnstyled)`
   font-weight: bold;
   background-color: transparent;
   width: 100%;
-  padding: 12px 16px;
-  margin: 6px 6px;
+  padding: 0.5rem 0.67rem;
+  margin: 0.25rem 0.25rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.25rem;
   display: flex;
   justify-content: center;
   &.${tabUnstyledClasses.selected} {
@@ -117,9 +117,9 @@ export default function InstrumentOrder(): React.ReactElement {
         style={{
           position: "relative",
           height: "max-content",
-          paddingTop: "12px",
+          paddingTop: "0.5rem",
           overflow: "auto",
-          maxWidth: "1144px",
+          maxWidth: "47.67rem",
           left: "50%",
           transform: "translateX(-50%)",
         }}

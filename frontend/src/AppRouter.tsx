@@ -14,23 +14,23 @@ const useStyles = makeStyles({
     overflowY: "auto",
   },
   routeContainer: {
-    width: "1024px",
+    width: "45rem",
     overflowY: "hidden",
   },
   title: {
-    height: "60px",
+    height: "2.5rem",
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 600,
-    fontSize: "40px",
-    lineHeight: "60px",
+    fontSize: "1.67rem",
+    lineHeight: "2.5rem",
     color: "#FFFFFF",
   },
 });
 // title: {
 //   color: theme.activeTextColor,
 //   fontSize: "36pt",
-//   marginBottom: "32px",
+//   marginBottom: "1.33rem",
 // },
 
 // This renders the container based on the current route.

@@ -19,14 +19,14 @@ export default function InstrumentCard({
     <div
       style={{
         color: theme.activeTextColor,
-        borderRadius: "6px",
+        borderRadius: "0.25rem",
         display: "flex",
         fontSize: "14pt",
-        padding: "16px",
-        width: "336px",
-        height: "224px",
+        padding: "0.67rem",
+        width: "14rem",
+        height: "21rem",
         flexDirection: "column",
-        marginLeft: "24px",
+        marginLeft: "1rem",
         backgroundColor: theme.instrumentCardBackgroundColor,
       }}
     >
@@ -35,22 +35,21 @@ export default function InstrumentCard({
           <img
             src={NFTIcons.get(instrument.ticker)}
             alt={instrument.ticker}
-            width="48px"
-            height="48px"
+            style={{height:"2rem", width:"2rem"}}
           />
           <div
             style={{
-              marginRight: "16px",
+              marginRight: "0.67rem",
             }}
           />
-          <b style={{ marginTop: "8px" }}>{instrument.ticker}</b>
+          <b style={{ marginTop: "0.75rem" }}>{instrument.ticker}</b>
         </div>
         <div
           style={{
             color: theme.inactiveTextColor,
             display: "flex",
             flexDirection: "column",
-            marginTop: "32px",
+            marginTop: "1.33rem",
             fontSize: "12pt",
           }}
         >

@@ -66,7 +66,7 @@ function AddressHeaderRenderer({
         <b>{config.label}</b>
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <Tooltip title={<h4>Paste synth token address to any existing DEX</h4>}>

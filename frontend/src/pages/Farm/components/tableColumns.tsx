@@ -85,7 +85,7 @@ function TooltipHeaderRenderer({
         <b>{config.label}</b>
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <Tooltip title={<h4>{config.tooltip}</h4>}>
@@ -136,12 +136,11 @@ export function TickerCellRenderer({
         <img
           src={NFTIcons.get(row.ticker)}
           alt={row.ticker}
-          width="32px"
-          height="32px"
+          style={{height:"1.33rem", width:"1.33rem"}}
         />
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <div style={{ display: "flex", flexDirection: "column" }}>

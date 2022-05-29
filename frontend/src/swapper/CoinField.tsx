@@ -9,7 +9,7 @@ import React from "react";
 const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(1),
-    minHeight: "80px",
+    minHeight: "3.33rem",
     backgroundColor: COLORS.grey[50],
     borderRadius: theme.spacing(2),
     borderColor: COLORS.grey[300],
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
   container_input: {
     padding: theme.spacing(1),
-    minHeight: "68px",
+    minHeight: "2.83rem",
     backgroundColor: COLORS.grey[50],
     borderRadius: theme.spacing(2),
     borderColor: COLORS.grey[300],
@@ -29,11 +29,11 @@ const useStyles = makeStyles((theme) => ({
   },
   container_blank: {
     padding: theme.spacing(1),
-    minHeight: "80px",
+    minHeight: "3.33rem",
     borderRadius: theme.spacing(2),
   },
   grid: {
-    height: "60px",
+    height: "2.5rem",
   },
   fab: {
     zIndex: "0",

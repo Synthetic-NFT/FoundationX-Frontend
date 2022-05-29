@@ -18,15 +18,15 @@ const useStyles = makeStyles({
   root: {
     background: "inherit",
     boxShadow: "none",
-    paddingTop: "64px",
+    paddingTop: "0.11rem",
   },
   spacer: {
     flexGrow: 1,
   },
   buttonText: {
     fontWeight: 400,
-    fontSize: "20px",
-    lineHeight: "30px",
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
     color: "#FFFFFF",
   }
 });
@@ -112,11 +112,11 @@ export default function TopBar(): React.ReactElement {
             style={{
               color: "white",
               backgroundColor: theme.wallet,
-              height: '50px',
+              height: '2.08rem',
               background: 'linear-gradient(102.22deg, #1368E8 41.1%, #221FBE 78.05%)',
-              borderRadius: '3px',              
-              padding: "10px 25px",
-              marginRight: "64px",
+              borderRadius: '0.125rem',              
+              padding: "0.41rem 1rem",
+              marginRight: "2.67rem",
             }}
             id="walletButton"
             onClick={connectWalletPressed}

@@ -40,8 +40,8 @@ export default function SwapInstrumentTable({
         <Table
           style={{
             backgroundColor: theme.tableBackgroundColor,
-            borderTopLeftRadius: "16px",
-            borderTopRightRadius: "16px",
+            borderTopLeftRadius: "0.67rem",
+            borderTopRightRadius: "0.67rem",
             overflow: "hidden",
             background: "inherit",
             borderStyle:"none",

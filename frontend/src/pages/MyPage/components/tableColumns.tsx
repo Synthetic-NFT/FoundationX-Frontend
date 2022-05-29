@@ -41,14 +41,14 @@ export function DefaultHeaderRenderer({
       style={{
         minWidth: config.minWidth,
         backgroundColor: "inherit",
-        height: "76px",
+        height: "3.17rem",
         fontFamily: "Poppins",
         fontStyle: "normal",
         fontWeight: 400,
-        fontSize: "18px",
-        lineHeight: "27px",
+        fontSize: "0.75rem",
+        lineHeight: "1rem",
         color: "#FFFFFF",
-        paddingLeft: "64px"
+        paddingLeft: "2.67rem"
       }}
     >
       <div
@@ -74,14 +74,14 @@ function TooltipHeaderRenderer({
       style={{
         minWidth: config.minWidth,
         backgroundColor: "inherit",
-        height: "76px",
+        height: "3.17rem",
         fontFamily: "Poppins",
         fontStyle: "normal",
         fontWeight: 400,
-        fontSize: "18px",
-        lineHeight: "27px",
+        fontSize: "0.75rem",
+        lineHeight: "1rem",
         color: "#FFFFFF",
-        paddingLeft: "64px"
+        paddingLeft: "2.67rem"
       }}
     >
       <div
@@ -95,7 +95,7 @@ function TooltipHeaderRenderer({
         <b>{config.label}</b>
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <Tooltip title={<h4>{config.tooltip}</h4>}>
@@ -114,8 +114,8 @@ function TooltipHeaderRenderer({
 export const TABLE_CELL_STYLE = {
   color: theme.tableRowPrimaryTextColor,
   borderColor: theme.tableBorderColor,
-  height: "140px",
-  paddingLeft: "64px",
+  height: "3.67rem",
+  paddingLeft: "2.67rem",
 };
 
 export const TABLE_CELL_STYLE_HOVER = {
@@ -147,12 +147,12 @@ export function TickerCellRenderer({
         {/* <img
           src={NFTIcons.get(row.ticker)}
           alt={row.ticker}
-          width="32px"
-          height="32px"
+          width="1.33rem"
+          height="1.33rem"
         /> */}
         {/* <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         /> */}
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -220,12 +220,12 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <Button
-        size="large"
+        size="small"
         variant="contained"
         onClick={() => handleClick()}
         style={{
           background: "#4340CB",
-          borderRadius: "50px",
+          borderRadius: "2.08rem",
         }}
       >
         Trade

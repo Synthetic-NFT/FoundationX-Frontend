@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     display: "flex",
     height: "100vh",
     width: "100vw",
-    background: "radial-gradient(50% 50% at 10% 90%, #1368E8 0%, rgba(0, 0, 0, 0) 100%)",
+    background: "radial-gradient(20% 40% at 10% 90%, #1368E8 0%, rgba(0, 0, 0, 0) 100%)",
   },
   right: {
     display: "flex",
@@ -24,30 +24,14 @@ const useStyles = makeStyles({
     overflow: "hidden",
   },
   router: {
-    display: "flex",
+    // display: "flex",
     background: "inherit",
     justifyContent: "center",
-    flexGrow: 1,
+    // flexGrow: 1,
     width: "100%",
-    padding: "100px 60px 0px 60px",
+    padding: "1rem 2.5rem 0 2.5rem",
     overflow: "auto",
   },
-  rightCircle: {
-    position: "absolute",
-    width: "1259px",
-    height: "1259px",
-    left: "1002px",
-    top: "-558px",
-    background: "radial-gradient(50% 50% at 50% 50%, rgba(19, 104, 232, 0.43) 0%, rgba(0, 0, 0, 0) 100%)",
-  },
-  leftCircle: {
-    position: "absolute",
-    width: "1159px",
-    height: "1159px",
-    left: "-627px",
-    top: "253px",
-    background: "radial-gradient(50% 50% at 50% 50%, #1368E8 0%, rgba(0, 0, 0, 0) 100%)",
-  }
 });
 
 // The top level component of the app
@@ -66,8 +50,6 @@ function App() {
                 <AppRouter />
               </div>
             </div>
-            {/* <div className={styles.rightCircle}> </div>
-            <div className={styles.leftCircle}> </div> */}
           </div>
         </HashRouter>
       </TradeContextProvider>
