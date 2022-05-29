@@ -93,7 +93,9 @@ function Nav({
             marginRight: "26px",
           }}
         />
-        <div>{label}</div>
+        <div style={{
+            width: "200px",
+          }}>{label}</div>
       </div>
     </ListItem>
   );

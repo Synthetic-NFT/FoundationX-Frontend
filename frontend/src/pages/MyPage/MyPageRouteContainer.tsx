@@ -13,7 +13,7 @@ import api, {MyPageData} from "../../api";
 import CreditCard from "../../styles/images/CreditCard.png";
 import theme from "../../theme";
 import MyPageTable from "./components/MyPageTable";
-import {holdingTableColumns, borrowingTableColumns} from "./components/tableColumns";
+import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./components/tableColumns";
 
 const useStyles = makeStyles({
   loginGroup: {
@@ -52,6 +52,8 @@ const useStyles = makeStyles({
   },
   cardGroup: {
     display: "flex",
+    marginTop: "96px",
+    marginBottom: "64px",
   },
   card: {
     color: theme.activeTextColor,
@@ -59,48 +61,61 @@ const useStyles = makeStyles({
     display: "flex",
     fontSize: "14pt",
     padding: "16px",
-    width: "488px",
-    height: "280px",
+    width: "522px",
+    height: "294px",
     flexDirection: "column",
     marginRight: "24px",
     backgroundColor: theme.instrumentCardBackgroundColor,
   },
   cardLeft: {
     color: theme.activeTextColor,
-    borderRadius: "6px",
     display: "flex",
     fontSize: "14pt",
-    padding: "16px",
-    width: "496px",
-    height: "280px",
+    padding: "26px 40px",
+    width: "522px",
+    height: "294px",
     flexDirection: "column",
-    marginRight: "12px",
+    marginRight: "14px",
     marginLeft: "4px",
-    backgroundColor: theme.instrumentCardBackgroundColor,
+    // background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
+    border: "solid 1px transparent",
+    // borderImage: "linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0)) 1",
+    borderRadius: "20px",
+    clipPath: "inset(0 round 20px)",
+    backgroundClip: "padding-box, border-box",
+    backgroundOrigin: "padding-box, border-box",
+    backgroundImage: "linear-gradient(160.35deg, #25283C 93.23%, rgba(31, 30, 35, 0.6) 13.15%), linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0))",
   },
   cardRight: {
     color: theme.activeTextColor,
-    borderRadius: "6px",
     display: "flex",
     fontSize: "14pt",
-    padding: "16px",
-    width: "496px",
-    height: "280px",
+    padding: "26px 40px",
+    width: "522px",
+    height: "294px",
     flexDirection: "column",
-    marginLeft: "12px",
+    marginLeft: "14px",
     marginRight: "4px",
-    backgroundColor: theme.instrumentCardBackgroundColor,
+    background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
+    borderRadius: "20px",
   },
   titleGroup: {
     display: "flex",
     justifyContent: "space-between !important",
   },
   cardButton: {
-    width: "100px", 
+    width: "106px", 
     display: "flex",
     justifyContent: "space-between !important",
-    borderRadius: "8px",
-    height: "32px",
+    height: "34px",
+    background: "linear-gradient(94.8deg, #072CB2 2.99%, #4B3CA8 57.25%, #440495 98.64%, #0C3666 138.99%)",
+    borderRadius: "50px !important",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "12px",
+    lineHeight: "18px",
+    color: "#FFFFFF",
   },
   chartContainer: {
     display: "flex",
@@ -108,28 +123,35 @@ const useStyles = makeStyles({
     height: "200px",
     fontSize: "12px",
     width: "100%",
+    marginTop: "28px",
   },
   chart: {
     border: "0px solid red",
   },
   chartLegend: {
     border: "0px solid red",
-    minWidth: "150px",
-    width: "150px",
-    marginTop: "12px",
+    minWidth: "200px",
+    width: "300px",
+    display: "flex",
+    flexWrap: "wrap",
   },
   ust: {
     display: "inline-block",
     paddingLeft: "14px",
     position: "relative",
+    marginRight: "36px",
+    marginLeft: "12px",
+    marginBottom: "26px",
+    width: "100px",
     "&::after": {
         content: "''",
-        height: "10px",
-        width: "10px",
-        backgroundColor: "#00FFFF",
+        width: "12px",
+        height: "39px",
+        borderRadius: "6px",
+        backgroundColor: "#2B87E3",
         position: "absolute",
-        top: "14px",
-        left: "0px",
+        top: "6px",
+        left: "-12px",
         right: "0px",
     }
   },
@@ -137,14 +159,17 @@ const useStyles = makeStyles({
     display: "inline-block",
     paddingLeft: "14px",
     position: "relative",
+    width: "100px",
+    marginBottom: "26px",
     "&::after": {
         content: "''",
-        height: "10px",
-        width: "10px",
-        backgroundColor: "#0099FF",
+        width: "12px",
+        height: "39px",
+        borderRadius: "6px",
+        backgroundColor: "#43CCC4",
         position: "absolute",
-        top: "14px",
-        left: "0px",
+        top: "6px",
+        left: "-12px",
         right: "0px",
     }
   },
@@ -152,24 +177,36 @@ const useStyles = makeStyles({
     display: "inline-block",
     paddingLeft: "14px",
     position: "relative",
+    marginLeft: "12px",
+    width: "100px",
+    marginBottom: "26px",
     "&::after": {
         content: "''",
-        height: "10px",
-        width: "10px",
-        backgroundColor: "#0000FF",
+        width: "12px",
+        height: "39px",
+        borderRadius: "6px",
+        backgroundColor: "#072CB2",
         position: "absolute",
-        top: "14px",
-        left: "0px",
+        top: "6px",
+        left: "-12px",
         right: "0px",
     }
   },
   priceLabel: {
-    fontSize: "14px",
-    color: "#858585"
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "16px",
+    lineHeight: "24px",
+    color: "#FFFFFF",
   },
   price: {
-    fontSize: "14px",
-    color: "#ffffff",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "16px",
+    lineHeight: "24px",
+    color: "#FFFFFF",
   },
   header: {
     display: "flex",
@@ -181,9 +218,25 @@ const useStyles = makeStyles({
     padding: "0 16px",    
     height: "64px",
     alignItems: "center",
+  },
+  totalValueTitle: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 500,
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
+  },
+  totalValue: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "24px",
+    lineHeight: "36px",
+    color: "#FFFFFF",
   }
 });
-const colors = ["#00FFFF", "#0099FF", "#0000FF"];
+const colors = ["#2B87E3", "#43CCC4", "#072CB2"];
 
 export default function MyPageRouteContainer(): React.ReactElement {
   const history = useHistory();
@@ -212,10 +265,6 @@ export default function MyPageRouteContainer(): React.ReactElement {
       tooltip: {
         trigger: 'item'
       },
-      grid: {
-        top: "100px",
-        left: "200px",
-      },
       color: colors,
       legend: {
         show: false,
@@ -224,19 +273,13 @@ export default function MyPageRouteContainer(): React.ReactElement {
         {
           name: 'My Page',
           type: 'pie',
-          radius: ['50%', '70%'],
+          radius: ['70%', '98%'],
           avoidLabelOverlap: false,
           label: {
             show: false,
             position: 'center'
           },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: '16',
-              fontWeight: 'bold'
-            }
-          },
+          emphasis: false,
           labelLine: {
             show: false
           },
@@ -363,84 +406,86 @@ export default function MyPageRouteContainer(): React.ReactElement {
             <div className={styles.cardLeft} >
               <div className={styles.titleGroup}>
                 <div>
-                  <div>
+                  <div className={styles.totalValueTitle}>
                     Total Value 
-                    <Tooltip title={<h4>total value tooltip</h4>}>
+                    {/* <Tooltip title={<h4>total value tooltip</h4>}>
                       <IconButton>
                         <HelpOutlineOutlinedIcon
                           sx={{ color: theme.tableHeaderTextColor }}
                         />
                       </IconButton>
-                    </Tooltip>
-                  </div>
-                  <div>
-                    {myPageData?.total} ust
+                    </Tooltip> */}
                   </div>
                 </div>
-                <Button
-                  className={styles.cardButton}
-                  size="large"
-                  variant="text"
-                  startIcon={<SendIcon />}
-                  onClick={() => setLoginSuccess(true)}
-                >
-                  Send
-                </Button>
+                <div className={styles.totalValue}>
+                  {myPageData?.total} ust
+                </div>
               </div>
               <div className={styles.chartContainer}>
-                <div className={styles.chartLegend}>
-                  <div className={styles.ust}>
-                    <div className={styles.priceLabel}>
-                      UST 
-                      <Tooltip title={<h4>UST tooltip</h4>}>
-                        <IconButton>
-                          <HelpOutlineOutlinedIcon
-                            sx={{ color: theme.tableHeaderTextColor }}
-                          />
-                        </IconButton>
-                      </Tooltip>
+                <div>
+                  <div className={styles.chartLegend}>
+                    <div className={styles.ust}>
+                      <div className={styles.priceLabel}>
+                        UST 
+                        {/* <Tooltip title={<h4>UST tooltip</h4>}>
+                          <IconButton>
+                            <HelpOutlineOutlinedIcon
+                              sx={{ color: theme.tableHeaderTextColor }}
+                            />
+                          </IconButton>
+                        </Tooltip> */}
+                      </div>
+                      <div className={styles.price}>
+                        {myPageData?.ust} UST
+                      </div>
                     </div>
-                    <div className={styles.price}>
-                      {myPageData?.ust} UST
+                    <div className={styles.holding}>
+                      <div className={styles.priceLabel}>
+                        HOLDING 
+                        {/* <Tooltip title={<h4>holding tooltip</h4>}>
+                          <IconButton>
+                            <HelpOutlineOutlinedIcon
+                              sx={{ color: theme.tableHeaderTextColor }}
+                            />
+                          </IconButton>
+                        </Tooltip> */}
+                      </div>
+                      <div className={styles.price}>
+                        {myPageData?.holding} UST
+                      </div>
+                    </div>
+                    <div className={styles.borrowing}>
+                      <div className={styles.priceLabel}>
+                        BORROWING 
+                        {/* <Tooltip title={<h4>borrowing tooltip</h4>}>
+                          <IconButton>
+                            <HelpOutlineOutlinedIcon
+                              sx={{ color: theme.tableHeaderTextColor }}
+                            />
+                          </IconButton>
+                        </Tooltip> */}
+                      </div>
+                      <div className={styles.price}>
+                        {myPageData?.borrowing} UST
+                      </div>
                     </div>
                   </div>
-                  <div className={styles.holding}>
-                    <div className={styles.priceLabel}>
-                      HOLDING 
-                      <Tooltip title={<h4>holding tooltip</h4>}>
-                        <IconButton>
-                          <HelpOutlineOutlinedIcon
-                            sx={{ color: theme.tableHeaderTextColor }}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                    <div className={styles.price}>
-                      {myPageData?.holding} UST
-                    </div>
-                  </div>
-                  <div className={styles.borrowing}>
-                    <div className={styles.priceLabel}>
-                      BORROWING 
-                      <Tooltip title={<h4>borrowing tooltip</h4>}>
-                        <IconButton>
-                          <HelpOutlineOutlinedIcon
-                            sx={{ color: theme.tableHeaderTextColor }}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                    <div className={styles.price}>
-                      {myPageData?.borrowing} UST
-                    </div>
-                  </div>
+                  <Button
+                    className={styles.cardButton}
+                    size="large"
+                    variant="text"
+                    endIcon={<SendIcon />}
+                    onClick={() => setLoginSuccess(true)}
+                  >
+                    Send
+                  </Button>
                 </div>
                 <ReactEcharts
                   className={styles.chart}
                   style={{
                     height: "200px",
                     width: "200px",
-                    marginRight: "-30px",
+                    marginTop: "-26px",
                   }}
                   option={getOption()}
                 />
@@ -448,15 +493,15 @@ export default function MyPageRouteContainer(): React.ReactElement {
             </div>
             <div className={styles.cardRight} >
               <div className={styles.titleGroup} style={{width: "280px"}}>
-                <div style={{display: "flex", alignItems: "center"}}>
+                <div className={styles.totalValueTitle} style={{display: "flex", alignItems: "center"}}>
                   Total Claimable Rewards
-                  <Tooltip title={<h4>Total Claimable Rewards</h4>}>
+                  {/* <Tooltip title={<h4>Total Claimable Rewards</h4>}>
                     <IconButton>
                       <HelpOutlineOutlinedIcon
                         sx={{ color: theme.tableHeaderTextColor }}
                       />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
                 </div>
               </div>
               <div className={styles.price} style={{marginTop: "32px",}}>
@@ -470,20 +515,32 @@ export default function MyPageRouteContainer(): React.ReactElement {
                 {myPageData?.totalClaimableRewards.mriPrice}
               </div>
               <Button
-                style={{ marginTop: "32px", width: "300px", alignSelf: "center", backgroundColor: "#0099FF"}}
+                style={{ 
+                  width: "220px", 
+                  height: "34px",
+                  alignSelf: "flex-end", 
+                  background: "linear-gradient(94.8deg, #072CB2 2.99%, #4B3CA8 57.25%, #440495 98.64%, #0C3666 138.99%)",
+                  borderRadius: "50px",
+                  fontFamily: "Poppins",
+                  fontStyle: "normal",
+                  fontWeight: 400,
+                  fontSize: "12px",
+                  lineHeight: "18px",
+                  color: "#FFFFFF",
+                }}
                 size="large"
                 variant="contained"
                 disabled
-                startIcon={<SendIcon />}
+                endIcon={<SendIcon />}
               >
-              Claim All Rewards
-            </Button>
+                Claim All Rewards
+              </Button>
             </div>
           </div>
-          <div style={{margin: "0 4px"}}>
-            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader}/>
-            <MyPageTable tableColumns={borrowingTableColumns} data={myPageData?.data.borrowing} Header={BorrowingHeader}/>
-            <MyPageTable tableColumns={null} data={null} Header={GovernHeader}/>
+          <div style={{margin: "0 4px 54px 4px"}}>
+            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="20px 20px 0px 0px" />
+            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={BorrowingHeader} Radius="0px 0px 0px 0px"/>
+            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader}  Radius="0px 0px 20px 20px"/>
           </div>
         </>
       }

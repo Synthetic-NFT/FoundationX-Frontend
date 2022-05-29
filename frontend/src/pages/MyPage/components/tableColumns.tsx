@@ -13,7 +13,7 @@ type ColumnConfigWithoutRenderers = {
   id: string;
   label: string;
   minWidth: number;
-  align?: "right"|"left";
+  align?: "left"|"left";
   tooltip?: string;
 };
 
@@ -40,9 +40,15 @@ export function DefaultHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
-        color: theme.tableHeaderTextColor,
-        borderColor: theme.tableBorderColor,
+        backgroundColor: "inherit",
+        height: "76px",
+        fontFamily: "Poppins",
+        fontStyle: "normal",
+        fontWeight: 400,
+        fontSize: "18px",
+        lineHeight: "27px",
+        color: "#FFFFFF",
+        paddingLeft: "64px"
       }}
     >
       <div
@@ -50,7 +56,7 @@ export function DefaultHeaderRenderer({
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: config.align === "right" ? "end" : "start",
+          justifyContent: config.align === "left" ? "start" : "end",
         }}
       >
         <b>{config.label}</b>
@@ -67,9 +73,15 @@ function TooltipHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
-        color: theme.tableHeaderTextColor,
-        borderColor: theme.tableBorderColor,
+        backgroundColor: "inherit",
+        height: "76px",
+        fontFamily: "Poppins",
+        fontStyle: "normal",
+        fontWeight: 400,
+        fontSize: "18px",
+        lineHeight: "27px",
+        color: "#FFFFFF",
+        paddingLeft: "64px"
       }}
     >
       <div
@@ -77,7 +89,7 @@ function TooltipHeaderRenderer({
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: config.align === "right" ? "end" : "start",
+          justifyContent: config.align === "left" ? "start" : "end",
         }}
       >
         <b>{config.label}</b>
@@ -102,6 +114,8 @@ function TooltipHeaderRenderer({
 export const TABLE_CELL_STYLE = {
   color: theme.tableRowPrimaryTextColor,
   borderColor: theme.tableBorderColor,
+  height: "140px",
+  paddingLeft: "64px",
 };
 
 export const TABLE_CELL_STYLE_HOVER = {
@@ -130,26 +144,26 @@ export function TickerCellRenderer({
       <div style={{ display: "flex", alignItems: "center" }}>
         {/* This is just a placeholder. We need to replace this with img tag when we have
         the images for the tickers. */}
-        <img
+        {/* <img
           src={NFTIcons.get(row.ticker)}
           alt={row.ticker}
           width="32px"
           height="32px"
-        />
-        <div
+        /> */}
+        {/* <div
           style={{
             marginRight: "16px",
           }}
-        />
+        /> */}
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex" }}>
             <b>{row.ticker}</b>
           </div>
-          <div
+          {/* <div
             style={{ color: theme.tableRowSecondaryTextColor, display: "flex" }}
           >
             {row.ticker}
-          </div>
+          </div> */}
         </div>
       </div>
     </TableCell>
@@ -158,7 +172,7 @@ export function TickerCellRenderer({
 
 function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {  
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE} >
+    <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.poolPrice} UST</b>
     </TableCell>
   );
@@ -166,7 +180,7 @@ function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {
 
 function OraclePriceCellRenderer({ row }: CellRendererProps): TableCellElement {  
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE} >
+    <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.oraclePrice} UST</b>
     </TableCell>
   );
@@ -174,7 +188,7 @@ function OraclePriceCellRenderer({ row }: CellRendererProps): TableCellElement {
 
 function BalanceCellRenderer({ row }: CellRendererProps): TableCellElement {  
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE} >
+    <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.balance}</b>
     </TableCell>
   );
@@ -182,7 +196,7 @@ function BalanceCellRenderer({ row }: CellRendererProps): TableCellElement {
 
 function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {  
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE} >
+    <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.value} UST</b>
     </TableCell>
   );
@@ -190,7 +204,7 @@ function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {
 
 function CollateralCellRenderer({ row }: CellRendererProps): TableCellElement {  
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE} >
+    <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.collateral} UST</b>
     </TableCell>
   );
@@ -204,11 +218,15 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
     history.push(`/trade/order/buy?ticker=${row.ticker}`);
   }
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE} >
+    <TableCell align="left" style={TABLE_CELL_STYLE} >
       <Button
         size="large"
         variant="contained"
         onClick={() => handleClick()}
+        style={{
+          background: "#4340CB",
+          borderRadius: "50px",
+        }}
       >
         Trade
       </Button>
@@ -224,7 +242,7 @@ function BorrowingActionCellRenderer({ row }: CellRendererProps): TableCellEleme
     history.push(`/trade/order/buy?ticker=${row.ticker}`);
   }
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE}>
+    <TableCell align="left" style={TABLE_CELL_STYLE}>
       <Button
         size="large"
         variant="contained"
@@ -238,7 +256,7 @@ function BorrowingActionCellRenderer({ row }: CellRendererProps): TableCellEleme
 
 function BorrowedCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE}>
+    <TableCell align="left" style={TABLE_CELL_STYLE}>
       <div>{row.borrowed.meth} mETH</div>
       <div>{row.borrowed.ust} UST</div>
     </TableCell>
@@ -247,7 +265,7 @@ function BorrowedCellRenderer({ row }: CellRendererProps): TableCellElement {
 
 function CollateralRatioCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
-    <TableCell align="right" style={TABLE_CELL_STYLE}>
+    <TableCell align="left" style={TABLE_CELL_STYLE}>
       <span>{row.collateralRatio} %</span>
       <span>Min: 150% </span>
     </TableCell>
@@ -259,6 +277,7 @@ export const holdingTableColumns: ColumnConfig[] = [
     id: "ticker",
     label: "Ticker",
     minWidth: 100,
+    align: "left",
     cellRenderer: TickerCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
@@ -266,7 +285,7 @@ export const holdingTableColumns: ColumnConfig[] = [
     id: "poolPrice",
     label: "Pool Price",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: PoolPriceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
@@ -274,7 +293,7 @@ export const holdingTableColumns: ColumnConfig[] = [
     id: "balance",
     label: "Balance",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: BalanceCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Balance"
@@ -283,7 +302,7 @@ export const holdingTableColumns: ColumnConfig[] = [
     id: "value",
     label: "Value",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: ValueCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Value"
@@ -292,7 +311,7 @@ export const holdingTableColumns: ColumnConfig[] = [
     id: "action",
     label: "Action",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: HoldingActionCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
@@ -303,6 +322,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
     id: "ticker",
     label: "Ticker",
     minWidth: 100,
+    align: "left",
     cellRenderer: TickerCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
@@ -310,7 +330,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
     id: "oraclePrice",
     label: "Oracle Price",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: OraclePriceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
@@ -318,7 +338,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
     id: "borrowed",
     label: "Borrowed",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: BorrowedCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Borrowed."
@@ -327,7 +347,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
     id: "collateral",
     label: "Collateral",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: CollateralCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Collateral."
@@ -336,7 +356,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
     id: "collateralRatio",
     label: "Collateral Ratio",
     minWidth: 100,
-    align: "right",
+    align: "left",
     cellRenderer: CollateralRatioCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Collateral Ration"
@@ -345,7 +365,61 @@ export const borrowingTableColumns: ColumnConfig[] = [
     id: "action",
     label: "Action",
     minWidth: 100,
-    align: "right",
+    align: "left",
+    cellRenderer: BorrowingActionCellRenderer,
+    headerRenderer: DefaultHeaderRenderer,
+  },
+];
+
+export const governTableColumns: ColumnConfig[] = [
+  {
+    id: "ticker",
+    label: "Ticker",
+    minWidth: 100,
+    align: "left",
+    cellRenderer: TickerCellRenderer,
+    headerRenderer: DefaultHeaderRenderer,
+  },
+  {
+    id: "oraclePrice",
+    label: "Oracle Price",
+    minWidth: 100,
+    align: "left",
+    cellRenderer: OraclePriceCellRenderer,
+    headerRenderer: DefaultHeaderRenderer,
+  },
+  {
+    id: "borrowed",
+    label: "Borrowed",
+    minWidth: 100,
+    align: "left",
+    cellRenderer: BorrowedCellRenderer,
+    headerRenderer: TooltipHeaderRenderer,
+    tooltip: "Borrowed."
+  },
+  {
+    id: "collateral",
+    label: "Collateral",
+    minWidth: 100,
+    align: "left",
+    cellRenderer: CollateralCellRenderer,
+    headerRenderer: TooltipHeaderRenderer,
+    tooltip: "Collateral."
+  },
+  {
+    id: "collateralRatio",
+    label: "Collateral Ratio",
+    minWidth: 100,
+    align: "left",
+    cellRenderer: CollateralRatioCellRenderer,
+    headerRenderer: TooltipHeaderRenderer,
+    tooltip: "Collateral Ration"
+  },
+  {
+    id: "action",
+    label: "Action",
+    minWidth: 100,
+    align: "left",
     cellRenderer: BorrowingActionCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
