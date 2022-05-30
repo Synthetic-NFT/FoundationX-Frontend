@@ -233,7 +233,10 @@ function CoinSwapper(props: any) : React.ReactElement{
 
   // @ts-ignore
   return (
-    <div>
+    <div style={{ 
+      display: "flex",
+      justifyContent: "center",
+    }}>
       {/* Dialog Windows */}
       <CoinDialog
         open={dialog1Open}

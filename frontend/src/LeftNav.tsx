@@ -7,7 +7,7 @@ import { OverridableComponent } from "@mui/material/OverridableComponent";
 import React, { useCallback, useEffect } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
-import { routes, defaultRoute } from "./routeRegistry";
+import { routes, defaultRoute, defaultRoutes } from "./routeRegistry";
 import logo from "./styles/images/logo.svg";
 import theme from "./theme";
 
@@ -71,14 +71,62 @@ function Nav({
     history.push(path);
   }, [history, path]);
 
-  // https://docs.nftsyprotocol.io/protocol/overview
-
   return (
     <ListItem 
       button 
       onClick={onNav} 
       className={match != null ? styles.active : styles.inactive}
-      style={{marginTop: label === "Legal Docs" ? "4.17rem" : "0"}}
+      // style={{marginTop: label === "Legal Docs" ? "4.17rem" : "0"}}
+      >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
+      >
+        <img src={Icon} alt={Icon} style={{height:"0.83rem", width:"0.83rem"}} />
+        <div
+          style={{
+            marginRight: "1rem",
+          }}
+        />
+        <div style={{
+            width: "8.33rem",
+          }}>{label}</div>
+      </div>
+    </ListItem>
+  );
+}
+
+function DefaultNav({
+  path,
+  label,
+  icon: Icon,
+}: {
+  path: string;
+  label: string;
+  icon: string;
+}): React.ReactElement {
+  const styles = useStyles();
+
+  const history = useHistory();
+  const match = useRouteMatch(path);
+
+  const onNav = useCallback(() => {
+    if (path === defaultRoute) {
+      history.push(path);
+    } else {
+      window.open(path);
+    }
+  }, [history, path]);
+
+  return (
+    <ListItem 
+      button 
+      onClick={onNav} 
+      className={styles.inactive}
       >
       <div
         style={{
@@ -133,6 +181,11 @@ export default function LeftNav(): React.ReactElement {
         {routes.map(({ path, label, icon }) => (
           <Nav key={path} path={path} label={label} icon={icon} />
         ))}
+        <div style={{position: "fixed", bottom: "2rem"}}>
+          {defaultRoutes.map(({ path, label, icon }) => (
+            <DefaultNav key={path} path={path} label={label} icon={icon} />
+          ))}
+        </div>
       </List>
     </div>
   );

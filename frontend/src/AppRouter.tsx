@@ -44,7 +44,7 @@ function AppRouter() {
           <div className={styles.root}>
             <div className={styles.title}>{label}</div>
             <div className={styles.routeContainer}>
-              <RouteContainer />
+              {RouteContainer && <RouteContainer />}
             </div>
           </div>
         </Route>

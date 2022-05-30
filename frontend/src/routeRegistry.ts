@@ -23,7 +23,7 @@ type Route = {
   label: string;
   // icon: OverridableComponent<any>;
   icon: string;
-  RouteContainer: React.FunctionComponent;
+  RouteContainer?: React.FunctionComponent;
 };
 
 const tradeRoute = "/trade";
@@ -65,23 +65,24 @@ export const routes: Route[] = [
     label: "Farm",
     icon: Farm,
     RouteContainer: FarmRouteContainer,
-  },   
+  },
+];
+
+
+export const defaultRoutes: Route[] = [
   {
-    path: "/legalDocs",
+    path: "https://docs.nftsyprotocol.io/protocol/overview",
     label: "Legal Docs",
     icon: LegalDocs,
-    RouteContainer: FarmRouteContainer,
   },   
   {
-    path: "/contactSupport",
+    path: "https://docs.nftsyprotocol.io/protocol/overview",
     label: "Contact Support",
     icon: Contact,
-    RouteContainer: FarmRouteContainer,
   },   
   {
     icon: Logout,
-    path: "/logOut",
+    path: myPageRoute,
     label: "Log Out",
-    RouteContainer: FarmRouteContainer,
   },
 ];
