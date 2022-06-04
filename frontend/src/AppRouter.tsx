@@ -8,22 +8,30 @@ const useStyles = makeStyles({
   root: {
     display: "flex",
     overflowX: "hidden",
-    alignItems: "center",
+    alignItems: "flex-start",
     flexDirection: "column",
     height: "fit-content",
     overflowY: "auto",
-    marginBottom: "32px",
   },
   routeContainer: {
-    width: "1024px",
+    width: "45rem",
     overflowY: "hidden",
   },
   title: {
-    color: theme.activeTextColor,
-    fontSize: "36pt",
-    marginBottom: "32px",
+    height: "2.5rem",
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: "1.67rem",
+    lineHeight: "2.5rem",
+    color: "#FFFFFF",
   },
 });
+// title: {
+//   color: theme.activeTextColor,
+//   fontSize: "36pt",
+//   marginBottom: "1.33rem",
+// },
 
 // This renders the container based on the current route.
 // The routes are defined in routeRegistry.
@@ -36,7 +44,7 @@ function AppRouter() {
           <div className={styles.root}>
             <div className={styles.title}>{label}</div>
             <div className={styles.routeContainer}>
-              <RouteContainer />
+              {RouteContainer && <RouteContainer />}
             </div>
           </div>
         </Route>

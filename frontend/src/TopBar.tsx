@@ -11,12 +11,24 @@ import theme from "./theme";
 import { connectWallet, getCurrentWalletConnected } from "./util/interact";
 
 const useStyles = makeStyles({
+  appBar: {
+    background: "inherit",
+    boxShadow: "none",
+  }, 
   root: {
-    background: theme.topBar,
+    background: "inherit",
+    boxShadow: "none",
+    paddingTop: "0.11rem",
   },
   spacer: {
     flexGrow: 1,
   },
+  buttonText: {
+    fontWeight: 400,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
+    color: "#FFFFFF",
+  }
 });
 
 export default function TopBar(): React.ReactElement {
@@ -64,7 +76,7 @@ export default function TopBar(): React.ReactElement {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" className={styles.appBar}>
       <Toolbar className={styles.root}>
         <div className={styles.spacer} />
         {loading ? (
@@ -100,6 +112,11 @@ export default function TopBar(): React.ReactElement {
             style={{
               color: "white",
               backgroundColor: theme.wallet,
+              height: '2.08rem',
+              background: 'linear-gradient(102.22deg, #1368E8 41.1%, #221FBE 78.05%)',
+              borderRadius: '0.125rem',              
+              padding: "0.41rem 1rem",
+              marginRight: "2.67rem",
             }}
             id="walletButton"
             onClick={connectWalletPressed}
@@ -109,7 +126,9 @@ export default function TopBar(): React.ReactElement {
                 walletAddress,
               ).substring(38)}`
             ) : (
-              <span>Connect Wallet</span>
+              <span className={styles.buttonText}>
+                Connect Wallet
+              </span>
             )}
           </Button>
         )}

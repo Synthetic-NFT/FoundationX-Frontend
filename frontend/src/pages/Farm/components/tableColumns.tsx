@@ -40,9 +40,10 @@ export function DefaultHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
         color: theme.tableHeaderTextColor,
         borderColor: theme.tableBorderColor,
+        backgroundColor: "inherit",
+        border: "none",
       }}
     >
       <div
@@ -67,9 +68,10 @@ function TooltipHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
         color: theme.tableHeaderTextColor,
         borderColor: theme.tableBorderColor,
+        backgroundColor: "inherit",
+        border: "none",
       }}
     >
       <div
@@ -83,7 +85,7 @@ function TooltipHeaderRenderer({
         <b>{config.label}</b>
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <Tooltip title={<h4>{config.tooltip}</h4>}>
@@ -102,6 +104,7 @@ function TooltipHeaderRenderer({
 export const TABLE_CELL_STYLE = {
   color: theme.tableRowPrimaryTextColor,
   borderColor: theme.tableBorderColor,
+  border: "none",
 };
 
 export const TABLE_CELL_STYLE_HOVER = {
@@ -133,12 +136,11 @@ export function TickerCellRenderer({
         <img
           src={NFTIcons.get(row.ticker)}
           alt={row.ticker}
-          width="32px"
-          height="32px"
+          style={{height:"1.33rem", width:"1.33rem"}}
         />
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <div style={{ display: "flex", flexDirection: "column" }}>

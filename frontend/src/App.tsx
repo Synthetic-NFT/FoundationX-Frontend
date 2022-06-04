@@ -8,11 +8,13 @@ import theme from "./theme";
 import TopBar from "./TopBar";
 import { TradeContextProvider } from "./TradeContext";
 
+// background: "radial-gradient(50% 50% at 90% 10%, rgba(19, 104, 232, 0.43) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(50% 50% at 10% 90%, #1368E8 0%, rgba(0, 0, 0, 0) 100%)",
 const useStyles = makeStyles({
   root: {
     display: "flex",
     height: "100vh",
     width: "100vw",
+    background: "radial-gradient(20% 40% at 10% 90%, #1368E8 0%, rgba(0, 0, 0, 0) 100%)",
   },
   right: {
     display: "flex",
@@ -22,13 +24,13 @@ const useStyles = makeStyles({
     overflow: "hidden",
   },
   router: {
-    display: "flex",
-    background: theme.routeContainer,
+    // display: "flex",
+    background: "inherit",
     justifyContent: "center",
-    flexGrow: 1,
+    // flexGrow: 1,
     width: "100%",
-    padding: "24px 24px 0px 24px",
-    overflowY: "scroll",
+    padding: "1rem 2.5rem 0 2.5rem",
+    overflow: "auto",
   },
 });
 

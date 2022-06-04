@@ -140,8 +140,8 @@ function FieldLabel({ title }: { title: string }) {
   return (
     <div
       style={{
-        marginTop: "16px",
-        marginLeft: "24px",
+        marginTop: "0.67rem",
+        marginLeft: "1rem",
         display: "flex",
         flexGrow: 1,
         flexDirection: "column",
@@ -180,7 +180,7 @@ function CollateralField({
   return (
     <StyledTextField
       value={currCollateral}
-      style={{ margin: "24px" }}
+      style={{ margin: "1rem" }}
       label="Count"
       type="number"
       // We probably should do some validation on this
@@ -215,7 +215,7 @@ function DebtField({
   return (
     <StyledTextField
       value={debtValid ? currDebt : ""}
-      style={{ margin: "24px" }}
+      style={{ margin: "1rem" }}
       label="Count"
       type="number"
       // We probably should do some validation on this
@@ -239,7 +239,7 @@ function OrigCollateralField({
   return (
     <StyledTextField
       value={numCount}
-      style={{ margin: "24px" }}
+      style={{ margin: "1rem" }}
       label="Count"
       type="number"
       disabled
@@ -272,7 +272,7 @@ function RatioField({
       }}
     >
       <StyledSlider
-        style={{ width: "364px" }}
+        style={{ width: "15.17rem" }}
         value={state.ratioValid ? +state.ratio : 0}
         step={5}
         min={100}
@@ -305,7 +305,7 @@ function RatioField({
       <StyledTextField
         value={state.ratioValid ? state.ratio : ""}
         inputProps={{ min: 0, max: 12 }}
-        style={{ margin: "24px", width: "64px" }}
+        style={{ margin: "1rem", width: "2.67rem" }}
         label="Ratio"
         type="number"
         onChange={(e) =>
@@ -403,7 +403,7 @@ function UserInputField({
   return (
     <StyledTextField
       value={state[type]}
-      style={{ margin: "24px" }}
+      style={{ margin: "1rem" }}
       label="Count"
       type="number"
       // disabled={new BigNumber(state.debt).lte(0)}
@@ -491,7 +491,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
     >
       <div
         style={{
-          borderRadius: "6px",
+          borderRadius: "0.25rem",
           display: "flex",
           flexDirection: "column",
           backgroundColor: theme.tradeFormBackgroundColor,
@@ -511,7 +511,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
             type={ManageActionKind.COLLATERAL}
             price={synthPrice.div("1e18")}
           />
-          <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
+          <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
         </div>
 
         <FieldLabel title="Collateral Ratio (%)" />
@@ -545,8 +545,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
           <img
             src={NFTIcons.get(instrument.ticker)}
             alt={instrument.ticker}
-            height="40px"
-            width="40px"
+            style={{height:"1.67rem", width:"1.67rem"}}
           />
         </div>
 
@@ -554,7 +553,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
         <RatioField {...fakeLimits} instrument={instrument} />
       </div>
       <Button
-        style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
+        style={{ marginTop: "1.33rem", width: "12.5rem", alignSelf: "center" }}
         size="large"
         variant="contained"
         disabled={walletAddress === ""}

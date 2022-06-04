@@ -8,14 +8,22 @@ import React from "react";
 
 import FarmRouteContainer from "./pages/Farm/FarmRouteContainer";
 import MyPageRouteContainer from "./pages/MyPage/MyPageRouteContainer";
+import Farm from "./styles/images/farm.png";
+import Contact from "./styles/images/Huge Icon/Headphone.png";
+import LegalDocs from "./styles/images/Huge Icon/Info 01.png";
+import Logout from "./styles/images/logout-1 1.png";
+import MyPage from "./styles/images/mypage.png";
+import Swap from "./styles/images/swap.png";
+import Trade from "./styles/images/trade.png";
 import SwapRouteContainer from "./SwapRouteContainer";
 import TradeRouteContainer from "./TradeRouteContainer";
 
 type Route = {
   path: string;
   label: string;
-  icon: OverridableComponent<any>;
-  RouteContainer: React.FunctionComponent;
+  // icon: OverridableComponent<any>;
+  icon: string;
+  RouteContainer?: React.FunctionComponent;
 };
 
 const tradeRoute = "/trade";
@@ -37,25 +45,44 @@ export const routes: Route[] = [
   {
     path: myPageRoute,
     label: "My Page",
-    icon: ManageAccountsIcon,
+    icon: MyPage,
     RouteContainer: MyPageRouteContainer,
   },
   {
     path: tradeRoute,
     label: "Trade",
-    icon: MonetizationOnIcon,
+    icon: Trade,
     RouteContainer: TradeRouteContainer,
   },
   {
     path: "/swap",
     label: "Swap",
-    icon: CurrencyExchangeIcon,
+    icon: Swap,
     RouteContainer: SwapRouteContainer,
   },  
   {
     path: "/farm",
     label: "Farm",
-    icon: SwapHorizontalCircleIcon,
+    icon: Farm,
     RouteContainer: FarmRouteContainer,
+  },
+];
+
+
+export const defaultRoutes: Route[] = [
+  {
+    path: "https://docs.nftsyprotocol.io/protocol/overview",
+    label: "Legal Docs",
+    icon: LegalDocs,
+  },   
+  {
+    path: "https://docs.nftsyprotocol.io/protocol/overview",
+    label: "Contact Support",
+    icon: Contact,
+  },   
+  {
+    icon: Logout,
+    path: myPageRoute,
+    label: "Log Out",
   },
 ];

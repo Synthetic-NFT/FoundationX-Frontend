@@ -1,8 +1,12 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
+import { makeStyles } from "@material-ui/core";
 import { Button, Select, MenuItem  } from "@material-ui/core";
+import InputBase from '@material-ui/core/InputBase';
+import InputLabel from '@material-ui/core/InputLabel';
 import Slider from "@material-ui/core/Slider";
 import { withStyles } from "@material-ui/core/styles";
+import { StylesContext } from "@material-ui/styles";
 import { TextField } from "@mui/material";
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect, useState } from "react";
@@ -85,17 +89,17 @@ function FieldLabel({
   return (
     <div
       style={{
-        marginTop: "16px",
-        marginLeft: "24px",
+        // marginTop: "0.67rem",
+        // marginLeft: "1rem",
         display: "flex",
         flexGrow: 1,
         flexDirection: "column",
       }}
     >
-      <div style={{ fontSize: "16pt", color: theme.activeTextColor }}>
+      <div style={{ fontSize: "1.25rem", color: theme.activeTextColor }}>
         <b>{title}</b>
       </div>
-      <div style={{ fontSize: "8pt", color: theme.inactiveTextColor }}>
+      <div style={{ fontSize: "0.83rem", color: theme.inactiveTextColor, fontWeight: 300, marginTop: "0.42rem" }}>
         <b>{description}</b>
       </div>
     </div>
@@ -116,7 +120,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
     >
       <StyledTextField
         value={state.collateralValid ? state.collateral : ""}
-        style={{ margin: "24px" }}
+        style={{ margin: "1rem" }}
         label="Collateral"
         type="number"
         // We probably should do some validation on this
@@ -130,7 +134,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
           })
         }
       />
-      <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
+      <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
     </div>
   );
 }
@@ -159,23 +163,23 @@ function RatioField({
       }}
     >
       <StyledSlider
-        style={{ width: "364px" }}
+        style={{ width: "15.17rem" }}
         value={state.ratioValid ? +state.ratio : 0}
         step={5}
         min={100}
         max={250}
-        color={+state.ratio > minRatio ? "primary" : "secondary"}
-        valueLabelDisplay="on"
-        marks={[
-          {
-            value: minRatio,
-            label: `Min ${String(minRatio)} %`,
-          },
-          {
-            value: safeRatio,
-            label: `Safe ${String(safeRatio)} %`,
-          },
-        ]}
+        // color={+state.ratio > minRatio ? "primary" : "secondary"}
+        // valueLabelDisplay="on"
+        // marks={[
+        //   {
+        //     value: minRatio,
+        //     label: `Min ${String(minRatio)} %`,
+        //   },
+        //   {
+        //     value: safeRatio,
+        //     label: `Safe ${String(safeRatio)} %`,
+        //   },
+        // ]}
         onChange={(_, v) => {
           if (typeof v !== "number") {
             throw Error("expect number");
@@ -192,7 +196,7 @@ function RatioField({
       <StyledTextField
         value={state.ratioValid ? state.ratio : ""}
         inputProps={{ min: 0, max: 12 }}
-        style={{ margin: "24px", width: "64px" }}
+        style={{ margin: "1rem", width: "2.67rem" }}
         label="Ratio"
         type="number"
         onChange={(e) =>
@@ -223,7 +227,7 @@ function DebtField({ instrument }: { instrument: Instrument }) {
     >
       <StyledTextField
         value={state.debtValid ? state.debt : ""}
-        style={{ margin: "24px" }}
+        style={{ margin: "1rem" }}
         label="Count"
         type={instrument.ticker}
         // We probably should do some validation on this
@@ -232,9 +236,93 @@ function DebtField({ instrument }: { instrument: Instrument }) {
       <img
         src={NFTIcons.get(instrument.ticker)}
         alt={instrument.ticker}
-        height="40px"
-        width="40px"
+        style={{height:"1.67rem", width:"1.67rem"}}
       />
+    </div>
+  );
+}
+
+function Card({
+  instrument,
+}: {
+  instrument: Instrument;
+}) {
+  const data = [
+    ["Oracle Price", instrument.price],
+    ["Premium", instrument.fee],
+    ["Liquidity ", instrument.fee],
+  ];
+
+  // @ts-ignore
+  return (
+    <div
+      style={{
+        color: theme.activeTextColor,
+        borderRadius: "0.75rem",
+        display: "flex",
+        fontSize: "14pt",
+        padding: "1.33rem",
+        width: "17.29rem",
+        height: "8.7rem",
+        flexDirection: "column",
+        marginLeft: "1rem",
+        background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)"
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <img
+              src={NFTIcons.get(instrument.ticker)}
+              alt={instrument.ticker}
+              style={{height:"2rem", width:"2rem"}}
+            />
+            <div
+              style={{
+                marginRight: "0.67rem",
+              }}
+            />
+            <div style={{ lineHeight: "2rem", }}>{instrument.ticker}</div>
+          </div>
+          <div style={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "0.67rem",
+            lineHeight: "2rem",
+            color: "#565656",
+          }}>191.36 UST</div>
+        </div>
+        <div
+          style={{
+            color: theme.inactiveTextColor,
+            display: "flex",
+            flexDirection: "column",
+            marginTop: "1.33rem",
+            fontSize: "12pt",
+          }}
+        >
+          {data.map(([label, value]) => (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontFamily: "Poppins",
+                fontStyle: "normal",
+                fontWeight: 300,
+                fontSize: "0.58rem",
+                lineHeight: "0.875rem",
+                color: "#FFFFFF",
+                marginBottom: "0.25rem",
+              }}
+              key={label}
+            >
+              <div>{label}</div>
+              <div>{value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -272,7 +360,7 @@ function LongForm({ instrument, handleChange }: { instrument: Instrument, handle
     >
       <div
         style={{
-          borderRadius: "6px",
+          borderRadius: "0.25rem",
           display: "flex",
           flexDirection: "column",
           backgroundColor: theme.tradeFormBackgroundColor,
@@ -290,8 +378,8 @@ function LongForm({ instrument, handleChange }: { instrument: Instrument, handle
           label="Asset"
           onChange={(e) => handleChange(e.target.value)}
           style={{
-            marginTop: "16px",
-            marginLeft: "24px",
+            marginTop: "0.67rem",
+            marginLeft: "1rem",
             display: "flex",
             flexGrow: 1,
             flexDirection: "column",
@@ -303,7 +391,7 @@ function LongForm({ instrument, handleChange }: { instrument: Instrument, handle
         </Select>
       </div>
       <Button
-        style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
+        style={{ marginTop: "1.33rem", width: "12.5rem", alignSelf: "center" }}
         size="large"
         variant="contained"
         disabled={walletAddress === ""}
@@ -315,25 +403,205 @@ function LongForm({ instrument, handleChange }: { instrument: Instrument, handle
   );
 }
 
-// Rendered in the `/trade/order/buy` and contains business logic related to placing a
-// order for an instrument.
+const useStyles = makeStyles({
+  step: {
+    display: "flex",
+    marginTop: "0.17rem"
+  },
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "0.42rem 1rem",
+    gap: "0.42rem",
+    width: "23.33rem",
+    height: "2.5rem",
+    background: "linear-gradient(102.22deg, #1368E8 41.1%, #221FBE 78.05%)",
+    borderRadius: "0.125rem",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
+    color: "#FFFFFF",
+    marginTop: "2.33rem",
+    marginLeft: "2.75rem",
+    marginBottom: "3.17rem",
+  },
+  stepNumber: {
+    background: "#323232",
+    borderRadius: "0.125rem",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: "0.67rem",
+    lineHeight: "1.5rem",
+    textAlign: "center",
+    color: "#FFFFFF",
+    width: "1.5rem",
+    height: "1.5rem",
+  },
+  summary: {
+    marginTop: "3rem",
+    fontWeight: 300,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
+    color: "#FFFFFF",
+    marginLeft: "2.75rem",
+    marginBottom: "0.5rem",
+  }
+})
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    // backgroundColor: theme.palette.background.paper,
+    border: '0 solid #ced4da',
+    fontSize: 16,
+    padding: '0.42rem 1rem 0.42rem 0.5rem',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    height: "2.67rem",
+    lineHeight: "2.67rem",
+    backgroundColor: "#222121",
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      // borderRadius: 4,
+      // borderColor: '#80bdff',
+      // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}))(InputBase);
+
+
 export default function FarmLong({
   instrument,
 }: {
   instrument: Instrument;
 }) {
+  
+  const styles = useStyles();
+
   const [inst, setInst] = useState(instrument);
   const { tradeData } = useContext(TradeContext);
   function handleChange(id:string) {
     const inst:Instrument|undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
     setInst(inst)
   }
+  const fakeLimits = {
+    minRatio: 150,
+    safeRatio: 200,
+  };
+
   return (
     <div style={{ display: "flex", overflow: "hidden" }}>
-      <MintContextProvider>
+      {/* <MintContextProvider>
         <LongForm instrument={inst} handleChange={(id: string) => handleChange(id)}/>
       </MintContextProvider>
-      <InstrumentCard instrument={inst} />
+      <InstrumentCard instrument={inst} /> */}
+      <div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>1</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Choose a collateral asset"
+              description="Collateral asset may affect the minimum collateral ratio."
+            />
+            <div style={{display: "flex", marginTop: "1.5rem"}}>
+              <Select
+                labelId="demo-customized-select-label"
+                id="demo-customized-select"
+                input={<BootstrapInput />}
+                defaultValue="10"
+                style={{height: "2.67rem", marginTop: "0.42rem",}}
+              >
+                <MenuItem value={10}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Ten</MenuItem>
+                <MenuItem value={20}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Twenty</MenuItem>
+                <MenuItem value={30}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Thirty</MenuItem>
+              </Select>
+              <BootstrapInput id="demo-customized-textbox" />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>2</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Set a Collateral Ratio"
+              description="Position will be liquidated below the minimum"
+            />
+            <div style={{display: "flex"}}>
+              <RatioField {...fakeLimits} instrument={instrument} />
+              {/* <div
+                style={{
+                  marginTop: "1.33rem",
+                }}
+              />
+              <DebtField instrument={instrument} /> */}
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>3</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Confirm borrow amount"
+              description="Position can be closed by repaying the borrowed amount."
+            />
+            <div style={{display: "flex", marginTop: "1.5rem"}}>
+              <Select
+                labelId="demo-customized-select-label"
+                id="demo-customized-select"
+                input={<BootstrapInput />}
+                defaultValue="10"
+              >
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+              <BootstrapInput id="demo-customized-textbox" />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.summary}>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>Oracle Price</div>
+            <div>1 mApple = 140.94 UST</div>            
+          </div>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>TX Fees</div>
+            <div>0.20 UST</div>                 
+          </div>
+        </div>
+        <Button
+          className={styles.button}
+          size="large"
+          variant="contained"
+        >
+          Connect Wallet
+        </Button>
+      </div>
+      <Card instrument={inst} />
     </div>
   );
 }

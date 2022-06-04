@@ -35,7 +35,7 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     paddingBottom: theme.spacing(2),
   },
   coinList: {
-    height: "300px",
+    height: "12.5rem",
     overflow: "scroll",
   },
   coinContainer: {

@@ -84,8 +84,8 @@ function FieldLabel({
   return (
     <div
       style={{
-        marginTop: "16px",
-        marginLeft: "24px",
+        marginTop: "0.67rem",
+        marginLeft: "1rem",
         display: "flex",
         flexGrow: 1,
         flexDirection: "column",
@@ -115,7 +115,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
     >
       <StyledTextField
         value={state.collateralValid ? state.collateral : ""}
-        style={{ margin: "24px" }}
+        style={{ margin: "1rem" }}
         label="Collateral"
         type="number"
         // We probably should do some validation on this
@@ -129,7 +129,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
           })
         }
       />
-      <img src={Ethereum} alt="Ethereum" height="40px" width="40px" />
+      <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
     </div>
   );
 }
@@ -158,7 +158,7 @@ function RatioField({
       }}
     >
       <StyledSlider
-        style={{ width: "364px" }}
+        style={{ width: "15.17rem" }}
         value={state.ratioValid ? +state.ratio : 0}
         step={5}
         min={100}
@@ -191,7 +191,7 @@ function RatioField({
       <StyledTextField
         value={state.ratioValid ? state.ratio : ""}
         inputProps={{ min: 0, max: 12 }}
-        style={{ margin: "24px", width: "64px" }}
+        style={{ margin: "1rem", width: "2.67rem" }}
         label="Ratio"
         type="number"
         onChange={(e) =>
@@ -222,7 +222,7 @@ function DebtField({ instrument }: { instrument: Instrument }) {
     >
       <StyledTextField
         value={state.debtValid ? state.debt : ""}
-        style={{ margin: "24px" }}
+        style={{ margin: "1rem" }}
         label="Count"
         type={instrument.ticker}
         // We probably should do some validation on this
@@ -231,8 +231,7 @@ function DebtField({ instrument }: { instrument: Instrument }) {
       <img
         src={NFTIcons.get(instrument.ticker)}
         alt={instrument.ticker}
-        height="40px"
-        width="40px"
+        style={{height:"1.67rem", width:"1.67rem"}}
       />
     </div>
   );
@@ -275,7 +274,7 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
     >
       <div
         style={{
-          borderRadius: "6px",
+          borderRadius: "0.25rem",
           display: "flex",
           flexDirection: "column",
           backgroundColor: theme.tradeFormBackgroundColor,
@@ -293,19 +292,19 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
         />
         <div
           style={{
-            marginTop: "32px",
+            marginTop: "1.33rem",
           }}
         />
         <RatioField {...fakeLimits} instrument={instrument} />
         <div
           style={{
-            marginTop: "32px",
+            marginTop: "1.33rem",
           }}
         />
         <DebtField instrument={instrument} />
       </div>
       <Button
-        style={{ marginTop: "32px", width: "300px", alignSelf: "center" }}
+        style={{ marginTop: "1.33rem", width: "12.5rem", alignSelf: "center" }}
         size="large"
         variant="contained"
         disabled={walletAddress === ""}

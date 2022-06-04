@@ -23,8 +23,8 @@ export function SearchBar({
       style={{
         backgroundColor: theme.tableSearchBarBackgroundColor,
         display: "flex",
-        margin: "0px 0px 6px 0px",
-        borderRadius: "6px",
+        margin: "1.33rem 0 3rem 0",
+        borderRadius: "0.25rem",
       }}
     >
       <IconButton color="primary">
@@ -36,6 +36,7 @@ export function SearchBar({
           color: theme.activeTextColor,
           display: "flex",
           flexGrow: 1,
+          height: "2.33rem",
         }}
         // This is called on every key stroke, which is fine for now but we might want to
         // add some debouncing.
@@ -84,16 +85,16 @@ export function FarmTable(): React.ReactElement {
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table
           style={{
-            backgroundColor: theme.tableBackgroundColor,
-            borderTopLeftRadius: "6px",
-            borderTopRightRadius: "6px",
+            backgroundColor: "inherit",
+            borderTopLeftRadius: "0.25rem",
+            borderTopRightRadius: "0.25rem",
             overflow: "hidden",
           }}
           stickyHeader
           aria-label="sticky table"
         >
           <TableHead style={{
-              height: "40px"
+              height: "1.67rem"
             }}>
             <TableRow>
               {FarmTableColumns.map((column) => {

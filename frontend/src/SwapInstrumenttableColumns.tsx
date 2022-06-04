@@ -49,9 +49,10 @@ function AddressHeaderRenderer({
       align={config.align}
       style={{
         minWidth: config.minWidth,
-        backgroundColor: theme.tableHeaderBackgroundColor,
+        backgroundColor: "inherit",
         color: theme.tableHeaderTextColor,
         borderColor: theme.tableBorderColor,
+        border: "none",
       }}
     >
       <div
@@ -65,7 +66,7 @@ function AddressHeaderRenderer({
         <b>{config.label}</b>
         <div
           style={{
-            marginRight: "16px",
+            marginRight: "0.67rem",
           }}
         />
         <Tooltip title={<h4>Paste synth token address to any existing DEX</h4>}>

@@ -3,6 +3,7 @@ import Input from "@material-ui/core/Input";
 import SearchIcon from "@material-ui/icons/Search";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -11,33 +12,35 @@ import React, { useContext, useEffect, useState } from "react";
 import theme from "../../../theme";
 
 export default function MyPageTable(props: any): React.ReactElement {
-  const { tableColumns, data, Header } = props;
+  const { tableColumns, data, Header, Radius } = props;
   return (
     <>
       {Header}
       {tableColumns && <TableContainer sx={{ maxHeight: 440 }}>
         <Table
           style={{
-            backgroundColor: theme.tableBackgroundColor,
-            borderBottomLeftRadius: "6px",
-            borderBottomRightRadius: "6px",
-            borderTopLeftRadius: "6px",
-            borderTopRightRadius: "6px",
-            overflow: "hidden"
+            background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
+            borderRadius: "0.83rem",
+            overflow: "hidden",
+            marginBottom: "3rem",
           }}
           stickyHeader
           aria-label="sticky table"
         >
           <TableHead>
-            <TableRow>
+            <TableRow 
+              style={{
+                background: "linear-gradient(160.35deg, #1465B0 13.15%, #1D2995 93.23%)",
+                height: "3.17rem",
+              }}>
               {tableColumns.map((column:any) => {
                 const Renderer = column.headerRenderer;
                 return <Renderer key={column.id} config={column} />;
               })}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {data.map((row:any) => (
+          <TableBody >
+            {data && data.length > 0 && data.map((row:any) => (
               <TableRow hover key={row.id} >
                 {tableColumns.map((column:any) => {
                   const Renderer = column.cellRenderer;
@@ -45,6 +48,16 @@ export default function MyPageTable(props: any): React.ReactElement {
                 })}
               </TableRow>
             ))}
+            {data && data.length === 0 &&
+              <TableRow hover 
+                style={{
+                  height: "3.67rem",
+                }}>
+                {tableColumns.map((column:any) => (
+                  <TableCell align="right" key={column.id}> </TableCell>
+                ))}
+              </TableRow>
+            }
           </TableBody>
         </Table>
       </TableContainer>}
