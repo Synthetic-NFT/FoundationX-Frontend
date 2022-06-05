@@ -29,10 +29,10 @@ const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 const VaultABI = require("../abi/contracts/Vault.sol/Vault.json");
 
 const WETHAddress = ContractAddress.weth;
-const FactoryAddress = ContractAddress.factory;
-const OracleAddress = ContractAddress.oracle;
 const SwapFactoryAddress = ContractAddress.swapFactory;
 const RouterAddress = ContractAddress.router;
+const FactoryAddress = ContractAddress.factory;
+
 
 const ReserveAddress: { [key: string]: any } = {};
 const SynthAddress: { [key: string]: any } = {};
@@ -166,7 +166,9 @@ export const swapExactTokensForETH = async(amountIn: string, amountOutMin: strin
       status: (error as any).message,
     };
   }
-}
+};
+
+
 
 export const mintSynth = async (
   address: string | null,
@@ -184,7 +186,6 @@ export const mintSynth = async (
   // eslint-disable-next-line
 
   const bnCRatio = new BigNumber(ratio).times("1e18").div('100');
-
   const mintParameters = {
     to: VaultAddress[tickerID], // Required except during contract publications.
     from: address, // must match user's active address.
