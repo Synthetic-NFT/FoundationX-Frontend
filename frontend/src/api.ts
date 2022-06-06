@@ -1,12 +1,13 @@
 import { AppData } from "./AppContext";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
-import {loadActiveTokens} from "./util/interact";
+import {loadActiveTokens, loadPoolSythPrice, loadSynthPrice} from "./util/interact";
 
 export type Instrument = {
   ticker: string;
   fullName: string;
   id: string;
   price: string;
+  poolPrice: string,
   fee: number;
   long: number;
   short: number;
@@ -21,6 +22,7 @@ export const defaultInstrument: Instrument = {
   fullName: "",
   id: "",
   price: "",
+  poolPrice: "",
   fee: 0,
   long: 0,
   short: 0,
@@ -85,9 +87,42 @@ export type TradeData = {
 export const blockchainAPI = {
   async loadInstruments(): Promise<TradeData> {
     const activeTokens = await loadActiveTokens();
+    const {tokenNames, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    const oraclePricePromises = []
+    const poolPricePromises = []
+    await loadPoolSythPrice(tokenNames[0])
+    for(let i = 0; i < tokenNames.length; i += 1) {
+      oraclePricePromises.push(loadSynthPrice(tokenNames[i]));
+      poolPricePromises.push(loadPoolSythPrice(tokenNames[i]));
+    }
+
+    const allOracePrices = await Promise.all(oraclePricePromises);
+    const allPoolPrices = await Promise.all(poolPricePromises);
+
+    const tradeData: TradeData = {
+      instruments: []
+    };
+
+    for(let i = 0; i < tokenNames.length; i += 1) {
+      const currInstrument: Instrument = {
+        ticker: tokenNames[i],
+        fullName: tokenNames[i],
+        id: i.toString(),
+        price: allOracePrices[i],
+        poolPrice: allPoolPrices[i],
+        fee: 0,
+        long: 0,
+        short: 0,
+        premium: 0,
+        vaultAddress: vaultAddresses[i],
+        address: synthAddresses[i],
+        reserveAddress: reserveAddresses[i],
+      }
+      tradeData.instruments.push(currInstrument);
+    }
 
     return new Promise((resolve) => {
-      resolve(activeTokens);
+      resolve(tradeData);
     });
   },
 }

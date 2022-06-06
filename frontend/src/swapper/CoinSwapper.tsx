@@ -6,10 +6,20 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
+
+import {
+  getLpReserve,
+  getAmountSynthOut,
+  getAmountETHOut,
+  swapExactETHForTokens,
+  swapExactTokensForETH,
+  readWalletTokenBalance
+} from "../util/interact"
+
 import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { Button } from "@mui/material";
-import React, { useEffect } from "react";
+import React, {useContext, useEffect} from "react";
 
 import { defaultInstrument } from "../api";
 import LoadingButton from "../components/LoadingButton";
@@ -18,6 +28,7 @@ import { fakeTradeData } from "../fakeData";
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
+import {AppContext} from "../AppContext";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -101,7 +112,7 @@ function CoinSwapper(props: any) : React.ReactElement{
 
   // Stores the current reserves in the liquidity pool between coin1 and coin2
   const [reserves, setReserves] = React.useState(["0.0", "0.0"]);
-
+  const { walletAddress, setWallet } = useContext(AppContext);
   // Stores the current value of their respective text box
   const [field1Value, setField1Value] = React.useState("");
   const [field2Value, setField2Value] = React.useState("");
@@ -139,15 +150,13 @@ function CoinSwapper(props: any) : React.ReactElement{
   };
 
   // Determines whether the button should be enabled or not
-  const isButtonEnabled = () => {
-
+  const isButtonEnabled = async() => {
     // If both coins have been selected, and a valid float has been entered which is less than the user's balance, then return true
     const parsedInput1 = parseFloat(field1Value);
     const parsedInput2 = parseFloat(field2Value);
-
     return (
-      coin1.address &&
-      coin2.address &&
+        (coin1.symbol === "Ethereum" ||
+      coin2.symbol === "Ethereum") &&
       !Number.isNaN(parsedInput1) &&
       !Number.isNaN(parsedInput2) &&
       parsedInput1 > 0 &&
@@ -157,19 +166,47 @@ function CoinSwapper(props: any) : React.ReactElement{
   };
 
   useEffect(() => {
-    const ethCoin = DummyCoins.find((coin) => coin.name === "Ethereum");
-    setCoin1({
-      address: ethCoin?.address || undefined,
-      symbol: ethCoin?.name || undefined,
-      balance: 1000,
-    });
+    if (Number.isNaN(parseFloat(field1Value))) {
+      setField2Value("");
+    } else if (parseFloat(field1Value) && coin1.symbol === "Ethereum" && coin2.symbol) {
+      getAmountSynthOut(coin2.symbol, field1Value).then(
+          (amount) => setField2Value(amount.toFixed(7))
+      ).catch((e: any) => {
+        console.log(e);
+        setField2Value("NA");
+      })
+    } else if (parseFloat(field1Value) && coin2.symbol === "Ethereum" && coin1.symbol) {
+      getAmountETHOut(coin1.symbol, field1Value).then(
+          (amount) => setField2Value(amount.toFixed(7))
+      ).catch((e: any) => {
+        console.log(e);
+        setField2Value("NA");
+      })
+    } else {
+      setField2Value("");
+    }
+  }, [field1Value, coin1, coin2]);
 
+  useEffect(() => {
+    console.log(instrument)
+    const ethCoin = DummyCoins.find((coin) => coin.name === "Ethereum");
+
+    readWalletTokenBalance(walletAddress, ethCoin?.name).then((data) => {
+      setCoin1({
+        address: ethCoin?.address || undefined,
+        symbol: ethCoin?.name || undefined,
+        balance: data.toNumber(),
+      });
+    })
     const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
-    setCoin2({
-      address: initCoin?.address || undefined,
-      symbol: initCoin?.name || undefined,
-      balance: initCoin? 1000 : undefined,
-    });
+
+    readWalletTokenBalance(walletAddress, initCoin?.name).then((data) => {
+      setCoin2({
+        address: initCoin?.address || undefined,
+        symbol: initCoin?.name || undefined,
+        balance: data.toNumber(),
+      });
+    })
   }, [availbleCoinIn, instrument]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
@@ -194,11 +231,14 @@ function CoinSwapper(props: any) : React.ReactElement{
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      setCoin1({
-        address,
-        symbol: name,
-        balance: 1000,
-      });
+      readWalletTokenBalance(walletAddress, name).then((data) => {
+        setCoin1({
+          address,
+          symbol: name,
+          balance: data.toNumber(),
+        });
+      })
+
     }
   };
 
@@ -213,11 +253,13 @@ function CoinSwapper(props: any) : React.ReactElement{
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      setCoin2({
-        address,
-        symbol: name,
-        balance: 1000,
-      });
+      readWalletTokenBalance(walletAddress, name).then((data) => {
+        setCoin2({
+          address,
+          symbol: name,
+          balance: data.toNumber(),
+        });
+      })
     }
   };
 
@@ -278,6 +320,7 @@ function CoinSwapper(props: any) : React.ReactElement{
                   activeField={false}
                   value={field2Value}
                   onClick={() => setDialog2Open(true)}
+                  // onChange={(e) => console.log(e)}
                   symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
                 />
               </Grid>
@@ -292,7 +335,7 @@ function CoinSwapper(props: any) : React.ReactElement{
                   color: "#FFFFFF",
                   marginTop: "2rem",
                 }}>
-                  Crypto Punks
+                  {getCurrentInstrument().ticker}
                 </div>
                 <div style={{
                   fontWeight: 400,
@@ -306,22 +349,15 @@ function CoinSwapper(props: any) : React.ReactElement{
                 </div>
               </div>
 
-              <Button
+              <LoadingButton
                 size="large"
                 variant="text"
-                style={{
-                  background: "linear-gradient(97.27deg, #2F038C 44.35%, #0837A5 70.76%)",
-                  borderRadius: "0.42rem",
-                  fontWeight: 600,
-                  fontSize: "0.83rem",
-                  lineHeight: "1rem",
-                  color: "#FFFFFF",
-                  height: "3rem",
-                  marginLeft: "0.33rem",
-                }}
+                loading={loading}
+                valid={isButtonEnabled()}
+                // onClick={swap}
               >
               Swap Now
-              </Button>
+              </LoadingButton>
             </Grid>
           </Paper>
 

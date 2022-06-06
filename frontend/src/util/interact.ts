@@ -68,8 +68,7 @@ const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
 export const loadActiveTokens = async () => {
-  const res = await FactoryContract.methods.getAllActiveTokens().call();
-  console.log(res)
+  const res = await FactoryContract.methods.listTokenAddressInfo().call();
   return res;
 }
 
@@ -80,14 +79,16 @@ export const getLpReserve = async(tickerID: string) => {
 
 export const getAmountSynthOut = async(tickerID: string, amountETH: string) => {
   const bnAmountETH = new BigNumber(amountETH).times("1e18");
-  const amountsOut = RouterContract.methods.getAmountsOut(bnAmountETH, [WETHAddress, SynthAddress[tickerID]]);
-  return amountsOut[1];
+  const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountETH, [WETHAddress, SynthAddress[tickerID]]).call();
+  const res = new BigNumber( amountsOut[1]).div("1e18");
+  return res;
 }
 
 export const getAmountETHOut = async(tickerID: string, amountSynth: string) => {
   const bnAmountSynth = new BigNumber(amountSynth).times("1e18");
-  const amountsOut = RouterContract.methods.getAmountsOut(bnAmountSynth, [SynthAddress[tickerID], WETHAddress]);
-  return amountsOut;
+  const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountSynth, [SynthAddress[tickerID], WETHAddress]).call();
+  const res = new BigNumber( amountsOut[1]).div("1e18");
+  return res;
 }
 
 export const swapExactETHForTokens = async(amountIn: string, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: Date) => {
@@ -329,6 +330,18 @@ export const loadSynthPrice = async (tickerID: string) => {
   return synthPrice;
 };
 
+export const loadPoolSythPrice = async (tickerID: string) => {
+  const lpReserve = await getLpReserve(tickerID);
+  // eslint-disable-next-line no-underscore-dangle
+  const synthReserve = lpReserve._reserve0;
+  // eslint-disable-next-line no-underscore-dangle
+  const ethReserve = lpReserve._reserve1;
+  const poolSynthPriceInETH = new BigNumber(ethReserve).div(synthReserve).toString();
+  return poolSynthPriceInETH;
+
+};
+
+
 export const loadUserOrderStat = async (address: string, tickerID: string) => {
   const synthPrice = await loadSynthPrice(tickerID);
   const bnSynthPrice = new BigNumber(synthPrice);
@@ -344,6 +357,19 @@ export const loadUserOrderStat = async (address: string, tickerID: string) => {
   }
   const bnCRatio = cRatio.times(new BigNumber("1e18"));
   return [bnCollateral, bnCRatio, bnDebt, bnSynthPrice];
+};
+
+
+export const readWalletTokenBalance = async (walletAddress: string, tickerID: string|undefined) => {
+  if(tickerID === "Ethereum") {
+    const balance = await web3.eth.getBalance(walletAddress);
+    return new BigNumber(balance).div('1e18');
+  }
+  if(tickerID == null) {
+    return new BigNumber('0');
+  }
+  const balance = await SynthContract[tickerID].methods.balanceOf(walletAddress).call();
+  return new BigNumber(balance).div('1e18');
 };
 
 export const connectWallet = async () => {
