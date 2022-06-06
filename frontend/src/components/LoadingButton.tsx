@@ -29,6 +29,16 @@ export default function LoadingButton(props: any) {
         fullWidth
         disabled={loading || !valid}
         type="submit"
+        style={{
+          background: "linear-gradient(97.27deg, #2F038C 44.35%, #0837A5 70.76%)",
+          borderRadius: "0.42rem",
+          fontWeight: 600,
+          fontSize: "0.83rem",
+          lineHeight: "1rem",
+          color: "#FFFFFF",
+          height: "3rem",
+          marginLeft: "0.33rem",
+        }}
         onClick={onClick}
         // {...other}
       >
