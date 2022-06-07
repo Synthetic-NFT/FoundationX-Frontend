@@ -323,8 +323,8 @@ export const manageSynth = async (
 };
 
 export const loadSynthPrice = async (tickerID: string) => {
-  const synthPrice = await OracleContract.methods
-    .getAssetPrice(tickerID)
+  const synthPrice = await SynthContract[tickerID].methods
+    .getSynthPriceToEth()
     .call();
   return synthPrice;
 };

@@ -241,6 +241,11 @@
         "type": "string[]"
       },
       {
+        "internalType": "string[]",
+        "name": "tokenSymbols",
+        "type": "string[]"
+      },
+      {
         "internalType": "address[]",
         "name": "vaultAddresses",
         "type": "address[]"

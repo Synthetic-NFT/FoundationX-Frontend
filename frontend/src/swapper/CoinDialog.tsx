@@ -13,7 +13,7 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
 import PropTypes from "prop-types";
 import React from "react";
-
+import { TradeData } from "../api";
 import CoinButton from "./CoinButton";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
@@ -153,12 +153,12 @@ function CoinDialog(props: any) {
           <Grid item className={classes.coinList}>
             <Grid container direction="column">
               {/* Maps all of the tokens in the constants file to buttons */}
-              {coins.map((coin: {name:string, abbr:string, address:string}) => (
+              {coins.map((coin: {name:string, symbol:string, address:string}) => (
                 <Grid item key={coin.name} xs={12}>
                   <CoinButton
                     coinName={coin.name}
-                    coinAbbr={coin.abbr}
-                    onClick={() => exit(coin.address, coin.abbr)}
+                    coinAbbr={coin.symbol}
+                    onClick={() => exit(coin.address, coin.symbol)}
                   />
                 </Grid>
               ))}
@@ -173,7 +173,7 @@ function CoinDialog(props: any) {
 CoinDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  coins: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
+  coins: PropTypes.any.isRequired,
   signer: PropTypes.string.isRequired,
 };
 
