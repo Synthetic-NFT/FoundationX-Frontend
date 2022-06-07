@@ -1,10 +1,12 @@
 import { AppData } from "./AppContext";
+import { BigNumber } from "bignumber.js";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
 import {loadActiveTokens, loadPoolSythPrice, loadSynthPrice} from "./util/interact";
 
 export type Instrument = {
   ticker: string;
   fullName: string;
+  symbol: string;
   id: string;
   price: string;
   poolPrice: string,
@@ -20,6 +22,7 @@ export type Instrument = {
 export const defaultInstrument: Instrument = {
   ticker: "",
   fullName: "",
+  symbol: "",
   id: "",
   price: "",
   poolPrice: "",
@@ -87,7 +90,7 @@ export type TradeData = {
 export const blockchainAPI = {
   async loadInstruments(): Promise<TradeData> {
     const activeTokens = await loadActiveTokens();
-    const {tokenNames, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
     const oraclePricePromises = []
     const poolPricePromises = []
     await loadPoolSythPrice(tokenNames[0])
@@ -107,8 +110,9 @@ export const blockchainAPI = {
       const currInstrument: Instrument = {
         ticker: tokenNames[i],
         fullName: tokenNames[i],
+        symbol: tokenSymbols[i],
         id: i.toString(),
-        price: allOracePrices[i],
+        price: new BigNumber(allOracePrices[i]).div('1e18').toString(),
         poolPrice: allPoolPrices[i],
         fee: 0,
         long: 0,

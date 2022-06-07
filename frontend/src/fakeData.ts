@@ -30,6 +30,7 @@ const fakeTradeData = {
     {
       ticker: tickerBoredApeYachtClub,
       fullName: tickerBoredApeYachtClub,
+      symbol: "",
       id: "1",
       price: "2.0",
       poolPrice: "2.4",
@@ -44,6 +45,7 @@ const fakeTradeData = {
     {
       ticker: tickerCryptoPunks,
       fullName: tickerCryptoPunks,
+      symbol: "",
       id: "2",
       price: "172.41",
       poolPrice: "172",
@@ -58,6 +60,7 @@ const fakeTradeData = {
     {
       ticker: tickerAzuki,
       fullName: tickerAzuki,
+      symbol: "",
       id: "3",
       price: "11.4",
       poolPrice: "12.4",
@@ -72,6 +75,7 @@ const fakeTradeData = {
     {
       ticker: tickerEthereum,
       fullName: tickerEthereum,
+      symbol: "",
       id: "3",
       price: "11.4",
       poolPrice: "12.4",
