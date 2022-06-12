@@ -6,8 +6,10 @@ import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import React from "react";
 
+import ClaimRouteContainer from "./pages/Claim/ClaimRouteContainer";
 import FarmRouteContainer from "./pages/Farm/FarmRouteContainer";
 import MyPageRouteContainer from "./pages/MyPage/MyPageRouteContainer";
+import Claim from "./styles/images/claim.svg";
 import Farm from "./styles/images/farm.png";
 import Contact from "./styles/images/Huge Icon/Headphone.png";
 import LegalDocs from "./styles/images/Huge Icon/Info 01.png";
@@ -65,6 +67,12 @@ export const routes: Route[] = [
     label: "Farm",
     icon: Farm,
     RouteContainer: FarmRouteContainer,
+  }, 
+  {
+    path: "/claim",
+    label: "Claim",
+    icon: Claim,
+    RouteContainer: ClaimRouteContainer,
   },
 ];
 
