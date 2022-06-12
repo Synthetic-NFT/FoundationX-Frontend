@@ -25,6 +25,8 @@ const useStyles = makeStyles({
     fontSize: "1.67rem",
     lineHeight: "2.5rem",
     color: "#FFFFFF",
+    // position: "absolute",
+    // top: "0.5rem",
   },
 });
 // title: {

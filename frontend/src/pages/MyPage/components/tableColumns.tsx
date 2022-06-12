@@ -215,7 +215,8 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
   const styles = useStyles();
   
   function handleClick() {
-    history.push(`/trade/order/buy?ticker=${row.ticker}`);
+    history.push(`/swap/order?ticker=${row.ticker}`);
+    // history.push(`/trade/order/buy?ticker=${row.ticker}`);
   }
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
@@ -228,7 +229,7 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
           borderRadius: "2.08rem",
         }}
       >
-        Trade
+        Swap
       </Button>
     </TableCell>
   );
@@ -239,14 +240,18 @@ function BorrowingActionCellRenderer({ row }: CellRendererProps): TableCellEleme
   const styles = useStyles();
   
   function handleClick() {
-    history.push(`/trade/order/buy?ticker=${row.ticker}`);
+    history.push(`/claim/detail?ticker=${row.ticker}`);
   }
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE}>
       <Button
-        size="large"
+        size="small"
         variant="contained"
         onClick={() => handleClick()}
+        style={{
+          background: "#4340CB",
+          borderRadius: "2.08rem",
+        }}
       >
         Manage
       </Button>
@@ -328,7 +333,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
   },
   {
     id: "oraclePrice",
-    label: "Oracle Price",
+    label: "Pool Price",
     minWidth: 100,
     align: "left",
     cellRenderer: OraclePriceCellRenderer,
@@ -336,28 +341,19 @@ export const borrowingTableColumns: ColumnConfig[] = [
   },
   {
     id: "borrowed",
-    label: "Borrowed",
+    label: "Balance",
     minWidth: 100,
     align: "left",
-    cellRenderer: BorrowedCellRenderer,
+    cellRenderer: BalanceCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Borrowed."
   },
   {
-    id: "collateral",
-    label: "Collateral",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: CollateralCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
-    tooltip: "Collateral."
-  },
-  {
     id: "collateralRatio",
-    label: "Collateral Ratio",
+    label: "Value",
     minWidth: 100,
     align: "left",
-    cellRenderer: CollateralRatioCellRenderer,
+    cellRenderer: ValueCellRenderer,
     headerRenderer: TooltipHeaderRenderer,
     tooltip: "Collateral Ration"
   },

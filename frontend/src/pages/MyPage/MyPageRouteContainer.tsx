@@ -542,7 +542,7 @@ export default function MyPageRouteContainer(): React.ReactElement {
           </div>
           <div style={{margin: "0 0.17rem 2.25rem 0.17rem"}}>
             <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
-            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={BorrowingHeader} Radius="0 0 0 0"/>
+            <MyPageTable tableColumns={borrowingTableColumns} data={myPageData?.data.borrowing} Header={BorrowingHeader} Radius="0 0 0 0"/>
             <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader}  Radius="0 0 0.83rem 0.83rem"/>
           </div>
         </>
