@@ -1,12 +1,14 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import { Button } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
+import { Button, Select, MenuItem  } from "@material-ui/core";
+import InputBase from '@material-ui/core/InputBase';
+import InputLabel from '@material-ui/core/InputLabel';
 import Slider from "@material-ui/core/Slider";
 import { withStyles } from "@material-ui/core/styles";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { StylesContext } from "@material-ui/styles";
 import { TextField } from "@mui/material";
 import { BigNumber } from "bignumber.js";
-import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
 
 import { Instrument } from "../../../api";
@@ -15,85 +17,26 @@ import { AppContext } from "../../../AppContext";
 import { NFTIcons } from "../../../fakeData";
 import InstrumentCard from "../../../InstrumentCard";
 import {
-  ManageActionKind,
-  ManageContext,
-  ManageContextProvider,
   MintContext,
+  MintContextProvider,
+  ManageActionKind,
 } from "../../../MintContext";
 import Ethereum from "../../../styles/images/Ethereum.svg";
 import theme from "../../../theme";
-import { burnSynth, loadUserOrderStat } from "../../../util/interact";
+import { TradeContext } from "../../../TradeContext";
+import { mintSynth } from "../../../util/interact";
 
-type SellSpecConfig = {
+type BuySpecConfig = {
   minRatio: number;
   safeRatio: number;
 };
-
-type BurnSpecConfig = {
-  // collateral: BigNumber;
-  // cRatio: BigNumber;
-  // debt: BigNumber;
-  minRatio: number;
-  safeRatio: number;
-};
-
-type BurnSpec = {
-  collateral: string;
-  setCollateral: (newCollateral: string) => void;
-  collateralValid: boolean;
-  cRatio: string;
-  setCRatio: (newCRatio: string) => void;
-  cRatioValid: boolean;
-  debt: string;
-  setDebt: (newDebt: string) => void;
-  debtValid: boolean;
-};
-
-function useBurnSpec(config: BurnSpecConfig): BurnSpec {
-  const { unit } = useContext(AppContext);
-  const [collateral, setCollateral] = useState("");
-  const [cRatio, setCRatio] = useState("");
-  const [debt, setDebt] = useState("");
-
-  const [collateralValid, setCollateralValid] = useState(true);
-  const [cRatioValid, setCRatioValid] = useState(true);
-  const [debtValid, setDebtValid] = useState(true);
-
-  // const [collateralValid, setCollateralValid] = useContext(MintContext);
-
-  useEffect(() => {
-    const collateralNum = +collateral;
-    const cRatioNum = +cRatio;
-    const debtNum = +debt;
-    setCollateralValid(collateralNum >= 0);
-    setCRatioValid(cRatioNum >= 0);
-    setDebtValid(debtNum >= 0);
-  }, [
-    collateral,
-    cRatio,
-    debt,
-    config,
-    setCollateralValid,
-    setCRatioValid,
-    setDebtValid,
-  ]);
-
-  return {
-    collateral,
-    setCollateral,
-    collateralValid,
-    cRatio,
-    setCRatio,
-    cRatioValid,
-    debt,
-    setDebt,
-    debtValid,
-  };
-}
 
 // @See https://v4.mui.com/components/text-fields/#customized-inputs
 const StyledTextField = withStyles({
   root: {
+    "& .MuiInputBase-input.MuiInput-input.Mui-disabled": {
+      "-webkit-text-fill-color": "rgba(0,0,0, 0.6)", // (default alpha is 0.38)
+    },
     "& label": {
       color: theme.tradeFormOutline,
     },
@@ -136,115 +79,63 @@ const StyledTextField = withStyles({
   },
 })(TextField);
 
-function FieldLabel({ title }: { title: string }) {
+function FieldLabel({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   return (
     <div
       style={{
-        marginTop: "0.67rem",
-        marginLeft: "1rem",
+        // marginTop: "0.67rem",
+        // marginLeft: "1rem",
         display: "flex",
         flexGrow: 1,
         flexDirection: "column",
       }}
     >
-      <div style={{ fontSize: "16pt", color: theme.activeTextColor }}>
+      <div style={{ fontSize: "1.25rem", color: theme.activeTextColor }}>
         <b>{title}</b>
+      </div>
+      <div style={{ fontSize: "0.83rem", color: theme.inactiveTextColor, fontWeight: 300, marginTop: "0.42rem" }}>
+        <b>{description}</b>
       </div>
     </div>
   );
 }
 
-function CollateralField({
-  burnSpec,
-  statSpec,
-}: {
-  burnSpec: BurnSpec;
-  statSpec: UserStatSpec;
-}) {
-  const { unit } = useContext(AppContext);
-  const { collateral, setCollateral, setDebt } = burnSpec;
-  const currCollateral = new BigNumber(collateral.toString())
-    .div(unit)
-    .toNumber();
+function CollateralField({ instrument }: { instrument: Instrument }) {
+  const { state, dispatch } = useContext(MintContext);
 
-  const { synthPrice, oldCRatio } = statSpec;
-
-  function updateCollateral(newCollateral: number) {
-    const floatCollateral = new BigNumber(newCollateral).times(unit);
-    const floatCRatio = new BigNumber(oldCRatio.toString()).div(unit);
-    const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
-    const floatDebt = floatCollateral.div(floatCRatio.times(floatSynthPrice));
-    setDebt(floatDebt.toString());
-    setCollateral(floatCollateral.toString());
-  }
   return (
-    <StyledTextField
-      value={currCollateral}
-      style={{ margin: "1rem" }}
-      label="Count"
-      type="number"
-      // We probably should do some validation on this
-      onChange={(e) => updateCollateral(Number(e.target.value))}
-    />
-  );
-}
-
-function DebtField({
-  burnSpec,
-  statSpec,
-}: {
-  burnSpec: BurnSpec;
-  statSpec: UserStatSpec;
-}) {
-  const { unit } = useContext(AppContext);
-  const { debt, setDebt, debtValid } = burnSpec;
-  const currDebt = new BigNumber(debt.toString()).div(unit).toNumber();
-
-  const { cRatio, setCRatio } = burnSpec;
-  const { collateral, setCollateral } = burnSpec;
-  const { synthPrice, setSynthPrice } = statSpec;
-
-  function updateDebt(newDebt: number) {
-    const floatDebt = new BigNumber(newDebt).times(unit);
-    const floatCRatio = new BigNumber(cRatio.toString()).div(unit);
-    const floatSynthPrice = new BigNumber(synthPrice.toString()).div(unit);
-    const floatCollateral = floatDebt.times(floatCRatio).times(floatSynthPrice);
-    setCollateral(floatCollateral.toString());
-    setDebt(floatDebt.toString());
-  }
-  return (
-    <StyledTextField
-      value={debtValid ? currDebt : ""}
-      style={{ margin: "1rem" }}
-      label="Count"
-      type="number"
-      // We probably should do some validation on this
-      onChange={(e) => updateDebt(Number(e.target.value))}
-    />
-  );
-}
-
-function OrigCollateralField({
-  count,
-  isCRatio,
-}: {
-  count: BigNumber;
-  isCRatio: boolean;
-}) {
-  let c = count;
-  if (isCRatio) {
-    c = c.times(new BigNumber(100));
-  }
-  const numCount = ethers.utils.formatEther(c.toString());
-  return (
-    <StyledTextField
-      value={numCount}
-      style={{ margin: "1rem" }}
-      label="Count"
-      type="number"
-      disabled
-    // We probably should do some validation on this
-    />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <StyledTextField
+        value={state.collateralValid ? state.collateral : ""}
+        style={{ margin: "1rem" }}
+        label="Collateral"
+        type="number"
+        // We probably should do some validation on this
+        onChange={(e) =>
+          dispatch({
+            type: ManageActionKind.COLLATERAL,
+            newRatio: "",
+            newCollateral: e.target.value,
+            newDebt: "",
+            price: new BigNumber(instrument.price),
+          })
+        }
+      />
+      <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
+    </div>
   );
 }
 
@@ -261,8 +152,8 @@ function RatioField({
   minRatio,
   safeRatio,
   instrument,
-}: BurnSpecConfig & { instrument: Instrument }) {
-  const { state, dispatch } = useContext(ManageContext);
+}: BuySpecConfig & { instrument: Instrument }) {
+  const { state, dispatch } = useContext(MintContext);
   return (
     <div
       style={{
@@ -272,23 +163,23 @@ function RatioField({
       }}
     >
       <StyledSlider
-        style={{ width: "15.17rem", marginTop:"1.25rem" }}
+        style={{ width: "15.17rem" }}
         value={state.ratioValid ? +state.ratio : 0}
         step={5}
         min={100}
         max={250}
-        color={+state.ratio > minRatio ? "primary" : "secondary"}
-        valueLabelDisplay="on"
-        marks={[
-          {
-            value: minRatio,
-            label: `Min ${String(minRatio)} %`,
-          },
-          {
-            value: safeRatio,
-            label: `Safe ${String(safeRatio)} %`,
-          },
-        ]}
+        // color={+state.ratio > minRatio ? "primary" : "secondary"}
+        // valueLabelDisplay="on"
+        // marks={[
+        //   {
+        //     value: minRatio,
+        //     label: `Min ${String(minRatio)} %`,
+        //   },
+        //   {
+        //     value: safeRatio,
+        //     label: `Safe ${String(safeRatio)} %`,
+        //   },
+        // ]}
         onChange={(_, v) => {
           if (typeof v !== "number") {
             throw Error("expect number");
@@ -322,143 +213,143 @@ function RatioField({
   );
 }
 
-type UserStatSpec = {
-  walletAddress: string;
-  oldCollateral: BigNumber;
-  setOldCollateral: (a: BigNumber) => void;
-  oldCRatio: BigNumber;
-  setOldCRatio: (a: BigNumber) => void;
-  oldDebt: BigNumber;
-  setOldDebt: (a: BigNumber) => void;
-  synthPrice: BigNumber;
-  setSynthPrice: (a: BigNumber) => void;
-};
-
-// Wraps the business logic in a single hook
-function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
-  const { unit } = useContext(AppContext);
-  const { walletAddress } = useContext(AppContext);
-  const [oldCollateral, setOldCollateral] = useState(new BigNumber(0));
-  const [oldCRatio, setOldCRatio] = useState(new BigNumber(0));
-  const [oldDebt, setOldDebt] = useState(new BigNumber(0));
-  const [synthPrice, setSynthPrice] = useState(new BigNumber(0));
-  const { setCRatio, setCollateral, setDebt } = burnSpec;
-  const { state, dispatch } = useContext(ManageContext);
-
-  useEffect(() => {
-    const getAndSetUserStat = async () => {
-      const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
-        await loadUserOrderStat(walletAddress);
-
-      const ratio = new BigNumber(bnCRatio).div(unit).times(100).toString();
-      const collateral = new BigNumber(bnCollateral).div(unit).toString();
-      const debt = new BigNumber(bnDebt).div(unit).toString();
-
-      dispatch({
-        type: ManageActionKind.SET,
-        newRatio: ratio,
-        newCollateral: collateral,
-        newDebt: debt,
-        price: bnSynthPrice,
-      });
-
-      setOldCollateral(bnCollateral);
-      setOldCRatio(bnCRatio);
-      setOldDebt(bnDebt);
-      // setCollateral(bnCollateral.div(unit).toString());
-      // setCRatio(bnCRatio.div(unit).toString());
-      // setDebt(bnDebt.div(unit).toString());
-      setSynthPrice(bnSynthPrice);
-    };
-    if (walletAddress.length > 0) {
-      getAndSetUserStat();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unit, walletAddress]);
-
-  return {
-    walletAddress,
-    oldCollateral,
-    setOldCollateral,
-    oldCRatio,
-    setOldCRatio,
-    oldDebt,
-    setOldDebt,
-    synthPrice,
-    setSynthPrice,
-  };
-}
-
-function UserInputField({
-  type,
-  price,
-  label = 'Count'
-}: {
-  type: ManageActionKind;
-  price: BigNumber;
-  label: String;
-}) {
-  const synthPriceBase10 = price.div("1e18");
-  const { state, dispatch } = useContext(ManageContext);
-  if (type === ManageActionKind.SET) {
-    return <StyledTextField />;
-  }
+function DebtField({ instrument }: { instrument: Instrument }) {
+  const { state, dispatch } = useContext(MintContext);
 
   return (
-    <StyledTextField
-      value={state[type]}
-      style={{ margin: "1rem" }}
-      label={label}
-      type="number"
-      disabled={new BigNumber(state.debt).lte(0)}
-      // We probably should do some validation on this
-      onChange={(e) => dispatch({ type, payload: e.target.value, price })}
-    />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <StyledTextField
+        value={state.debtValid ? state.debt : ""}
+        style={{ margin: "1rem" }}
+        label="Count"
+        type={instrument.ticker}
+        // We probably should do some validation on this
+        disabled
+      />
+      <img
+        src={NFTIcons.get(instrument.ticker)}
+        alt={instrument.ticker}
+        style={{height:"1.67rem", width:"1.67rem"}}
+      />
+    </div>
   );
 }
 
-function ShortForm({ instrument }: { instrument: Instrument }) {
+function Card({
+  instrument,
+}: {
+  instrument: Instrument;
+}) {
+  const data = [
+    ["Oracle Price", instrument.price],
+    ["Premium", instrument.fee],
+    ["Liquidity ", instrument.fee],
+  ];
+
+  // @ts-ignore
+  return (
+    <div
+      style={{
+        color: theme.activeTextColor,
+        borderRadius: "0.75rem",
+        display: "flex",
+        fontSize: "14pt",
+        padding: "1.33rem",
+        width: "17.29rem",
+        height: "8.7rem",
+        flexDirection: "column",
+        marginLeft: "1rem",
+        background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)"
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <img
+              src={NFTIcons.get(instrument.ticker)}
+              alt={instrument.ticker}
+              style={{height:"2rem", width:"2rem"}}
+            />
+            <div
+              style={{
+                marginRight: "0.67rem",
+              }}
+            />
+            <div style={{ lineHeight: "2rem", }}>{instrument.ticker}</div>
+          </div>
+          <div style={{
+            fontFamily: "Poppins",
+            fontStyle: "normal",
+            fontWeight: 500,
+            fontSize: "0.67rem",
+            lineHeight: "2rem",
+            color: "#565656",
+          }}>191.36 UST</div>
+        </div>
+        <div
+          style={{
+            color: theme.inactiveTextColor,
+            display: "flex",
+            flexDirection: "column",
+            marginTop: "1.33rem",
+            fontSize: "12pt",
+          }}
+        >
+          {data.map(([label, value]) => (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontFamily: "Poppins",
+                fontStyle: "normal",
+                fontWeight: 300,
+                fontSize: "0.58rem",
+                lineHeight: "0.875rem",
+                color: "#FFFFFF",
+                marginBottom: "0.25rem",
+              }}
+              key={label}
+            >
+              <div>{label}</div>
+              <div>{value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LongForm({ instrument, handleChange }: { instrument: Instrument, handleChange: Function }) {
+  const { walletAddress } = useContext(AppContext);
   const fakeLimits = {
     minRatio: 150,
     safeRatio: 200,
   };
-  const origBurnSpecConfig = {
-    minRatio: 150,
-    safeRatio: 200,
+
+  const { tradeData } = useContext(TradeContext);
+  const { state, dispatch } = useContext(MintContext);
+
+  const mintSynthPressed = async () => {
+    if (state.collateralValid && state.ratioValid) {
+      const mintSynthResponse = await mintSynth(
+        walletAddress,
+        instrument.ticker,
+        state.collateral,
+        state.ratio,
+      );
+      console.log(mintSynthResponse);
+    }
   };
-  const burnSpec = useBurnSpec(origBurnSpecConfig);
-
-  const { state, dispatch } = useContext(ManageContext);
-
-  const UserStatSpec = useUserStatSpec(burnSpec);
-  const {
-    walletAddress,
-    oldDebt,
-    setOldDebt,
-    oldCollateral,
-    setOldCollateral,
-    oldCRatio,
-    setOldCRatio,
-    synthPrice,
-    setSynthPrice,
-  } = UserStatSpec;
-
-  const burnSynthPressed = async () => {
-    const burnSynthResponse = await burnSynth(
-      walletAddress,
-      instrument.ticker,
-      oldDebt.minus(new BigNumber(state.debt).times('1e18')),
-    );
-    console.log(burnSynthResponse);
-  };
-
-  const Icon = NFTIcons.get(instrument.ticker);
 
   // The place order button. We can connect it with the wallet connection flow.
-  // @ts-ignore
-  // @ts-ignore
-  // @ts-ignore
-  // @ts-ignore
   return (
     <div
       style={{
@@ -476,70 +367,35 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
           flexGrow: 1,
         }}
       >
-        <FieldLabel title="Collateral" />
-        <div
+        <FieldLabel
+          title={`Provide ${  instrument.fullName}`}
+          description="can be BOUGHT or BORROWED"
+        />
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={instrument.id}
+          label="Asset"
+          onChange={(e) => handleChange(e.target.value)}
           style={{
+            marginTop: "0.67rem",
+            marginLeft: "1rem",
             display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center"
+            flexGrow: 1,
+            flexDirection: "column",
           }}
         >
-          <UserInputField
-            type={ManageActionKind.COLLATERAL}
-            price={synthPrice.div("1e18")}
-            label="Count"
-          />
-          <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
-        </div>
-
-        <FieldLabel title="Set Collateral ratio" />
-        <RatioField {...fakeLimits} instrument={instrument} />
-
-        <FieldLabel title="Synthetic Tokens Minted" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <UserInputField
-            type={ManageActionKind.DEBT}
-            price={synthPrice.div("1e18")}
-            label="Count"
-          />
-          <img
-            src={NFTIcons.get(instrument.ticker)}
-            alt={instrument.ticker}
-            style={{height:"1.67rem", width:"1.67rem"}}
-          />
-        </div>
-
-        <FieldLabel title="Confirm Returned UST" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "right"
-          }}
-        >
-          <UserInputField
-            type={ManageActionKind.DEBT}
-            price={synthPrice.div("1e18")}
-            label="Returned UST"
-          />
-        </div>
-
+          {tradeData?.instruments.map((row) => (
+              <MenuItem value={row.id}>{row.fullName}</MenuItem>
+            ))}
+        </Select>
       </div>
       <Button
         style={{ marginTop: "1.33rem", width: "12.5rem", alignSelf: "center" }}
         size="large"
         variant="contained"
         disabled={walletAddress === ""}
-        onClick={burnSynthPressed}
+        onClick={mintSynthPressed}
       >
         {walletAddress === "" ? "Wallet Not Connected" : "Place Order"}
       </Button>
@@ -547,19 +403,224 @@ function ShortForm({ instrument }: { instrument: Instrument }) {
   );
 }
 
-// Rendered in the `/trade/order/buy` and contains business logic related to placing a
-// order for an instrument.
+const useStyles = makeStyles({
+  step: {
+    display: "flex",
+    marginTop: "0.17rem",
+    marginBottom: "3rem",
+  },
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "0.42rem 1rem",
+    gap: "0.42rem",
+    width: "23.33rem",
+    height: "2.5rem",
+    background: "linear-gradient(102.22deg, #1368E8 41.1%, #221FBE 78.05%)",
+    borderRadius: "0.125rem",
+    fontStyle: "normal",
+    fontWeight: 400,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
+    color: "#FFFFFF",
+    marginTop: "2.33rem",
+    marginLeft: "2.75rem",
+    marginBottom: "3.17rem",
+  },
+  stepNumber: {
+    background: "#323232",
+    borderRadius: "0.125rem",
+    fontStyle: "normal",
+    fontWeight: 600,
+    fontSize: "0.67rem",
+    lineHeight: "1.5rem",
+    textAlign: "center",
+    color: "#FFFFFF",
+    width: "1.5rem",
+    height: "1.5rem",
+  },
+  summary: {
+    marginTop: "3rem",
+    fontWeight: 300,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
+    color: "#FFFFFF",
+    marginLeft: "2.75rem",
+    marginBottom: "0.5rem",
+  }
+})
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    // backgroundColor: theme.palette.background.paper,
+    border: '0 solid #ced4da',
+    fontSize: 16,
+    padding: '0.42rem 1rem 0.42rem 0.5rem',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    height: "2.67rem",
+    lineHeight: "2.67rem",
+    backgroundColor: "#222121",
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      // borderRadius: 4,
+      // borderColor: '#80bdff',
+      // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}))(InputBase);
+
+
 export default function FarmShort({
   instrument,
 }: {
   instrument: Instrument;
 }) {
+  
+  const styles = useStyles();
+
+  const [inst, setInst] = useState(instrument);
+  const { tradeData } = useContext(TradeContext);
+  function handleChange(id:string) {
+    const inst:Instrument|undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
+    setInst(inst)
+  }
+  const fakeLimits = {
+    minRatio: 150,
+    safeRatio: 200,
+  };
+
   return (
     <div style={{ display: "flex", overflow: "hidden" }}>
-      <ManageContextProvider>
-        <ShortForm instrument={instrument} />
-      </ManageContextProvider>
-      <InstrumentCard instrument={instrument} />
+      {/* <MintContextProvider>
+        <LongForm instrument={inst} handleChange={(id: string) => handleChange(id)}/>
+      </MintContextProvider>
+      <InstrumentCard instrument={inst} /> */}
+      <div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>1</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Choose a collateral asset"
+              description="Collateral asset may affect the minimum collateral ratio."
+            />
+            <div style={{display: "flex", marginTop: "1.5rem"}}>
+              <Select
+                labelId="demo-customized-select-label"
+                id="demo-customized-select"
+                input={<BootstrapInput />}
+                defaultValue="10"
+                style={{height: "2.67rem", marginTop: "0.42rem", color: "#ffffff"}}
+              >
+                <MenuItem value={10}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Ten</MenuItem>
+                <MenuItem value={20}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Twenty</MenuItem>
+                <MenuItem value={30}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Thirty</MenuItem>
+              </Select>
+              <BootstrapInput id="demo-customized-textbox" />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>2</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Set a Collateral Ratio"
+              description="Position will be liquidated below the minimum"
+            />
+            <div style={{display: "flex"}}>
+              <RatioField {...fakeLimits} instrument={instrument} />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>3</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Confirm borrow amount"
+              description=""
+            />
+            <div style={{display: "flex", marginTop: "1.5rem"}}>
+              <Select
+                labelId="demo-customized-select-label"
+                id="demo-customized-select"
+                input={<BootstrapInput />}
+                defaultValue="10"
+                style={{color: "#ffffff"}}
+              >
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+              <BootstrapInput id="demo-customized-textbox" />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.step}>
+          <div className={styles.stepNumber}>4</div>
+          <div style={{marginLeft: "1.25rem"}}>
+            <FieldLabel
+              title="Confirm Returned UST"
+              description=""
+            />
+            <div style={{display: "flex", marginTop: "1.5rem"}}>
+              <Select
+                labelId="demo-customized-select-label"
+                id="demo-customized-select"
+                input={<BootstrapInput />}
+                defaultValue="10"
+                style={{color: "#ffffff"}}
+              >
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+              <BootstrapInput id="demo-customized-textbox" />
+            </div>
+          </div>
+        </div>
+        <div className={styles.summary}>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>Oracle Price</div>
+            <div>1 mApple = 140.94 UST</div>            
+          </div>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>TX Fees</div>
+            <div>0.20 UST</div>                 
+          </div>
+        </div>
+        <Button
+          className={styles.button}
+          size="large"
+          variant="contained"
+        >
+          Farm
+        </Button>
+      </div>
+      <Card instrument={inst} />
     </div>
   );
 }

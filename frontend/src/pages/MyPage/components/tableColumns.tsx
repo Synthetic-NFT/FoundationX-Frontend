@@ -240,7 +240,7 @@ function BorrowingActionCellRenderer({ row }: CellRendererProps): TableCellEleme
   const styles = useStyles();
   
   function handleClick() {
-    history.push(`/claim/detail?ticker=${row.ticker}`);
+    history.push(`/mypage/manage/nft?ticker=${row.ticker}`);
   }
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE}>

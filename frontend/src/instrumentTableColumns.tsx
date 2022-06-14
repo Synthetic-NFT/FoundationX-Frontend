@@ -118,14 +118,14 @@ export const tableColumns: ColumnConfig[] = [
     cellRenderer: PriceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
-  {
-    id: "fee",
-    label: "Fee",
-    minWidth: 170,
-    align: "right",
-    cellRenderer: FeeCellRenderer,
-    headerRenderer: DefaultHeaderRenderer,
-  },
+  // {
+  //   id: "fee",
+  //   label: "Fee",
+  //   minWidth: 170,
+  //   align: "right",
+  //   cellRenderer: FeeCellRenderer,
+  //   headerRenderer: DefaultHeaderRenderer,
+  // },
 ];
 
 export default tableColumns;

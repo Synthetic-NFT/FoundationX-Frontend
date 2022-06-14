@@ -81,7 +81,7 @@ export function FarmTable(): React.ReactElement {
 
   return (
     <>
-      <SearchBar onSearch={setSearchTerm} />
+      {/* <SearchBar onSearch={setSearchTerm} /> */}
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table
           style={{

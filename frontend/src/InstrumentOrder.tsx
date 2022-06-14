@@ -16,6 +16,7 @@ import {
 import ReturnButton from './components/ReturnButton';
 import InstrumentBuy from "./InstrumentBuy";
 import InstrumentSell from "./InstrumentSell";
+import ClaimDetail from "./pages/Claim/components/ClaimDetail";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
 import { loadSynthPrice } from "./util/interact";
@@ -23,22 +24,26 @@ import { loadSynthPrice } from "./util/interact";
 // Apart from `useStyles`, this shows an example of using styled for custom component, which
 // can be more flexible.
 const Tab = styled(TabUnstyled)`
-  color: white;
+  color: rgba(255, 255, 255, 0.52);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: bold;
   background-color: transparent;
-  width: 100%;
+  width: 48%;
   padding: 0.5rem 0.67rem;
   margin: 0.25rem 0.25rem;
   border: none;
   border-radius: 0.25rem;
   display: flex;
   justify-content: center;
+  max-width: 30rem;
   &.${tabUnstyledClasses.selected} {
-    background-color: white;
-    color: black;
-  }
+    background-color: #2B3342;
+    color: #ffffff;
+    border: 1px solid #B0B0B0;
+    border-radius: 0.25rem;
+  };
+  height: 2rem;
 `;
 
 const useStyles = makeStyles({
@@ -109,8 +114,8 @@ export default function InstrumentOrder(): React.ReactElement {
       >
         {/* Since there are only 2 tabs, just hard code 0 or 1 as the selected tab */}
         <Tabs centered value={match?.url === BUY_URL ? 0 : 1}>
-          <Tab label="Buy" onClick={() => onSwitch(BUY_URL)} />
-          <Tab label="Sell" onClick={() => onSwitch(SELL_URL)} />
+          <Tab label="Mint with ETH" onClick={() => onSwitch(BUY_URL)} />
+          <Tab label="Mint with NFT" onClick={() => onSwitch(SELL_URL)} />
         </Tabs>
       </Box>
       <div
@@ -130,7 +135,8 @@ export default function InstrumentOrder(): React.ReactElement {
             <InstrumentBuy instrument={instrument} />
           </Route>
           <Route path="/trade/order/sell" exact>
-            <InstrumentSell instrument={instrument} />
+            {/* <InstrumentSell instrument={instrument} /> */}
+            <ClaimDetail instrument={instrument} buttonName="mint"/>
           </Route>
         </Switch>
       </div>

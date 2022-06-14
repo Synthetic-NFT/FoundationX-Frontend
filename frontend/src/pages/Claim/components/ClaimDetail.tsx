@@ -85,7 +85,7 @@ const useStyles = makeStyles(styles);
 function ClaimDetail(props: any) : React.ReactElement{
   const classes = useStyles();
 
-  const { instrument } = props;
+  const { instrument, buttonName } = props;
 
   const availbleCoinIn = DummyCoins;
   const availbleCoinOut = DummyCoins;
@@ -165,6 +165,7 @@ function ClaimDetail(props: any) : React.ReactElement{
         onClose={() => setDialog({})}
         coins={availbleCoinIn}
         signer="placeholder"
+        buttonName={buttonName}
       />
       <Grid
         container
@@ -173,8 +174,16 @@ function ClaimDetail(props: any) : React.ReactElement{
         alignItems="center"
       >
         <Grid item xs={3} sm={3} md={3} spacing={2} style={{padding: "0.5rem"}}  alignItems="center">
-          <Card>
-            <img src={Add} alt="Add" style={{height:"100%", width:"100%"}} />
+          <Card cardStyle={{
+              width: "10rem",
+              height: "10rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              background: "inherit",
+              border: "1px dashed #ffffff",
+            }}>
+            <img src={Add} alt="Add" style={{height:"1rem", width:"1rem"}} />
           </Card>
           <div className={classes.id}> </div>
         </Grid>
@@ -193,7 +202,7 @@ function ClaimDetail(props: any) : React.ReactElement{
                 alignItems="center" 
                 onClick={() => setDialog(item)}
                 >
-                <Card>
+                <Card cardStyl="">
                   <img src={item.img} alt={item.name} style={{height:"100%", width:"100%"}} />
                 </Card>
                 <div className={classes.id}>#{item.id}</div>

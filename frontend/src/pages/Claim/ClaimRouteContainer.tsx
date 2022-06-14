@@ -23,7 +23,7 @@ export default function SwapRouteContainer(): React.ReactElement {
             </Route>
               <Route path="/claim/detail">
                 <ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/claim');}} textValue="Back" />
-                <ClaimDetail instrument={selectedInstrument} />
+                <ClaimDetail instrument={selectedInstrument} buttonName="claim"/>
               </Route>
         </Switch>
     );
