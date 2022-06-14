@@ -11,7 +11,7 @@ export default function InstrumentCard({
 }) {
   const data = [
     ["Price", instrument.price],
-    ["Fee", instrument.fee],
+    // ["Fee", instrument.fee],
   ];
 
   // @ts-ignore

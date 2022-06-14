@@ -6,9 +6,10 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import LoopIcon from "@material-ui/icons/Loop";
+import { Button, Select, MenuItem  } from "@material-ui/core";
+import InputBase from '@material-ui/core/InputBase';
+import { withStyles } from "@material-ui/core/styles";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
-import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 
 import { defaultInstrument } from "../api";
@@ -68,6 +69,44 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 
 // @ts-ignore
 const useStyles = makeStyles(styles);
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    // backgroundColor: theme.palette.background.paper,
+    border: '0 solid #ced4da',
+    fontSize: 16,
+    padding: '0.42rem 1rem 0.42rem 0.5rem',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    height: "2.67rem",
+    lineHeight: "2.67rem",
+    backgroundColor: "#222121",
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      // borderRadius: 4,
+      // borderColor: '#80bdff',
+      // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}))(InputBase);
 
 function CoinSwapper(props: any) : React.ReactElement{
   const classes = useStyles();
@@ -260,13 +299,27 @@ function CoinSwapper(props: any) : React.ReactElement{
             <Grid container direction="column" spacing={2}>
               <div className={classes.from}>From</div>
               <Grid item xs={12} className={classes.fullWidth}>
-                <CoinField
+                {/* <CoinField
                   activeField
                   value={field1Value}
                   onClick={() => setDialog1Open(true)}
                   onChange={handleChange.field1}
                   symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
-                />
+                /> */}
+               <div style={{display: "flex", marginTop: "1.5rem"}}>
+                <Select
+                  labelId="demo-customized-select-label"
+                  id="demo-customized-select"
+                  input={<BootstrapInput />}
+                  defaultValue="10"
+                  style={{color: "#ffffff"}}
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+                <BootstrapInput id="demo-customized-textbox" />
+              </div> 
               </Grid>
 
               <IconButton onClick={switchFields} className={classes.switchButton}>
@@ -274,12 +327,26 @@ function CoinSwapper(props: any) : React.ReactElement{
               </IconButton>
               <div className={classes.from}>To</div>
               <Grid item xs={12} className={classes.fullWidth}>
-                <CoinField
+                {/* <CoinField
                   activeField={false}
                   value={field2Value}
                   onClick={() => setDialog2Open(true)}
                   symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
-                />
+                /> */}
+                <div style={{display: "flex", marginTop: "1.5rem"}}>
+                <Select
+                  labelId="demo-customized-select-label"
+                  id="demo-customized-select"
+                  input={<BootstrapInput />}
+                  defaultValue="10"
+                  style={{color: "#ffffff"}}
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+                <BootstrapInput id="demo-customized-textbox" />
+              </div> 
               </Grid>
 
               <div style={{

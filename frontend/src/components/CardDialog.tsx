@@ -136,7 +136,7 @@ DialogTitle.defaultProps = {
 function CardDialog(props: any) {
 
   const classes = useStyles();
-  const { onClose, data } = props;
+  const { onClose, data, buttonName } = props;
 
   const exit = (value: string|undefined, name: string|undefined) => {
     onClose(value, name);
@@ -164,7 +164,7 @@ function CardDialog(props: any) {
             size="small"
             variant="contained"
           >
-            Claim
+            {buttonName}
           </Button>
         </div>
       </div>

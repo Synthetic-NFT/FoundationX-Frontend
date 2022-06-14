@@ -406,7 +406,8 @@ function LongForm({ instrument, handleChange }: { instrument: Instrument, handle
 const useStyles = makeStyles({
   step: {
     display: "flex",
-    marginTop: "0.17rem"
+    marginTop: "0.17rem",
+    marginBottom: "3rem",
   },
   button: {
     display: "flex",
@@ -521,8 +522,8 @@ export default function FarmLong({
           <div className={styles.stepNumber}>1</div>
           <div style={{marginLeft: "1.25rem"}}>
             <FieldLabel
-              title="Choose a collateral asset"
-              description="Collateral asset may affect the minimum collateral ratio."
+              title="Provide mApple"
+              description=""
             />
             <div style={{display: "flex", marginTop: "1.5rem"}}>
               <Select
@@ -530,7 +531,7 @@ export default function FarmLong({
                 id="demo-customized-select"
                 input={<BootstrapInput />}
                 defaultValue="10"
-                style={{height: "2.67rem", marginTop: "0.42rem",}}
+                style={{height: "2.67rem", marginTop: "0.42rem", color: "#ffffff"}}
               >
                 <MenuItem value={10}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Ten</MenuItem>
                 <MenuItem value={20}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Twenty</MenuItem>
@@ -541,7 +542,7 @@ export default function FarmLong({
           </div>
         </div>
 
-        <div className={styles.step}>
+        {/* <div className={styles.step}>
           <div className={styles.stepNumber}>2</div>
           <div style={{marginLeft: "1.25rem"}}>
             <FieldLabel
@@ -550,22 +551,16 @@ export default function FarmLong({
             />
             <div style={{display: "flex"}}>
               <RatioField {...fakeLimits} instrument={instrument} />
-              {/* <div
-                style={{
-                  marginTop: "1.33rem",
-                }}
-              />
-              <DebtField instrument={instrument} /> */}
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className={styles.step}>
-          <div className={styles.stepNumber}>3</div>
+          <div className={styles.stepNumber}>2</div>
           <div style={{marginLeft: "1.25rem"}}>
             <FieldLabel
-              title="Confirm borrow amount"
-              description="Position can be closed by repaying the borrowed amount."
+              title="Provide Additional UST"
+              description="An equivalent UST amount must be provided."
             />
             <div style={{display: "flex", marginTop: "1.5rem"}}>
               <Select
@@ -573,6 +568,7 @@ export default function FarmLong({
                 id="demo-customized-select"
                 input={<BootstrapInput />}
                 defaultValue="10"
+                style={{color: "#ffffff"}}
               >
                 <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
@@ -598,7 +594,7 @@ export default function FarmLong({
           size="large"
           variant="contained"
         >
-          Connect Wallet
+          Farm
         </Button>
       </div>
       <Card instrument={inst} />

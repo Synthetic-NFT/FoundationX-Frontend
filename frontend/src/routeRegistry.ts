@@ -52,7 +52,7 @@ export const routes: Route[] = [
   },
   {
     path: tradeRoute,
-    label: "Trade",
+    label: "Mint",
     icon: Trade,
     RouteContainer: TradeRouteContainer,
   },

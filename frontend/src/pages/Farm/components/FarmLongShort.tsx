@@ -22,21 +22,24 @@ import FarmLong from "./FarmLong";
 import FarmShort from "./FarmShort";
 
 const Tab = styled(TabUnstyled)`
-  color: white;
+  color: rgba(255, 255, 255, 0.52);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: bold;
   background-color: transparent;
-  width: 100%;
-  padding: 0.5rem 0.67rem;
+  width: 48%;
+  padding:0.5rem 0.67rem;
   margin: 0.25rem 0.25rem;
   border: none;
   border-radius: 0.25rem;
   display: flex;
   justify-content: center;
+  max-width: 30rem;
   &.${tabUnstyledClasses.selected} {
-    background-color: white;
-    color: black;
+    background-color: #2B3342;
+    color: #ffffff;
+    border: 1px solid #B0B0B0;
+    border-radius: 0.25rem;
   };
   height: 2rem;
 `;
@@ -92,12 +95,12 @@ export default function InstrumentOrder(): React.ReactElement {
   
   const tabs = [
     {
-      label: "Long",
+      label: "Long Farm",
       link: LONG_URL,
       tooltip: "Provide liquidity to receive LP tokens which are staked to earn MIR token rewards"
     },
     {
-      label: "Short",
+      label: "Short Farm",
       link: SHORT_URL,
       tooltip: "Provide collateral to create short positions and earn MIR token rewards."
     },
@@ -111,17 +114,17 @@ export default function InstrumentOrder(): React.ReactElement {
           borderColor: "divider",
         }}
       >
-        <Tabs centered value={match?.url === LONG_URL ? 0 : 1}>
+        <Tabs centered value={match?.url === LONG_URL ? 0 : 1} >
           {tabs.map((item, i) => {
                 const tabDom = (
                 <p>{item.label}
-                  <Tooltip title={<h4>{item.tooltip}</h4>}>
+                  {/* <Tooltip title={<h4>{item.tooltip}</h4>}>
                     <IconButton>
                       <HelpOutlineOutlinedIcon
                         sx={{ color: theme.tableHeaderTextColor }}
                       />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> */}
                   </p>)
                 return (
                   <Tab key={item.label} label={tabDom} onClick={()=>onSwitch(item.link)} />
