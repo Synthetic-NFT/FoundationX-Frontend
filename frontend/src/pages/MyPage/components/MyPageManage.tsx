@@ -56,6 +56,7 @@ const BASE_URL = `${MYPAGE_URL}/manage`;
 const ETH_URL = `${BASE_URL}/eth`;
 const NFT_URL = `${BASE_URL}/nft`;
 
+
 export default function MyPageManage(): React.ReactElement {
   const match = useRouteMatch([ETH_URL, NFT_URL]);
   const location = useLocation();
