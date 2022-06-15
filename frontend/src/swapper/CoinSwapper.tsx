@@ -6,8 +6,12 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
+import LoopIcon from "@material-ui/icons/Loop";
+import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
+import { Button } from "@mui/material";
+import React, {useContext, useEffect} from "react";
 
-import { defaultInstrument } from "../api";
+import { defaultInstrument, TradeData } from "../api";
 import {AppContext} from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../constants/coins";
@@ -127,34 +131,63 @@ const BootstrapInput = withStyles((theme) => ({
   },
 }))(InputBase);
 
+interface CoinInterface {
+  address: string|undefined;
+  name: string|undefined;
+  symbol: string|undefined;
+  balance: number|undefined;
+}
+
+const ethCoin: CoinInterface = {
+  address: undefined,
+  name: "Ethereum",
+  symbol: "ETH",
+  balance: undefined,
+}
+
+function getTradableCoinInfo(tradeData: TradeData): CoinInterface[]  {
+  const availableCoins = [ethCoin];
+  for (let i = 0; i < tradeData.instruments.length; i += 1) {
+    const instrument = tradeData.instruments[i];
+    if (instrument === defaultInstrument) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+    const currCoin: CoinInterface = {
+      address: instrument.address,
+      name: instrument.ticker,
+      symbol: instrument.symbol,
+      balance: undefined,
+    }
+    availableCoins.push(currCoin);
+  }
+  return availableCoins;
+}
+
 function CoinSwapper(props: any) : React.ReactElement{
   const classes = useStyles();
 
   const { instrument } = props;
   const { tradeData } = useContext(TradeContext);
 
-  const availableCoinIn = tradeData;
-  const availableCoinOut = tradeData;
-
+  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
   // Stores a record of whether their respective dialog window is open
   const [dialog1Open, setDialog1Open] = React.useState(false);
   const [dialog2Open, setDialog2Open] = React.useState(false);
   const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
-  interface CoinInterface {
-    address: string|undefined;
-    name: string|undefined;
-    balance: number|undefined;
-  }
+
   // Stores data about their respective coin
   const [coin1, setCoin1] = React.useState<CoinInterface>({
     address: undefined,
     name: undefined,
+    symbol: undefined,
     balance: undefined,
   });
   const [coin2, setCoin2] = React.useState<CoinInterface>({
     address: undefined,
     name: undefined,
+    symbol: undefined,
     balance: undefined,
   });
 
@@ -199,6 +232,10 @@ function CoinSwapper(props: any) : React.ReactElement{
   };
 
   useEffect(() => {
+    setAvailableCoin(getTradableCoinInfo(tradeData));
+  }, [tradeData]);
+
+  useEffect(() => {
     if (Number.isNaN(parseFloat(field1Value))) {
       setField2Value("");
     } else if (parseFloat(field1Value) && coin1.name === "Ethereum" && coin2.name) {
@@ -225,6 +262,7 @@ function CoinSwapper(props: any) : React.ReactElement{
       setCoin1({
         address: undefined,
         name: "Ethereum",
+        symbol: "ETH",
         balance: data.toNumber(),
       });
     })
@@ -233,6 +271,7 @@ function CoinSwapper(props: any) : React.ReactElement{
       setCoin2({
         address: instrument?.address || undefined,
         name: instrument?.ticker || undefined,
+        symbol: instrument?.symbol || undefined,
         balance: data.toNumber(),
       });
     })
@@ -249,7 +288,7 @@ function CoinSwapper(props: any) : React.ReactElement{
     });
   });
 
-  const onToken1Selected = (address: string, name: string) => {
+  const onToken1Selected = (address: string, name: string, symbol: string) => {
     // Close the dialog window
     setDialog1Open(false);
 
@@ -264,6 +303,7 @@ function CoinSwapper(props: any) : React.ReactElement{
         setCoin1({
           address,
           name,
+          symbol,
           balance: data.toNumber(),
         });
       })
@@ -271,7 +311,7 @@ function CoinSwapper(props: any) : React.ReactElement{
     }
   };
 
-  const onToken2Selected = (address: string, name: string) => {
+  const onToken2Selected = (address: string, name: string, symbol: string) => {
     // Close the dialog window
     setDialog2Open(false);
 
@@ -286,6 +326,7 @@ function CoinSwapper(props: any) : React.ReactElement{
         setCoin2({
           address,
           name,
+          symbol,
           balance: data.toNumber(),
         });
       })
@@ -312,13 +353,13 @@ function CoinSwapper(props: any) : React.ReactElement{
       <CoinDialog
         open={dialog1Open}
         onClose={onToken1Selected}
-        coins={availableCoinIn}
+        coins={availableCoin}
         signer="placeholder"
       />
       <CoinDialog
         open={dialog2Open}
         onClose={onToken2Selected}
-        coins={availableCoinOut}
+        coins={availableCoin}
         signer="placeholder"
       />
       <div style={{ display: "flex", flexDirection: "row", height: "max-content", width: "21.75rem"}}>
