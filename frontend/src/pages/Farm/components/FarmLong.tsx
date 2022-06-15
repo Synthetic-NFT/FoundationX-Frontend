@@ -8,6 +8,7 @@ import Slider from "@material-ui/core/Slider";
 import { withStyles } from "@material-ui/core/styles";
 import { StylesContext } from "@material-ui/styles";
 import { TextField } from "@mui/material";
+import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect, useState } from "react";
 
@@ -525,19 +526,21 @@ export default function FarmLong({
               title="Provide mApple"
               description=""
             />
-            <div style={{display: "flex", marginTop: "1.5rem"}}>
-              <Select
-                labelId="demo-customized-select-label"
-                id="demo-customized-select"
-                input={<BootstrapInput />}
-                defaultValue="10"
-                style={{height: "2.67rem", marginTop: "0.42rem", color: "#ffffff"}}
-              >
-                <MenuItem value={10}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Ten</MenuItem>
-                <MenuItem value={20}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Twenty</MenuItem>
-                <MenuItem value={30}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Thirty</MenuItem>
-              </Select>
-              <BootstrapInput id="demo-customized-textbox" />
+            <div >
+              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} style={{display: "flex", marginTop: "1.5rem", flexDirection: "row"}}>
+                <Select
+                  labelId="demo-customized-select-label"
+                  id="demo-customized-select"
+                  input={<BootstrapInput />}
+                  defaultValue="10"
+                  style={{height: "2.67rem", marginTop: "0.42rem", color: "#ffffff"}}
+                  >
+                  <MenuItem value={10}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Ten</MenuItem>
+                  <MenuItem value={20}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Twenty</MenuItem>
+                  <MenuItem value={30}><img src={Ethereum} alt="Ethereum" style={{height:"0.83rem", width:"0.83rem"}} />Thirty</MenuItem>
+                </Select>
+                <BootstrapInput id="demo-customized-textbox" />
+              </FormControl> 
             </div>
           </div>
         </div>

@@ -87,6 +87,7 @@ const useStyles = makeStyles({
     backgroundClip: "padding-box, border-box",
     backgroundOrigin: "padding-box, border-box",
     backgroundImage: "linear-gradient(160.35deg, #25283C 93.23%, rgba(31, 30, 35, 0.6) 13.15%), linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0))",
+    justifyContent: "space-between",
   },
   cardRight: {
     color: theme.activeTextColor,
@@ -106,7 +107,7 @@ const useStyles = makeStyles({
     justifyContent: "space-between !important",
   },
   cardButton: {
-    width: "7rem", 
+    width: "fit-content", 
     display: "flex",
     justifyContent: "space-between !important",
     height: "1.42rem",
@@ -247,6 +248,7 @@ export default function MypPage(): React.ReactElement {
 
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
+  const [step, setStep] = useState(0);
 
   const [loading, setIsLoading] = React.useState(false);
   useEffect(() => {
@@ -254,6 +256,7 @@ export default function MypPage(): React.ReactElement {
       setIsLoading(true);
       api.loadMyPageData().then((data) => {
         setMyPageData(data);
+        // setStep(0);
         setIsLoading(false);
       });
     }
@@ -373,22 +376,24 @@ export default function MypPage(): React.ReactElement {
       </div>      
     </div>
   )
+  const statusList = ['claim', 'mint', 'swap'];
+  const titleList = [
+    'You don’t have any NFT yet. Claim testing NFT now', 
+    'Now you can mint sTokens with your NFTs',
+    'Now you can trade your sTokens',
+  ]
+  const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
+  function handleClick() {
+    const s = step + 1;
+    setStep(s%3);
+    // history.push(`/${statusList[step]}`);
+  }
 
   return (
     <>
       {
         !loginSuccess &&
         <div className={styles.loginGroup} >
-          {/* <div className={styles.title}>Connect to a wallet</div> */}
-          {/* <Button
-            className={styles.button}
-            size="large"
-            variant="contained"
-            endIcon={<QrCodeIcon />}
-            onClick={() => login()}
-          >
-            View an address
-          </Button> */}
           <Button
             className={styles.button}
             size="large"
@@ -407,17 +412,10 @@ export default function MypPage(): React.ReactElement {
         <>
           <div className={styles.cardGroup}>
             <div className={styles.cardLeft} >
-              <div className={styles.titleGroup}>
+              {/* <div className={styles.titleGroup}>
                 <div>
                   <div className={styles.totalValueTitle}>
                     Total Value 
-                    {/* <Tooltip title={<h4>total value tooltip</h4>}>
-                      <IconButton>
-                        <HelpOutlineOutlinedIcon
-                          sx={{ color: theme.tableHeaderTextColor }}
-                        />
-                      </IconButton>
-                    </Tooltip> */}
                   </div>
                 </div>
                 <div className={styles.totalValue}>
@@ -430,13 +428,6 @@ export default function MypPage(): React.ReactElement {
                     <div className={styles.ust}>
                       <div className={styles.priceLabel}>
                         UST 
-                        {/* <Tooltip title={<h4>UST tooltip</h4>}>
-                          <IconButton>
-                            <HelpOutlineOutlinedIcon
-                              sx={{ color: theme.tableHeaderTextColor }}
-                            />
-                          </IconButton>
-                        </Tooltip> */}
                       </div>
                       <div className={styles.price}>
                         {myPageData?.ust} UST
@@ -445,13 +436,6 @@ export default function MypPage(): React.ReactElement {
                     <div className={styles.holding}>
                       <div className={styles.priceLabel}>
                         HOLDING 
-                        {/* <Tooltip title={<h4>holding tooltip</h4>}>
-                          <IconButton>
-                            <HelpOutlineOutlinedIcon
-                              sx={{ color: theme.tableHeaderTextColor }}
-                            />
-                          </IconButton>
-                        </Tooltip> */}
                       </div>
                       <div className={styles.price}>
                         {myPageData?.holding} UST
@@ -460,13 +444,6 @@ export default function MypPage(): React.ReactElement {
                     <div className={styles.borrowing}>
                       <div className={styles.priceLabel}>
                         BORROWING 
-                        {/* <Tooltip title={<h4>borrowing tooltip</h4>}>
-                          <IconButton>
-                            <HelpOutlineOutlinedIcon
-                              sx={{ color: theme.tableHeaderTextColor }}
-                            />
-                          </IconButton>
-                        </Tooltip> */}
                       </div>
                       <div className={styles.price}>
                         {myPageData?.borrowing} UST
@@ -492,19 +469,24 @@ export default function MypPage(): React.ReactElement {
                   }}
                   option={getOption()}
                 />
+              </div> */}
+              <div className={styles.totalValueTitle}>
+                {titleList[step]}
               </div>
+              <Button
+                className={styles.cardButton}
+                size="large"
+                variant="text"
+                // endIcon={<img src={Send} alt={Send} style={{height:"0.83rem", width:"0.83rem"}} />}
+                onClick={() => handleClick()}
+              >
+                {buttonList[step]}  
+              </Button>
             </div>
             <div className={styles.cardRight} >
               <div className={styles.titleGroup} style={{width: "11.67rem"}}>
                 <div className={styles.totalValueTitle} style={{display: "flex", alignItems: "center"}}>
                   Total Claimable Rewards
-                  {/* <Tooltip title={<h4>Total Claimable Rewards</h4>}>
-                    <IconButton>
-                      <HelpOutlineOutlinedIcon
-                        sx={{ color: theme.tableHeaderTextColor }}
-                      />
-                    </IconButton>
-                  </Tooltip> */}
                 </div>
               </div>
               <div className={styles.price} style={{marginTop: "1.33rem",}}>

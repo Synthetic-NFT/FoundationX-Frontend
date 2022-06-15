@@ -214,22 +214,37 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
   const history = useHistory();
   const styles = useStyles();
   
-  function handleClick() {
+  function handleSwapClick() {
     history.push(`/swap/order?ticker=${row.ticker}`);
     // history.push(`/trade/order/buy?ticker=${row.ticker}`);
   }
+  function handleManageClick() {
+    history.push(`/mypage/manage/nft?ticker=${row.ticker}`);
+  }
+
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <Button
         size="small"
         variant="contained"
-        onClick={() => handleClick()}
+        onClick={() => handleSwapClick()}
         style={{
           background: "#4340CB",
           borderRadius: "2.08rem",
         }}
       >
         Swap
+      </Button>
+      <Button
+        size="small"
+        variant="contained"
+        onClick={() => handleManageClick()}
+        style={{
+          background: "#4340CB",
+          borderRadius: "2.08rem",
+        }}
+      >
+        Reedem
       </Button>
     </TableCell>
   );
