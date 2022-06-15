@@ -13,7 +13,7 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
 import PropTypes from "prop-types";
 import React from "react";
-import { TradeData } from "../api";
+import { TradeData, Instrument } from "../api";
 import CoinButton from "./CoinButton";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
@@ -158,7 +158,7 @@ function CoinDialog(props: any) {
                   <CoinButton
                     coinName={coin.name}
                     coinAbbr={coin.symbol}
-                    onClick={() => exit(coin.address, coin.symbol)}
+                    onClick={() => exit(coin.address, coin.name)}
                   />
                 </Grid>
               ))}
@@ -173,7 +173,8 @@ function CoinDialog(props: any) {
 CoinDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  coins: PropTypes.any.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  coins: PropTypes.array.isRequired,
   signer: PropTypes.string.isRequired,
 };
 
