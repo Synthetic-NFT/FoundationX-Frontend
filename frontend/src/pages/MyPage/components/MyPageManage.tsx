@@ -56,7 +56,8 @@ const BASE_URL = `${MYPAGE_URL}/manage`;
 const ETH_URL = `${BASE_URL}/eth`;
 const NFT_URL = `${BASE_URL}/nft`;
 
-export default function InstrumentOrder(): React.ReactElement {
+
+export default function MyPageManage(): React.ReactElement {
   const match = useRouteMatch([ETH_URL, NFT_URL]);
   const location = useLocation();
   const history = useHistory();
@@ -124,7 +125,7 @@ export default function InstrumentOrder(): React.ReactElement {
             <InstrumentSell instrument={instrument} />
           </Route>
           <Route path="/mypage/manage/nft" exact>
-            <ClaimDetail instrument={instrument} buttonName="reedem"/>
+            <ClaimDetail instrument={instrument} buttonName="reedem" haveAdd={false}/>
           </Route>
         </Switch>
       </div>
