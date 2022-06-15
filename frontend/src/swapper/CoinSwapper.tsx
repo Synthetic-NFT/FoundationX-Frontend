@@ -5,13 +5,15 @@ import {
   makeStyles,
   Paper,
   Typography,
-} from "@material-ui/core";
+ Button, Select, MenuItem  } from "@material-ui/core";
+import InputBase from '@material-ui/core/InputBase';
+import { withStyles } from "@material-ui/core/styles";
 import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
-import { Button } from "@mui/material";
 import React, {useContext, useEffect} from "react";
 
-import { defaultInstrument, TradeData } from "../api";
+import { defaultInstrument } from "../api";
+import type { TradeData } from "../api";
 import {AppContext} from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../constants/coins";
@@ -25,23 +27,9 @@ import {
   swapExactTokensForETH,
   readWalletTokenBalance
 } from "../util/interact"
-
-import LoopIcon from "@material-ui/icons/Loop";
-import { Button, Select, MenuItem  } from "@material-ui/core";
-import InputBase from '@material-ui/core/InputBase';
-import { withStyles } from "@material-ui/core/styles";
-import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
-import { Button } from "@mui/material";
-import React, {useContext, useEffect} from "react";
-
-import { defaultInstrument } from "../api";
-import LoadingButton from "../components/LoadingButton";
-import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../constants/coins";
-import { fakeTradeData } from "../fakeData";
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
-import {AppContext} from "../AppContext";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
