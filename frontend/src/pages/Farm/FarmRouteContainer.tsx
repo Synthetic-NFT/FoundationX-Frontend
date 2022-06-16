@@ -11,14 +11,15 @@ export default function FarmRouteContainer(): React.ReactElement {
   return (
     <Switch>
       <Route path="/farm" exact>
-        <FarmTable />
+        {/* <FarmTable /> */}
+        <FarmLongShort />
       </Route>
       <Route path="/farm/long">
-        <ReturnButton onClick={() => history.push('/farm')} textValue="Back" />
+        {/* <ReturnButton onClick={() => history.push('/farm')} textValue="Back" /> */}
         <FarmLongShort />
       </Route>
       <Route path="/farm/short">
-        <ReturnButton onClick={() => history.push('/farm')} textValue="Back" />
+        {/* <ReturnButton onClick={() => history.push('/farm')} textValue="Back" /> */}
         <FarmLongShort />
       </Route>
     </Switch>

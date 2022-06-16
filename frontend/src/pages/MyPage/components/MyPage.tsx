@@ -6,16 +6,16 @@ import SendIcon from '@mui/icons-material/Send';
 import { Button, IconButton, Snackbar, Tooltip } from "@mui/material";
 import EchartsOption from "echarts";
 import ReactEcharts from "echarts-for-react";
-import React, { useContext, useEffect, useState }  from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
-import api, {MyPageData} from "../../../api";
+import api, { MyPageData } from "../../../api";
 import CreditCard from "../../../styles/images/CreditCard.png";
 import Send from "../../../styles/images/send.svg";
 import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
 import MyPageTable from "./MyPageTable";
-import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./tableColumns";
+import { holdingTableColumns, borrowingTableColumns, governTableColumns } from "./tableColumns";
 
 const useStyles = makeStyles({
   loginGroup: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles({
     marginBottom: "0",
   },
   button: {
-    margin: "2.41rem 0 !important", 
+    margin: "2.41rem 0 !important",
     alignSelf: "flex-start",
     display: "flex",
     justifyContent: "space-between !important",
@@ -45,7 +45,6 @@ const useStyles = makeStyles({
   },
   buttonTitle: {
     height: "1.5rem",
-    fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
     lineHeight: "1.5rem",
@@ -107,13 +106,12 @@ const useStyles = makeStyles({
     justifyContent: "space-between !important",
   },
   cardButton: {
-    width: "fit-content", 
+    width: "fit-content",
     display: "flex",
     justifyContent: "space-between !important",
     height: "1.42rem",
     background: "linear-gradient(94.8deg, #072CB2 2.99%, #4B3CA8 57.25%, #440495 98.64%, #0C3666 138.99%)",
     borderRadius: "2.08rem !important",
-    fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
     fontSize: "0.5rem !important",
@@ -147,15 +145,15 @@ const useStyles = makeStyles({
     marginBottom: "1rem",
     width: "4.17rem",
     "&::after": {
-        content: "''",
-        width: "0.5rem",
-        height: "1.67rem",
-        borderRadius: "0.25rem",
-        backgroundColor: "#2B87E3",
-        position: "absolute",
-        top: "0.25rem",
-        left: "-0.5rem",
-        right: "0",
+      content: "''",
+      width: "0.5rem",
+      height: "1.67rem",
+      borderRadius: "0.25rem",
+      backgroundColor: "#2B87E3",
+      position: "absolute",
+      top: "0.25rem",
+      left: "-0.5rem",
+      right: "0",
     }
   },
   holding: {
@@ -165,15 +163,15 @@ const useStyles = makeStyles({
     width: "4.17rem",
     marginBottom: "1rem",
     "&::after": {
-        content: "''",
-        width: "0.5rem",
-        height: "1.67rem",
-        borderRadius: "0.25rem",
-        backgroundColor: "#43CCC4",
-        position: "absolute",
-        top: "0.25rem",
-        left: "-0.5rem",
-        right: "0",
+      content: "''",
+      width: "0.5rem",
+      height: "1.67rem",
+      borderRadius: "0.25rem",
+      backgroundColor: "#43CCC4",
+      position: "absolute",
+      top: "0.25rem",
+      left: "-0.5rem",
+      right: "0",
     }
   },
   borrowing: {
@@ -184,19 +182,18 @@ const useStyles = makeStyles({
     width: "4.17rem",
     marginBottom: "1rem",
     "&::after": {
-        content: "''",
-        width: "0.5rem",
-        height: "1.67rem",
-        borderRadius: "0.25rem",
-        backgroundColor: "#072CB2",
-        position: "absolute",
-        top: "0.25rem",
-        left: "-0.5rem",
-        right: "0",
+      content: "''",
+      width: "0.5rem",
+      height: "1.67rem",
+      borderRadius: "0.25rem",
+      backgroundColor: "#072CB2",
+      position: "absolute",
+      top: "0.25rem",
+      left: "-0.5rem",
+      right: "0",
     }
   },
   priceLabel: {
-    fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
     fontSize: "0.67rem",
@@ -204,7 +201,6 @@ const useStyles = makeStyles({
     color: "#FFFFFF",
   },
   price: {
-    fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
     fontSize: "0.67rem",
@@ -218,13 +214,12 @@ const useStyles = makeStyles({
     // borderTopLeftRadius: "0.67rem",
     // borderTopRightRadius: "0.67rem",
     // backgroundColor: "#0099FF",
-    padding: "0 0.67rem",    
+    padding: "0 0.67rem",
     height: "2.67rem",
     alignItems: "center",
     color: "#ffffff",
   },
   totalValueTitle: {
-    fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 500,
     fontSize: "1rem",
@@ -232,7 +227,6 @@ const useStyles = makeStyles({
     color: "#FFFFFF",
   },
   totalValue: {
-    fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 400,
     fontSize: "1rem",
@@ -261,7 +255,7 @@ export default function MypPage(): React.ReactElement {
       });
     }
   }, [loading, setIsLoading, myPageData, setMyPageData]);
-  
+
   function login() {
     setLoginSuccess(true);
   }
@@ -361,9 +355,9 @@ export default function MypPage(): React.ReactElement {
     </div>
   )
 
-  
+
   const GovernHeader = (
-    <div className={styles.header} style={{borderRadius: "0.67rem"}}>
+    <div className={styles.header} style={{ borderRadius: "0.67rem" }}>
       <div>
         Govern
         <Tooltip title={<h4>Govern tooltip</h4>}>
@@ -373,35 +367,21 @@ export default function MypPage(): React.ReactElement {
             />
           </IconButton>
         </Tooltip>
-      </div>      
+      </div>
     </div>
   )
-  const statusList = ['claim', 'mint', 'swap'];
+  const statusList = ['claim', 'trade', 'swap'];
   const titleList = [
-    'You don’t have any NFT yet. Claim testing NFT now', 
+    'You don’t have any NFT yet. Claim testing NFT now',
     'Now you can mint sTokens with your NFTs',
     'Now you can trade your sTokens',
   ]
   const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
   function handleClick() {
-    const s = step + 1;
-    setStep(s%3);
-    // history.push(`/${statusList[step]}`);
+    // const s = step + 1;
+    // setStep(s % 3);
+    history.push(`/${statusList[step]}`);
   }
-
-  const statusList = ['claim', 'mint', 'swap'];
-  const titleList = [
-    'You don’t have any NFT yet. Claim testing NFT now', 
-    'Now you can mint sTokens with your NFTs',
-    'Now you can trade your sTokens',
-  ]
-  const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
-  function handleClick() {
-    const s = step + 1;
-    setStep(s%3);
-    // history.push(`/${statusList[step]}`);
-  }
-
 
   return (
     <>
@@ -412,13 +392,13 @@ export default function MypPage(): React.ReactElement {
             className={styles.button}
             size="large"
             variant="contained"
-            endIcon={<img src={CreditCard} alt={CreditCard} style={{height:"0.83rem", width:"0.83rem"}} />}
+            endIcon={<img src={CreditCard} alt={CreditCard} style={{ height: "0.83rem", width: "0.83rem" }} />}
             onClick={() => login()}
           >
             <span className={styles.buttonTitle}>
               Wallet Connect
             </span>
-           </Button>
+          </Button>
         </div>
       }
       {
@@ -494,33 +474,35 @@ export default function MypPage(): React.ReactElement {
                 // endIcon={<img src={Send} alt={Send} style={{height:"0.83rem", width:"0.83rem"}} />}
                 onClick={() => handleClick()}
               >
-                {buttonList[step]}  
+                {buttonList[step]}
+              </Button>
+              <Button onClick={() => setStep((step + 1) % 3)} size="small">
+                next step
               </Button>
             </div>
             <div className={styles.cardRight} >
-              <div className={styles.titleGroup} style={{width: "11.67rem"}}>
-                <div className={styles.totalValueTitle} style={{display: "flex", alignItems: "center"}}>
+              <div className={styles.titleGroup} style={{ width: "11.67rem" }}>
+                <div className={styles.totalValueTitle} style={{ display: "flex", alignItems: "center" }}>
                   Total Claimable Rewards
                 </div>
               </div>
-              <div className={styles.price} style={{marginTop: "1.33rem",}}>
+              <div className={styles.price} style={{ marginTop: "1.33rem", }}>
                 {myPageData?.totalClaimableRewards.mir} MIR
               </div>
               <div className={styles.priceLabel}>
                 {myPageData?.totalClaimableRewards.ust} UST
               </div>
-              <div className={styles.price} style={{marginTop: "1.33rem",}}>
+              <div className={styles.price} style={{ marginTop: "1.33rem", }}>
                 <div className={styles.priceLabel}>Mri Price</div>
                 {myPageData?.totalClaimableRewards.mriPrice}
               </div>
               <Button
-                style={{ 
-                  width: "14rem", 
+                style={{
+                  width: "14rem",
                   height: "1.42rem",
-                  alignSelf: "flex-end", 
+                  alignSelf: "flex-end",
                   background: "linear-gradient(94.8deg, #072CB2 2.99%, #4B3CA8 57.25%, #440495 98.64%, #0C3666 138.99%)",
                   borderRadius: "2.08rem",
-                  fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: 400,
                   fontSize: "0.5rem",
@@ -530,16 +512,16 @@ export default function MypPage(): React.ReactElement {
                 size="large"
                 variant="contained"
                 disabled
-                endIcon={<img src={Star} alt={Star} style={{height:"0.83rem", width:"0.83rem"}} />}
+                endIcon={<img src={Star} alt={Star} style={{ height: "0.83rem", width: "0.83rem" }} />}
               >
                 Claim All Rewards
               </Button>
             </div>
           </div>
-          <div style={{margin: "0 0.17rem 2.25rem 0.17rem"}}>
+          <div style={{ margin: "0 0.17rem 2.25rem 0.17rem" }}>
             <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
-            <MyPageTable tableColumns={borrowingTableColumns} data={myPageData?.data.borrowing} Header={BorrowingHeader} Radius="0 0 0 0"/>
-            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader}  Radius="0 0 0.83rem 0.83rem"/>
+            <MyPageTable tableColumns={borrowingTableColumns} data={myPageData?.data.borrowing} Header={BorrowingHeader} Radius="0 0 0 0" />
+            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader} Radius="0 0 0.83rem 0.83rem" />
           </div>
         </>
       }

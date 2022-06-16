@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
   title: {
     height: "2.5rem",
-    fontFamily: "Poppins",
+    // fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 600,
     fontSize: "1.67rem",

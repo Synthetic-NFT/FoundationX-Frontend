@@ -20,6 +20,7 @@ import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
 import { loadSynthPrice } from "../../../util/interact";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
+import MyPageWithdraw from "./MyPageWithdraw";
 
 const Tab = styled(TabUnstyled)`
   color: rgba(255, 255, 255, 0.52);
@@ -55,9 +56,10 @@ const MYPAGE_URL = "/mypage";
 const BASE_URL = `${MYPAGE_URL}/manage`;
 const ETH_URL = `${BASE_URL}/eth`;
 const NFT_URL = `${BASE_URL}/nft`;
+const WITHDRAW_URL = `${BASE_URL}/withdraw`;
 
 export default function MyPageManage(): React.ReactElement {
-  const match = useRouteMatch([ETH_URL, NFT_URL]);
+  const match = useRouteMatch([ETH_URL, NFT_URL, WITHDRAW_URL]);
   const location = useLocation();
   const history = useHistory();
   const ticker = new URLSearchParams(location.search).get("ticker");
@@ -96,18 +98,18 @@ export default function MyPageManage(): React.ReactElement {
   return (
     <>
       <ReturnButton onClick={() => history.push('/trade')} textValue="Back" />
+      {match?.url !== WITHDRAW_URL && 
       <Box
         sx={{
           borderBottom: 1,
           borderColor: "divider",
         }}
       >
-        {/* Since there are only 2 tabs, just hard code 0 or 1 as the selected tab */}
         <Tabs centered value={match?.url === ETH_URL ? 0 : 1}>
           <Tab label="Manage ETH Positions" onClick={() => onSwitch(ETH_URL)} />
           <Tab label="Manage NFT Positions" onClick={() => onSwitch(NFT_URL)} />
         </Tabs>
-      </Box>
+      </Box>}
       <div
         style={{
           position: "relative",
@@ -124,7 +126,10 @@ export default function MyPageManage(): React.ReactElement {
             <InstrumentSell instrument={instrument} />
           </Route>
           <Route path="/mypage/manage/nft" exact>
-            <ClaimDetail instrument={instrument} buttonName="reedem" haveAdd={false}/>
+            <ClaimDetail instrument={instrument} buttonName="Reedem" haveAdd/>
+          </Route>
+          <Route path="/mypage/manage/withdraw" exact>
+            <MyPageWithdraw  instrument={instrument}/>
           </Route>
         </Switch>
       </div>
