@@ -250,8 +250,8 @@ function Card({
 }) {
   const data = [
     ["Oracle Price", instrument.price],
-    ["Premium", instrument.fee],
-    ["Liquidity ", instrument.fee],
+    // ["Premium", instrument.fee],
+    // ["Liquidity ", instrument.fee],
   ];
 
   // @ts-ignore
@@ -285,14 +285,13 @@ function Card({
             />
             <div style={{ lineHeight: "2rem", }}>{instrument.ticker}</div>
           </div>
-          <div style={{
-            fontFamily: "Poppins",
+          {/* <div style={{
             fontStyle: "normal",
             fontWeight: 500,
             fontSize: "0.67rem",
             lineHeight: "2rem",
             color: "#565656",
-          }}>191.36 UST</div>
+          }}>191.36 UST</div> */}
         </div>
         <div
           style={{
@@ -308,7 +307,6 @@ function Card({
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                fontFamily: "Poppins",
                 fontStyle: "normal",
                 fontWeight: 300,
                 fontSize: "0.58rem",

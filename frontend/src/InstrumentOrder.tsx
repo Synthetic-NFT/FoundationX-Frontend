@@ -136,7 +136,7 @@ export default function InstrumentOrder(): React.ReactElement {
           </Route>
           <Route path="/trade/order/sell" exact>
             {/* <InstrumentSell instrument={instrument} /> */}
-            <ClaimDetail instrument={instrument} buttonName="mint"/>
+            <ClaimDetail instrument={instrument} buttonName="Mint" haveAdd/>
           </Route>
         </Switch>
       </div>
