@@ -87,7 +87,6 @@ function ClaimDetail(props: any) : React.ReactElement{
 
   const { instrument, buttonName, haveAdd } = props;
 
-
   const availbleCoinIn = DummyCoins;
   const availbleCoinOut = DummyCoins;
 
@@ -175,7 +174,6 @@ function ClaimDetail(props: any) : React.ReactElement{
         alignItems="center"
       >
         {haveAdd && <Grid item xs={3} sm={3} md={3} spacing={2} style={{padding: "0.5rem"}}  alignItems="center">
-
           <Card cardStyle={{
               width: "10rem",
               height: "10rem",
