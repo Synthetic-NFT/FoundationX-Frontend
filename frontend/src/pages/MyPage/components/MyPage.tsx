@@ -88,7 +88,6 @@ const useStyles = makeStyles({
     backgroundOrigin: "padding-box, border-box",
     backgroundImage: "linear-gradient(160.35deg, #25283C 93.23%, rgba(31, 30, 35, 0.6) 13.15%), linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0))",
     justifyContent: "space-between",
-
   },
   cardRight: {
     color: theme.activeTextColor,
@@ -251,7 +250,6 @@ export default function MypPage(): React.ReactElement {
   const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
   const [step, setStep] = useState(0);
 
-
   const [loading, setIsLoading] = React.useState(false);
   useEffect(() => {
     if (!loading) {
@@ -378,6 +376,18 @@ export default function MypPage(): React.ReactElement {
       </div>      
     </div>
   )
+  const statusList = ['claim', 'mint', 'swap'];
+  const titleList = [
+    'You don’t have any NFT yet. Claim testing NFT now', 
+    'Now you can mint sTokens with your NFTs',
+    'Now you can trade your sTokens',
+  ]
+  const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
+  function handleClick() {
+    const s = step + 1;
+    setStep(s%3);
+    // history.push(`/${statusList[step]}`);
+  }
 
   const statusList = ['claim', 'mint', 'swap'];
   const titleList = [
@@ -398,7 +408,6 @@ export default function MypPage(): React.ReactElement {
       {
         !loginSuccess &&
         <div className={styles.loginGroup} >
-
           <Button
             className={styles.button}
             size="large"
