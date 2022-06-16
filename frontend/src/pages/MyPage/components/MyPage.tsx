@@ -389,6 +389,20 @@ export default function MypPage(): React.ReactElement {
     // history.push(`/${statusList[step]}`);
   }
 
+  const statusList = ['claim', 'mint', 'swap'];
+  const titleList = [
+    'You don’t have any NFT yet. Claim testing NFT now', 
+    'Now you can mint sTokens with your NFTs',
+    'Now you can trade your sTokens',
+  ]
+  const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
+  function handleClick() {
+    const s = step + 1;
+    setStep(s%3);
+    // history.push(`/${statusList[step]}`);
+  }
+
+
   return (
     <>
       {
