@@ -1,0 +1,53 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "synthBurned",
+        "type": "uint256"
+      }
+    ],
+    "name": "arbitrageurBurnSynth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "arbitrageurMintSynth",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getArbitrageurMintedSynth",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "synthAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "userLiquidateETH",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]

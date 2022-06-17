@@ -40,6 +40,9 @@ export function TradeContextProvider({
   // Automatically kicks off the tradeDataLoading upon rendering since we don't need to wait for
   // an user action (such as connecting wallet).
   useEffect(() => {
+
+
+
     if (!tradeDataLoading && tradeData === defaultTradeData) {
       setIsTradeDataLoading(true);
       // api.loadInstruments().then((tradeData) => {

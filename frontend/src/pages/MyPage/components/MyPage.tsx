@@ -16,6 +16,7 @@ import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
 import MyPageTable from "./MyPageTable";
 import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./tableColumns";
+import {AppContext} from "../../../AppContext";
 
 const useStyles = makeStyles({
   loginGroup: {
@@ -247,6 +248,7 @@ export default function MypPage(): React.ReactElement {
   const history = useHistory();
   const styles = useStyles();
 
+  const { walletAddress, setWallet } = useContext(AppContext);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
   const [step, setStep] = useState(0);
@@ -262,7 +264,7 @@ export default function MypPage(): React.ReactElement {
         setIsLoading(false);
       });
     }
-  }, [loading, setIsLoading, myPageData, setMyPageData]);
+  }, [loading, setIsLoading, myPageData, setMyPageData, walletAddress]);
   
   function login() {
     setLoginSuccess(true);

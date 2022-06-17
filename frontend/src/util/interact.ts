@@ -329,7 +329,7 @@ export const loadSynthPrice = async (tickerID: string) => {
   return synthPrice;
 };
 
-export const loadPoolSythPrice = async (tickerID: string) => {
+export const loadPoolSynthPrice = async (tickerID: string) => {
   const lpReserve = await getLpReserve(tickerID);
   // eslint-disable-next-line no-underscore-dangle
   const synthReserve = lpReserve._reserve0;
@@ -358,6 +358,10 @@ export const loadUserOrderStat = async (address: string, tickerID: string) => {
   return [bnCollateral, bnCRatio, bnDebt, bnSynthPrice];
 };
 
+export const loadUserDebtDeposit = async (walletAddress: string, tickerIDs: string[]) => {
+  const res = await FactoryContract.methods.listUserDebtDeposit(walletAddress, [tickerIDs]).call();
+  return [res.debt, res.deposits, res.depositsNFTs];
+};
 
 export const readWalletTokenBalance = async (walletAddress: string, tickerID: string|undefined) => {
   if(tickerID === "Ethereum") {
@@ -368,6 +372,14 @@ export const readWalletTokenBalance = async (walletAddress: string, tickerID: st
     return new BigNumber('0');
   }
   const balance = await SynthContract[tickerID].methods.balanceOf(walletAddress).call();
+  return new BigNumber(balance).div('1e18');
+};
+
+export const readWalletLpBalance = async (walletAddress: string, tickerID: string|undefined) => {
+  if(tickerID == null) {
+    return new BigNumber('0');
+  }
+  const balance = await LpPairContract[tickerID].methods.balanceOf(walletAddress).call();
   return new BigNumber(balance).div('1e18');
 };
 

@@ -1,7 +1,14 @@
 import { AppData } from "./AppContext";
 import { BigNumber } from "bignumber.js";
+import ContractAddress from "./util/ContractAddress";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
-import {loadActiveTokens, loadPoolSythPrice, loadSynthPrice} from "./util/interact";
+import {
+  loadActiveTokens,
+  loadPoolSynthPrice,
+  loadSynthPrice,
+  readWalletLpBalance,
+  readWalletTokenBalance
+} from "./util/interact";
 
 export type Instrument = {
   ticker: string;
@@ -93,13 +100,13 @@ export const blockchainAPI = {
     const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
     const oraclePricePromises = []
     const poolPricePromises = []
-    await loadPoolSythPrice(tokenNames[0])
+    await loadPoolSynthPrice(tokenNames[0])
     for(let i = 0; i < tokenNames.length; i += 1) {
       oraclePricePromises.push(loadSynthPrice(tokenNames[i]));
-      poolPricePromises.push(loadPoolSythPrice(tokenNames[i]));
+      poolPricePromises.push(loadPoolSynthPrice(tokenNames[i]));
     }
 
-    const allOracePrices = await Promise.all(oraclePricePromises);
+    const allOraclePrices = await Promise.all(oraclePricePromises);
     const allPoolPrices = await Promise.all(poolPricePromises);
 
     const tradeData: TradeData = {
@@ -112,7 +119,7 @@ export const blockchainAPI = {
         fullName: tokenNames[i],
         symbol: tokenSymbols[i],
         id: i.toString(),
-        price: new BigNumber(allOracePrices[i]).div('1e18').toString(),
+        price: new BigNumber(allOraclePrices[i]).div('1e18').toString(),
         poolPrice: allPoolPrices[i],
         fee: 0,
         long: 0,
@@ -127,6 +134,37 @@ export const blockchainAPI = {
 
     return new Promise((resolve) => {
       resolve(tradeData);
+    });
+  },
+
+  async loadUserTokenBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
+    const tokenBalancePromises = []
+    for(let i = 0; i < tickerIDs.length; i += 1) {
+      tokenBalancePromises.push(readWalletTokenBalance(walletAddress, tickerIDs[i]));
+    }
+
+    const bnAllTokenBalances = await Promise.all(tokenBalancePromises);
+    const allTokenBalances : { [key: string]: string } = {};
+    for(let i = 0; i < tickerIDs.length; i += 1) {
+      allTokenBalances[tickerIDs[i]] = new BigNumber(bnAllTokenBalances[i]).div('1e18').toString();
+    }
+    return new Promise((resolve) => {
+      resolve(allTokenBalances);
+    });
+  },
+
+  async loadUserLpBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
+    const tokenBalancePromises:  Promise<BigNumber>[] = [];
+    for (let i = 0; i < tickerIDs.length; i += 1) {
+      tokenBalancePromises.push(readWalletLpBalance(walletAddress, tickerIDs[i]));
+    }
+    const bnAllTokenBalances = await Promise.all(tokenBalancePromises);
+    const allTokenBalances : { [key: string]: string } = {};
+    for(let i = 0; i < tickerIDs.length; i += 1) {
+      allTokenBalances[tickerIDs[i]] = new BigNumber(bnAllTokenBalances[i]).div('1e18').toString();
+    }
+    return new Promise((resolve) => {
+      resolve(allTokenBalances);
     });
   },
 }
