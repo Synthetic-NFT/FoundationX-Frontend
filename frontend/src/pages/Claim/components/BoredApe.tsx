@@ -79,48 +79,45 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     marginTop: "0.5rem",
     textAlign: "center",
     minHeight: "1.25rem",
+  },
+  titleGroup: {
+    fontWeight: 600,
+    fontSize: "1.5rem",
+    lineHeight: "2.25rem",    
+    color: "#FFFFFF",
+    display: "flex",
+    marginBottom: "3rem",
+  },
+  count: {
+    marginRight: "1rem",
+  },
+  button: {
+    width: "6.5rem",
+    height: "2rem",
+    background: "linear-gradient(102.22deg, #1368E8 41.1%, #221FBE 78.05%)",
+    borderRadius: "0.125rem",
+    fontWeight: 400,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",    
+    color: "#FFFFFF",
   }
 });
 
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-function ClaimDetail(props: any) : React.ReactElement{
+export default function BoredApe(props: any) : React.ReactElement{
   const classes = useStyles();
   const history = useHistory();
 
   const { instrument, buttonName, haveAdd } = props;
+  const [selectCards, setSelectCards] = React.useState<string[]>([]);
 
-  const availbleCoinIn = DummyCoins;
-  const availbleCoinOut = DummyCoins;
-
-  // Stores a record of whether their respective dialog window is open
-  const [dialog, setDialog] = React.useState({});
-  const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
-
-  interface CoinInterface {
-    address: string|undefined;
-    symbol: string|undefined;
-    balance: number|undefined;
+  interface Card {
+    name: string;
+    id: string;
   }
-  // Stores data about their respective coin
-  const [coin1, setCoin1] = React.useState<CoinInterface>({
-    address: undefined,
-    symbol: undefined,
-    balance: undefined,
-  });
-  const [coin2, setCoin2] = React.useState<CoinInterface>({
-    address: undefined,
-    symbol: undefined,
-    balance: undefined,
-  });
 
-  useEffect(() => {
-
-  }, [availbleCoinIn, instrument]);
-
-  // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
-  // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
   useEffect(() => {
     const coinTimeout = setTimeout(() => {
       console.log('props: ', props);
@@ -130,12 +127,16 @@ function ClaimDetail(props: any) : React.ReactElement{
     });
   });
 
-  function handleCardClick(item:any) {
-    if (item.name === "ETH") {
-      setDialog(item) 
+  function handleCardClick(item:Card) {
+    const cards = [...selectCards];
+    const index = cards.indexOf(item.id);
+    if (index > -1) {
+      cards.splice(index, 1);
     } else {
-      history.push('/claim/boredApe');
+      cards.push(item.id);
     }
+
+    setSelectCards(cards);
   }
 
   const data = [
@@ -163,48 +164,75 @@ function ClaimDetail(props: any) : React.ReactElement{
       id: "4",
       price: "0.3",
       img: CryptoPunks,
-    }
-    ,    
+    },    
     {
       name: "Naruto Todorki4",
       id: "5",
       price: "0.4",
       img: CryptoPunks,
+    },
+    {
+      name: "ETH",
+      id: "6",
+      price: "0.1",
+      img: BoredApeYachtClub,
+    }, 
+    {
+      name: "Naruto Todorki1",
+      id: "7",
+      price: "0.1",
+      img: BoredApeYachtClub,
+    },    
+    {
+      name: "Naruto Todorki2",
+      id: "8",
+      price: "0.2",
+      img: Azuki,
+    },    
+    {
+      name: "Naruto Todorki3",
+      id: "9",
+      price: "0.3",
+      img: CryptoPunks,
+    },    
+    {
+      name: "Naruto Todorki4",
+      id: "10",
+      price: "0.4",
+      img: CryptoPunks,
     }
   ]
+  const active = {
+    // borderImage: "linear-gradient(222deg, rgba(152, 44, 177, 1), rgba(228, 88, 95, 1))",
+    border: "1px solid #951FBE"
+  }
+  const inactive = {
+  }
   // @ts-ignore
   return (
     <div style={{ 
       display: "flex",
-      justifyContent: "flex",
+      justifyContent: "flex",      
+      flexDirection: "column",
     }}>
-      <CardDialog
-        data={dialog}
-        onClose={() => setDialog({})}
-        coins={availbleCoinIn}
-        signer="placeholder"
-        buttonName={buttonName}
-      />
+      <div className={classes.titleGroup}>
+        <div className={classes.count}>
+          {selectCards.length} Selected
+        </div>
+        <Button
+            className={classes.button}
+            size="small"
+            variant="contained"
+          >
+            Claim Now
+          </Button>
+      </div>
       <Grid
         container
         direction="row"
         justifyContent="flex-start"
         alignItems="center"
       >
-        {haveAdd && <Grid item xs={3} sm={3} md={3} spacing={2} style={{padding: "0.5rem"}}  alignItems="center">
-          <Card cardStyle={{
-              width: "10rem",
-              height: "10rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              background: "inherit",
-              border: "1px dashed #ffffff",
-            }}>
-            <img src={Add} alt="Add" style={{height:"1rem", width:"1rem"}} />
-          </Card>
-          <div className={classes.id}> </div>
-        </Grid>}
         {
           data.map(item => 
             (
@@ -220,7 +248,7 @@ function ClaimDetail(props: any) : React.ReactElement{
                 alignItems="center" 
                 onClick={() => handleCardClick(item)}
                 >
-                <Card cardStyl="">
+                <Card cardStyle={selectCards.indexOf(item.id) > -1 ? active : inactive}>
                   <img src={item.img} alt={item.name} style={{height:"100%", width:"100%"}} />
                 </Card>
                 <div className={classes.id}>#{item.id}</div>
@@ -232,5 +260,3 @@ function ClaimDetail(props: any) : React.ReactElement{
     </div>
   );
 };
-
-export default ClaimDetail;

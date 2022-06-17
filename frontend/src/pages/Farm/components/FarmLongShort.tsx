@@ -56,7 +56,7 @@ const BASE_URL = `${FARM_URL}/order`;
 const LONG_URL = `${FARM_URL}/long`;
 const SHORT_URL = `${FARM_URL}/short`;
 
-export default function InstrumentOrder(): React.ReactElement {
+export default function FarmLongShort(): React.ReactElement {
   const match = useRouteMatch([LONG_URL, SHORT_URL]);
   const location = useLocation();
   const history = useHistory();
@@ -67,9 +67,9 @@ export default function InstrumentOrder(): React.ReactElement {
   const MINUTE_MS = 600000;
 
   useEffect(() => {
-    if (ticker == null) {
-      history.push(FARM_URL);
-    }
+    // if (ticker == null) {
+    //   history.push(FARM_URL);
+    // }
     const interval = setInterval(async () => {
       const synthPrice = await loadSynthPrice("SynthTest1");
       setSynthPrice(synthPrice);
@@ -80,9 +80,10 @@ export default function InstrumentOrder(): React.ReactElement {
 
   const { tradeData } = useContext(TradeContext);
 
-  const instrument = tradeData?.instruments.find(
-    (instrument) => instrument.ticker === ticker,
-  );
+  // const instrument = tradeData?.instruments.find(
+  //   (instrument) => instrument.ticker === ticker,
+  // );
+  const instrument = tradeData?.instruments[0];
   if (tradeData == null || instrument == null) {
     return <div />;
   }
@@ -92,7 +93,7 @@ export default function InstrumentOrder(): React.ReactElement {
     }
     history.push(`${targetURL}${location.search}`);
   };
-  
+
   const tabs = [
     {
       label: "Long Farm",
@@ -105,7 +106,7 @@ export default function InstrumentOrder(): React.ReactElement {
       tooltip: "Provide collateral to create short positions and earn MIR token rewards."
     },
   ];
-  
+
   return (
     <>
       <Box
@@ -114,22 +115,22 @@ export default function InstrumentOrder(): React.ReactElement {
           borderColor: "divider",
         }}
       >
-        <Tabs centered value={match?.url === LONG_URL ? 0 : 1} >
+        <Tabs centered value={match?.url === SHORT_URL ? 1 : 0} >
           {tabs.map((item, i) => {
-                const tabDom = (
-                <p>{item.label}
-                  {/* <Tooltip title={<h4>{item.tooltip}</h4>}>
+            const tabDom = (
+              <p>{item.label}
+                {/* <Tooltip title={<h4>{item.tooltip}</h4>}>
                     <IconButton>
                       <HelpOutlineOutlinedIcon
                         sx={{ color: theme.tableHeaderTextColor }}
                       />
                     </IconButton>
                   </Tooltip> */}
-                  </p>)
-                return (
-                  <Tab key={item.label} label={tabDom} onClick={()=>onSwitch(item.link)} />
-                );
-              })}
+              </p>)
+            return (
+              <Tab key={item.label} label={tabDom} onClick={() => onSwitch(item.link)} />
+            );
+          })}
         </Tabs>
       </Box>
       <div
@@ -144,6 +145,9 @@ export default function InstrumentOrder(): React.ReactElement {
         }}
       >
         <Switch>
+          <Route path="/farm" exact>
+            <FarmLong instrument={instrument} />
+          </Route>
           <Route path="/farm/long" exact>
             <FarmLong instrument={instrument} />
           </Route>

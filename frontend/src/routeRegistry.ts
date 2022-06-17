@@ -61,13 +61,13 @@ export const routes: Route[] = [
     label: "Swap",
     icon: Swap,
     RouteContainer: SwapRouteContainer,
-  },  
+  },
   {
     path: "/farm",
     label: "Farm",
     icon: Farm,
     RouteContainer: FarmRouteContainer,
-  }, 
+  },
   {
     path: "/claim",
     label: "Claim",
@@ -82,12 +82,12 @@ export const defaultRoutes: Route[] = [
     path: "https://docs.nftsyprotocol.io/protocol/overview",
     label: "Legal Docs",
     icon: LegalDocs,
-  },   
+  },
   {
     path: "https://docs.nftsyprotocol.io/protocol/overview",
     label: "Contact Support",
     icon: Contact,
-  },   
+  },
   {
     icon: Logout,
     path: myPageRoute,
