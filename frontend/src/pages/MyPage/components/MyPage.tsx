@@ -254,32 +254,35 @@ export default function MypPage(): React.ReactElement {
 
 
   useEffect(() => {
-    if (!loading) {
-      const setWalletAndStatus = async () => {
-        const { address, status } = await getCurrentWalletConnected();
-        setWallet(address);
-        setStatus(status);
-      };
-      setWalletAndStatus();
+    const setWalletAndStatus = async () => {
+      const {address, status} = await getCurrentWalletConnected();
+      setWallet(address);
+      setStatus(status);
+    };
+    setWalletAndStatus();
 
+    function addWalletListener() {
       if ((window as any).ethereum) {
         (window as any).ethereum.on(
-          "accountsChanged",
-          (accounts: string | any[]) => {
-            if (accounts.length > 0) {
-              setWallet(accounts[0]);
-              setStatus("👆🏽 Write a message in the text-field above.");
-            } else {
-              setWallet("");
-              setStatus("🦊 Connect to Metamask using the top right button.");
-            }
-          },
+            "accountsChanged",
+            (accounts: string | any[]) => {
+              if (accounts.length > 0) {
+                setWallet(accounts[0]);
+                setStatus("👆🏽 Write a message in the text-field above.");
+              } else {
+                setWallet("");
+                setStatus("🦊 Connect to Metamask using the top right button.");
+              }
+            },
         );
       } else {
         setStatus("Not installed");
       }
     }
+    addWalletListener()
+  }, [])
 
+  useEffect(() => {
     setIsLoading(true);
     if (walletAddress) {
       blockchainAPI.loadUserAllTokenPosition(walletAddress).then(holdings => {
@@ -320,7 +323,7 @@ export default function MypPage(): React.ReactElement {
         setIsLoading(false);
       });
     }
-  }, [loading, setIsLoading, setWallet, setStatus, walletAddress, setFarming, setHolding])
+  }, [setWallet, setStatus, walletAddress, setFarming, setHolding])
 
 
   const login = async () => {
