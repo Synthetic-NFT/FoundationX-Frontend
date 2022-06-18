@@ -9,15 +9,15 @@ import ReactEcharts from "echarts-for-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
-import api, { MyPageData } from "../../../api";
-import {AppContext} from "../../../AppContext";
+import api, { blockchainAPI } from "../../../api";
+import { AppContext } from "../../../AppContext";
 import CreditCard from "../../../styles/images/CreditCard.png";
 import Send from "../../../styles/images/send.svg";
 import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
 import { connectWallet, getCurrentWalletConnected } from "../../../util/interact";
 import MyPageTable from "./MyPageTable";
-import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./tableColumns";
+import { holdingTableColumns, borrowingTableColumns, governTableColumns } from "./tableColumns";
 
 
 const useStyles = makeStyles({
@@ -245,21 +245,16 @@ export default function MypPage(): React.ReactElement {
 
   const { walletAddress, setWallet } = useContext(AppContext);
   // const [loginSuccess, setLoginSuccess] = useState(false);
-  const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
+  // const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
+  const [holding, setHolding] = useState({});
+  const [farming, setFarming] = useState({});
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState("");
   const [loading, setIsLoading] = React.useState(false);
-  
+
 
   useEffect(() => {
     if (!loading) {
-      setIsLoading(true);
-      api.loadMyPageData().then((data) => {
-        setMyPageData(data);
-        // setStep(0);
-        setIsLoading(false);
-      });
-      
       const setWalletAndStatus = async () => {
         const { address, status } = await getCurrentWalletConnected();
         setWallet(address);
@@ -284,46 +279,88 @@ export default function MypPage(): React.ReactElement {
         setStatus("Not installed");
       }
     }
-  }, [loading, setIsLoading, myPageData, setMyPageData, walletAddress, setWallet, setStatus]);
-  
+
+    setIsLoading(true);
+    if (walletAddress) {
+      blockchainAPI.loadUserAllTokenPosition(walletAddress).then(holdings => {
+        const result = [];
+        if (holdings) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const key of Object.keys(holdings)) {
+            const item = holdings[key];
+            const target = {
+              "ticker": key,
+              "balance": Number(item[0]).toFixed(2),
+              "value": Number(item[1]).toFixed(2),
+              "poolPrice": Number(item[3]).toFixed(2)
+            }
+            result.push(target)
+          }
+        }
+        console.log("Holding", result);
+        setHolding(result);
+        setIsLoading(false);
+      });
+
+      blockchainAPI.loadUserAllLpBalance(walletAddress).then(farmings => {
+        const result = [];
+        if (farmings) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const key of Object.keys(farmings)) {
+            const item = farmings[key];
+            const target = {
+              "ticker": key,
+              "oraclePrice": Number(item)
+            }
+            result.push(target)
+          }
+        }
+        console.log("Framing", result);
+        setFarming(result);
+        setIsLoading(false);
+      });
+    }
+  }, [loading, setIsLoading, setWallet, setStatus, walletAddress, setFarming, setHolding])
+
+
   const login = async () => {
     const walletResponse = await connectWallet();
     setStatus(walletResponse.status);
     setWallet(walletResponse.address);
   }
 
-  function getOption() {
-    return {
-      tooltip: {
-        trigger: 'item'
-      },
-      color: colors,
-      legend: {
-        show: false,
-      },
-      series: [
-        {
-          name: 'My Page',
-          type: 'pie',
-          radius: ['70%', '98%'],
-          avoidLabelOverlap: false,
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: false,
-          labelLine: {
-            show: false
-          },
-          data: [
-            { value: myPageData?.ust, name: 'ust' },
-            { value: myPageData?.holding, name: 'holding' },
-            { value: myPageData?.borrowing, name: 'borrowing' },
-          ]
-        }
-      ]
-    };
-  }
+  // function getOption() {
+  //   return {
+  //     tooltip: {
+  //       trigger: 'item'
+  //     },
+  //     color: colors,
+  //     legend: {
+  //       show: false,
+  //     },
+  //     series: [
+  //       {
+  //         name: 'My Page',
+  //         type: 'pie',
+  //         radius: ['70%', '98%'],
+  //         avoidLabelOverlap: false,
+  //         label: {
+  //           show: false,
+  //           position: 'center'
+  //         },
+  //         emphasis: false,
+  //         labelLine: {
+  //           show: false
+  //         },
+  //         data: [
+  //           { value: myPageData?.ust, name: 'ust' },
+  //           { value: myPageData?.holding, name: 'holding' },
+  //           { value: myPageData?.borrowing, name: 'borrowing' },
+  //         ]
+  //       }
+  //     ]
+  //   };
+  // }
 
   const HoldingHeader = (
     <div className={styles.header}>
@@ -434,7 +471,7 @@ export default function MypPage(): React.ReactElement {
         </div>
       }
       {
-        walletAddress !== "" && myPageData &&
+        walletAddress !== "" &&
         <>
           <div className={styles.cardGroup}>
             <div className={styles.cardLeft} >
@@ -512,7 +549,7 @@ export default function MypPage(): React.ReactElement {
                 next step
               </Button>
             </div>
-            <div className={styles.cardRight} >
+            {/* <div className={styles.cardRight} >
               <div className={styles.titleGroup} style={{ width: "11.67rem" }}>
                 <div className={styles.totalValueTitle} style={{ display: "flex", alignItems: "center" }}>
                   Total Claimable Rewards
@@ -548,12 +585,12 @@ export default function MypPage(): React.ReactElement {
               >
                 Claim All Rewards
               </Button>
-            </div>
+            </div> */}
           </div>
           <div style={{ margin: "0 0.17rem 2.25rem 0.17rem" }}>
-            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
-            <MyPageTable tableColumns={borrowingTableColumns} data={myPageData?.data.borrowing} Header={BorrowingHeader} Radius="0 0 0 0" />
-            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader} Radius="0 0 0.83rem 0.83rem" />
+            <MyPageTable tableColumns={holdingTableColumns} data={holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
+            <MyPageTable tableColumns={borrowingTableColumns} data={farming} Header={BorrowingHeader} Radius="0 0 0 0" />
+            {/* <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader} Radius="0 0 0.83rem 0.83rem" /> */}
           </div>
         </>
       }
