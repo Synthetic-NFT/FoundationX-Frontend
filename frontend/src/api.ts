@@ -6,7 +6,7 @@ import ContractAddress from "./util/ContractAddress";
 import {
   loadActiveTokens,
   loadPoolSynthPrice,
-  loadSynthPrice,
+  loadSynthPrice, loadUserDebtDeposit,
   readWalletLpBalance,
   readWalletTokenBalance
 } from "./util/interact";
@@ -138,7 +138,7 @@ export const blockchainAPI = {
     });
   },
 
-  async loadUserTokenBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
+  async loadUserGivenTokenBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
     const tokenBalancePromises = []
     for(let i = 0; i < tickerIDs.length; i += 1) {
       tokenBalancePromises.push(readWalletTokenBalance(walletAddress, tickerIDs[i]));
@@ -154,7 +154,13 @@ export const blockchainAPI = {
     });
   },
 
-  async loadUserLpBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
+  async loadUserAllTokenBalance(walletAddress: string): Promise<{ [key: string]: string }> {
+    const activeTokens = await loadActiveTokens();
+    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    return this.loadUserGivenTokenBalance(walletAddress, tokenNames);
+  },
+
+  async loadUserGivenLpBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
     const tokenBalancePromises:  Promise<BigNumber>[] = [];
     for (let i = 0; i < tickerIDs.length; i += 1) {
       tokenBalancePromises.push(readWalletLpBalance(walletAddress, tickerIDs[i]));
@@ -167,6 +173,30 @@ export const blockchainAPI = {
     return new Promise((resolve) => {
       resolve(allTokenBalances);
     });
+  },
+
+  async loadUserAllLpBalance(walletAddress: string): Promise<{ [key: string]: string }> {
+    const activeTokens = await loadActiveTokens();
+    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    return this.loadUserGivenLpBalance(walletAddress, tokenNames);
+  },
+
+  async loadUserGivenTokenPosition(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: any[]}> {
+    const tokenBalances = await this.loadUserGivenTokenBalance(walletAddress, tickerIDs);
+    const userDebtDeposit = await loadUserDebtDeposit(walletAddress, tickerIDs);
+    const result: { [key: string]: any[]} = {}
+    for (let i = 0; i < tickerIDs.length; i += 1) {
+      const tickerID = tickerIDs[i];
+      result[tickerID] = [tokenBalances[tickerID]].concat(userDebtDeposit);
+    }
+    return new Promise((resolve) => {
+      resolve(result);
+    });
+  },
+  async loadUserAllTokenPosition(walletAddress: string): Promise<{ [key: string]: any[]}> {
+    const activeTokens = await loadActiveTokens();
+    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    return this.loadUserGivenTokenPosition(walletAddress, tokenNames);
   },
 }
 
