@@ -103,6 +103,8 @@ export const blockchainAPI = {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
     // console.log("aaaaa", a)
     console.log("aaaa", await this.loadUserAllTokenPosition('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
+    console.log("aaaaa", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
+
     const activeTokens = await loadActiveTokens();
     const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
     const oraclePricePromises = []

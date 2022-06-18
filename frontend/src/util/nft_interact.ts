@@ -18,7 +18,7 @@ const Web3 = require("web3");
 
 const web3 = new Web3("http://localhost:8545");
 
-const IERC721EnumerableABI = require("../abi/@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol/IERC721Enumerable.json");
+const IERC721EnumerableABI = require("../abi/@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol/ERC721EnumerableUpgradeable.json");
 const SwapFactoryABI = require("../abi/contracts/core/UniswapV2Factory.sol/UniswapV2Factory.json");
 const LpPairABI = require("../abi/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json");
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
@@ -75,13 +75,16 @@ const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAdd
 
 export const loadUserAllNFT = async (walletAddress: string, tickerID: string) => {
   const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();
-  const tokenIDs = [];
+  const tokenIDAndURI: {[key: string]: string} = {};
   for (let i = 0; i < balance; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     const bnTokenID = await NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call();
-    tokenIDs.push(bnTokenID);
+    // eslint-disable-next-line no-await-in-loop
+    const tokenURI = await NFTContract[tickerID].methods.tokenURI(bnTokenID).call();
+    tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/");
+    tokenIDAndURI[bnTokenID] = tokenURI;
   }
-  return tokenIDs;
+  return tokenIDAndURI;
 }
 
 export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], tickerID: string) => {
