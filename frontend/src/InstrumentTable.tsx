@@ -58,9 +58,9 @@ export function simpleFilter(
 
   return tradeData.instruments.filter(
     (instrument) =>
-      instrument.ticker !== "Ethereum" && 
+      instrument.ticker !== "Ethereum" &&
       (instrument.ticker.toLowerCase().includes(loweredSearchTerm) ||
-      instrument.fullName.toLowerCase().includes(loweredSearchTerm)),
+        instrument.fullName.toLowerCase().includes(loweredSearchTerm)),
   );
 }
 
@@ -89,7 +89,7 @@ export function InstrumentTable({
 
   return (
     <>
-      <SearchBar onSearch={setSearchTerm} />
+      {/* <SearchBar onSearch={setSearchTerm} /> */}
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table
           style={{
@@ -98,7 +98,7 @@ export function InstrumentTable({
             borderTopRightRadius: "0.67rem",
             overflow: "scroll",
             background: "inherit",
-            borderStyle:"none",
+            borderStyle: "none",
           }}
           stickyHeader
           aria-label="sticky table"

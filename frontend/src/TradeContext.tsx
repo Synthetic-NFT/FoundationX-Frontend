@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import type { TradeData } from "./api";
-import api, {Instrument, blockchainAPI, defaultInstrument} from "./api";
+import api, { blockchainAPI, defaultInstrument } from "./api";
 
 export const defaultTradeData: TradeData = {
   instruments: [defaultInstrument]
@@ -9,10 +9,10 @@ export const defaultTradeData: TradeData = {
 
 export const TradeContext = React.createContext<{
   tradeData: TradeData;
-  setTradeData: (_: TradeData ) => void;
+  setTradeData: (_: TradeData) => void;
 }>({
   tradeData: defaultTradeData,
-  setTradeData: () => {},
+  setTradeData: () => { },
 });
 
 export type TokenAddress = {
@@ -23,10 +23,10 @@ export type TokenAddress = {
 
 export const OnChainAddressContext = React.createContext<{
   tokenAddresses: Map<string, TokenAddress> | null;
-  setTokenAddresses: (_: Map<string, TokenAddress>  | null) => void;
+  setTokenAddresses: (_: Map<string, TokenAddress> | null) => void;
 }>({
   tokenAddresses: null,
-  setTokenAddresses: () => {},
+  setTokenAddresses: () => { },
 });
 
 // Provides the data of the instruments available for trade.
@@ -37,18 +37,9 @@ export function TradeContextProvider({
 }) {
   const [tradeData, setTradeData] = React.useState<TradeData>(defaultTradeData);
   const [tradeDataLoading, setIsTradeDataLoading] = React.useState(false);
-  // Automatically kicks off the tradeDataLoading upon rendering since we don't need to wait for
-  // an user action (such as connecting wallet).
   useEffect(() => {
-
-
-
     if (!tradeDataLoading && tradeData === defaultTradeData) {
       setIsTradeDataLoading(true);
-      // api.loadInstruments().then((tradeData) => {
-      //   setTradeData(tradeData);
-      //   setIsTradeDataLoading(false);
-      // });
       blockchainAPI.loadInstruments().then((tradeData) => {
         setTradeData(tradeData);
         setIsTradeDataLoading(false);
