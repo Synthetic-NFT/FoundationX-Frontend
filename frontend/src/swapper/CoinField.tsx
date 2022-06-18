@@ -10,18 +10,18 @@ const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(1),
     minHeight: "3.33rem",
-    backgroundColor: COLORS.grey[50],
+    backgroundColor: "#2C2A35",
     borderRadius: theme.spacing(2),
-    borderColor: COLORS.grey[300],
+    // borderColor: COLORS.grey[300],
     borderWidth: "1px",
     borderStyle: "solid",
   },
   container_input: {
     padding: theme.spacing(1),
     minHeight: "2.83rem",
-    backgroundColor: COLORS.grey[50],
-    borderRadius: theme.spacing(2),
-    borderColor: COLORS.grey[300],
+    backgroundColor: "#2C2A35",
+    borderRadius: "0.4rem",
+    // borderColor: COLORS.grey[300],
     borderWidth: "1px",
     borderStyle: "solid",
     marginLeft: "50%",
@@ -37,10 +37,18 @@ const useStyles = makeStyles((theme) => ({
   },
   fab: {
     zIndex: "0",
+    background: '#2C2A35',
+    boxShadow: "none",
+    color: "#ffffff",
+    "&:hover": {
+      backgroundColor: '#2C2A35 !important',
+    }
   },
   input: {
     ...theme.typography.h5,
     width: "100%",
+    background: '#2C2A35',
+    color: "#ffffff",
   },
   inputBase: {
     textAlign: "right",

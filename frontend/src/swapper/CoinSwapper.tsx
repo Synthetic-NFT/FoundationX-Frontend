@@ -14,7 +14,7 @@ import React, { useEffect } from "react";
 
 import { defaultInstrument } from "../api";
 import LoadingButton from "../components/LoadingButton";
-import SearchInput from '../components/SearchInput'
+import { SearchInput } from '../components/SearchInput'
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../constants/coins";
 import { fakeTradeData } from "../fakeData";
 import CoinDialog from "./CoinDialog";
@@ -269,28 +269,16 @@ function CoinSwapper(props: any): React.ReactElement {
             <Grid container direction="column" spacing={2}>
               <div className={classes.from}>From</div>
               <Grid item xs={12} className={classes.fullWidth}>
-                {/* <CoinField
+                <CoinField
                   activeField
                   value={field1Value}
                   onClick={() => setDialog1Open(true)}
                   onChange={handleChange.field1}
                   symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
-                /> */}
-                <div style={{ display: "flex", marginTop: "1.5rem" }}>
-                  {/* <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  input={<BootstrapInput />}
-                  defaultValue="10"
-                  style={{color: "#ffffff"}}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-                <BootstrapInput id="demo-customized-textbox" /> */}
+                />
+                {/* <div style={{ display: "flex" }}>
                   <SearchInput />
-                </div>
+                </div> */}
               </Grid>
 
               <IconButton onClick={switchFields} className={classes.switchButton}>
@@ -298,15 +286,15 @@ function CoinSwapper(props: any): React.ReactElement {
               </IconButton>
               <div className={classes.from}>To</div>
               <Grid item xs={12} className={classes.fullWidth}>
-                {/* <CoinField
+                <CoinField
                   activeField={false}
                   value={field2Value}
                   onClick={() => setDialog2Open(true)}
                   symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
-                /> */}
-                <div style={{ display: "flex", marginTop: "1.5rem" }}>
+                />
+                {/* <div style={{ display: "flex" }}>
                   <SearchInput />
-                </div>
+                </div> */}
               </Grid>
 
               <div style={{

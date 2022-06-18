@@ -321,7 +321,7 @@ export default function MypPage(): React.ReactElement {
   const BorrowingHeader = (
     <div className={styles.header}>
       <div>
-        Borrowing
+        Farming
         <Tooltip title={<h4>Borrowing tooltip</h4>}>
           <IconButton>
             <HelpOutlineOutlinedIcon

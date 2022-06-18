@@ -15,7 +15,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Instrument } from "../../../api";
 import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
-import SearchInput from '../../../components/SearchInput'
+import { SearchInput } from '../../../components/SearchInput'
 import { NFTIcons } from "../../../fakeData";
 import InstrumentCard from "../../../InstrumentCard";
 import {
