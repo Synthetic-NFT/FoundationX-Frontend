@@ -1,9 +1,9 @@
 import Azuki from "./styles/images/Azuki.jpeg";
 import BoredApeYachtClub from "./styles/images/BoredApeYachtClub.png";
-import MutantApeYachtClub from "./styles/images/MutantApeYachtClub.png";
-import Otherdeed from "./styles/images/Otherdeed.png";
 import CryptoPunks from "./styles/images/CryptoPunks.png";
 import Ethereum from "./styles/images/Ethereum.svg";
+import MutantApeYachtClub from "./styles/images/MutantApeYachtClub.png";
+import Otherdeed from "./styles/images/Otherdeed.png";
 
 const tickerAzuki = "Azuki";
 // const tickerBoredApeYachtClub = "BoredApeYachtClub";
