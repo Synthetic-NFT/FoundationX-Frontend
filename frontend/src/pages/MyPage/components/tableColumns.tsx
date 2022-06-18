@@ -266,7 +266,7 @@ function BorrowingActionCellRenderer({ row }: CellRendererProps): TableCellEleme
           borderRadius: "2.08rem",
         }}
       >
-        Manage
+        Withdraw
       </Button>
     </TableCell>
   );

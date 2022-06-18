@@ -16,7 +16,7 @@ import React from "react";
 
 import Ethereum from "../styles/images/Ethereum.svg";
 import Card from "./Card"
-import SearchInput from './SearchInput'
+import { SearchInput } from './SearchInput'
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   dialogContainer: {
@@ -59,25 +59,25 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   name: {
     fontWeight: 600,
     fontSize: "1.67rem",
-    lineHeight: "2.5rem",    
+    lineHeight: "2.5rem",
     color: "#FFFFFF",
     paddingBottom: "0.33rem",
   },
   id: {
     fontWeight: 400,
     fontSize: "0.83rem",
-    lineHeight: "1.25rem",    
+    lineHeight: "1.25rem",
     color: "#FFFFFF",
     paddingBottom: "1.67rem",
   },
   price: {
     fontWeight: 600,
     fontSize: "1rem",
-    lineHeight: "1.5rem",    
+    lineHeight: "1.5rem",
     color: "#FFFFFF",
     paddingBottom: "1rem",
   },
-  button: {    
+  button: {
     padding: "10px 25px",
     width: "5.5rem",
     height: "1.5rem",
@@ -85,7 +85,7 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     borderRadius: "0.125rem",
     fontWeight: 400,
     fontSize: "0.67rem",
-    lineHeight: "1rem",    
+    lineHeight: "1rem",
     color: "#FFFFFF",
   },
   close: {
@@ -139,7 +139,7 @@ function CardDialog(props: any) {
   const classes = useStyles();
   const { onClose, data, buttonName } = props;
 
-  const exit = (value: string|undefined, name: string|undefined) => {
+  const exit = (value: string | undefined, name: string | undefined) => {
     onClose(value, name);
   };
 
@@ -154,9 +154,9 @@ function CardDialog(props: any) {
       <DialogTitle onClose={() => exit(undefined, undefined)}> </DialogTitle>
       <div className={classes.coinContainer}>
         <Card>
-          <img src={data.img} alt="Ethereum" style={{height:"10rem", width:"10rem"}} />
+          <img src={data.img} alt="Ethereum" style={{ height: "10rem", width: "10rem" }} />
         </Card>
-        <div style={{marginLeft: "1.5rem"}}>
+        <div style={{ marginLeft: "1.5rem" }}>
           <div className={classes.name}>{data.name}</div>
           <SearchInput />
           <Button

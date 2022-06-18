@@ -50,7 +50,7 @@ const BootstrapInput = withStyles((theme) => ({
     },
 }))(InputBase);
 
-export default function SearchInput(props: any) {
+function SearchInput(props: any) {
     const styles = useStyles();
     const { children } = props;
     return (
@@ -70,3 +70,5 @@ export default function SearchInput(props: any) {
         </FormControl>
     );
 }
+export { SearchInput, BootstrapInput };
+
