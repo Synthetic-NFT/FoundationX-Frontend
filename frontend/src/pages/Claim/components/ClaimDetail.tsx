@@ -18,7 +18,7 @@ import {
 import { defaultInstrument } from "../../../api";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
-import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../../../constants/coins";
+import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../../../constants/coins";
 import { fakeTradeData } from "../../../fakeData";
 import Add from "../../../styles/images/add.svg";
 import Azuki from "../../../styles/images/Azuki.jpeg";
@@ -32,7 +32,7 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     paddingBottom: theme.spacing(3),
     background: "linear-gradient(160.35deg, rgba(31, 30, 35, 0.6) 13.15%, #25283C 93.23%)",
     borderRadius: "0.83rem",
-    border: "1px solid #ffffff",    
+    border: "1px solid #ffffff",
     padding: "1.67rem 2.17rem",
   },
   switchButton: {
@@ -71,7 +71,7 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     color: "#FFFFFF",
     marginLeft: "0.33rem",
   },
-  id: {    
+  id: {
     fontWeight: 600,
     fontSize: "0.83rem",
     lineHeight: "1.25rem",
@@ -85,11 +85,11 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-function ClaimDetail(props: any) : React.ReactElement{
+function ClaimDetail(props: any): React.ReactElement {
   const classes = useStyles();
   const history = useHistory();
 
-  const { instrument, buttonName, haveAdd } = props;
+  const { instrument, buttonName, haveAdd, openDialog } = props;
 
   const availbleCoinIn = DummyCoins;
   const availbleCoinOut = DummyCoins;
@@ -99,9 +99,9 @@ function ClaimDetail(props: any) : React.ReactElement{
   const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
   interface CoinInterface {
-    address: string|undefined;
-    symbol: string|undefined;
-    balance: number|undefined;
+    address: string | undefined;
+    symbol: string | undefined;
+    balance: number | undefined;
   }
   // Stores data about their respective coin
   const [coin1, setCoin1] = React.useState<CoinInterface>({
@@ -130,9 +130,11 @@ function ClaimDetail(props: any) : React.ReactElement{
     });
   });
 
-  function handleCardClick(item:any) {
-    if (item.name === "ETH") {
-      setDialog(item) 
+  function handleCardClick(item: any) {
+    if (openDialog) {
+      setDialog(item)
+    } else if (item.name === "ETH") {
+      setDialog(item)
     } else {
       history.push('/claim/boredApe');
     }
@@ -144,27 +146,27 @@ function ClaimDetail(props: any) : React.ReactElement{
       id: "1",
       price: "0.1",
       img: BoredApeYachtClub,
-    }, 
+    },
     {
       name: "Naruto Todorki1",
       id: "2",
       price: "0.1",
       img: BoredApeYachtClub,
-    },    
+    },
     {
       name: "Naruto Todorki2",
       id: "3",
       price: "0.2",
       img: Azuki,
     }
-    ,    
+    ,
     {
       name: "Naruto Todorki3",
       id: "4",
       price: "0.3",
       img: CryptoPunks,
     }
-    ,    
+    ,
     {
       name: "Naruto Todorki4",
       id: "5",
@@ -174,7 +176,7 @@ function ClaimDetail(props: any) : React.ReactElement{
   ]
   // @ts-ignore
   return (
-    <div style={{ 
+    <div style={{
       display: "flex",
       justifyContent: "flex",
     }}>
@@ -191,41 +193,41 @@ function ClaimDetail(props: any) : React.ReactElement{
         justifyContent="flex-start"
         alignItems="center"
       >
-        {haveAdd && <Grid item xs={3} sm={3} md={3} spacing={2} style={{padding: "0.5rem"}}  alignItems="center">
+        {haveAdd && <Grid item xs={3} sm={3} md={3} spacing={2} style={{ padding: "0.5rem" }} alignItems="center">
           <Card cardStyle={{
-              width: "10rem",
-              height: "10rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              background: "inherit",
-              border: "1px dashed #ffffff",
-            }}>
-            <img src={Add} alt="Add" style={{height:"1rem", width:"1rem"}} />
+            width: "10rem",
+            height: "10rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "inherit",
+            border: "1px dashed #ffffff",
+          }}>
+            <img src={Add} alt="Add" style={{ height: "1rem", width: "1rem" }} />
           </Card>
           <div className={classes.id}> </div>
         </Grid>}
         {
-          data.map(item => 
-            (
-              <Grid 
-                item 
-                xs={3} 
-                sm={3} 
-                md={3} 
-                lg={3} 
-                key={item.id} 
-                spacing={2} 
-                style={{padding: "0.5rem"}}  
-                alignItems="center" 
-                onClick={() => handleCardClick(item)}
-                >
-                <Card cardStyl="">
-                  <img src={item.img} alt={item.name} style={{height:"100%", width:"100%"}} />
-                </Card>
-                <div className={classes.id}>#{item.id}</div>
-              </Grid>
-            )
+          data.map(item =>
+          (
+            <Grid
+              item
+              xs={3}
+              sm={3}
+              md={3}
+              lg={3}
+              key={item.id}
+              spacing={2}
+              style={{ padding: "0.5rem" }}
+              alignItems="center"
+              onClick={() => handleCardClick(item)}
+            >
+              <Card cardStyl="">
+                <img src={item.img} alt={item.name} style={{ height: "100%", width: "100%" }} />
+              </Card>
+              <div className={classes.id}>#{item.id}</div>
+            </Grid>
+          )
           )
         }
       </Grid>

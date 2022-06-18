@@ -5,30 +5,18 @@ import {
   makeStyles,
   Paper,
   Typography,
-  Button, Select, MenuItem
 } from "@material-ui/core";
+import { Button, Select, MenuItem } from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from "@material-ui/core/styles";
-import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { defaultInstrument } from "../api";
-import type { TradeData } from "../api";
-import { AppContext } from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
-import SearchInput from '../components/SearchInput'
+import { SearchInput } from '../components/SearchInput'
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../constants/coins";
 import { fakeTradeData } from "../fakeData";
-import { TradeContext } from "../TradeContext";
-import {
-  getLpReserve,
-  getAmountSynthOut,
-  getAmountETHOut,
-  swapExactETHForTokens,
-  swapExactTokensForETH,
-  readWalletTokenBalance
-} from "../util/interact"
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
@@ -90,84 +78,14 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-const BootstrapInput = withStyles((theme) => ({
-  root: {
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-  },
-  input: {
-    borderRadius: 4,
-    position: 'relative',
-    // backgroundColor: theme.palette.background.paper,
-    border: '0 solid #ced4da',
-    fontSize: 16,
-    padding: '0.42rem 1rem 0.42rem 0.5rem',
-    transition: theme.transitions.create(['border-color', 'box-shadow']),
-    height: "2.67rem",
-    lineHeight: "2.67rem",
-    backgroundColor: "#222121",
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-    '&:focus': {
-      // borderRadius: 4,
-      // borderColor: '#80bdff',
-      // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-    },
-  },
-}))(InputBase);
-
-interface CoinInterface {
-  address: string | undefined;
-  name: string | undefined;
-  symbol: string | undefined;
-  balance: number | undefined;
-}
-
-const ethCoin: CoinInterface = {
-  address: undefined,
-  name: "Ethereum",
-  symbol: "ETH",
-  balance: undefined,
-}
-
-function getTradableCoinInfo(tradeData: TradeData): CoinInterface[] {
-  const availableCoins = [ethCoin];
-  for (let i = 0; i < tradeData.instruments.length; i += 1) {
-    const instrument = tradeData.instruments[i];
-    if (instrument === defaultInstrument) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-    const currCoin: CoinInterface = {
-      address: instrument.address,
-      name: instrument.ticker,
-      symbol: instrument.symbol,
-      balance: undefined,
-    }
-    availableCoins.push(currCoin);
-  }
-  return availableCoins;
-}
-
 function CoinSwapper(props: any): React.ReactElement {
   const classes = useStyles();
 
   const { instrument } = props;
-  const { tradeData } = useContext(TradeContext);
 
-  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
+  const availbleCoinIn = DummyCoins;
+  const availbleCoinOut = DummyCoins;
+
   // Stores a record of whether their respective dialog window is open
   const [dialog1Open, setDialog1Open] = React.useState(false);
   const [dialog2Open, setDialog2Open] = React.useState(false);
@@ -175,26 +93,24 @@ function CoinSwapper(props: any): React.ReactElement {
 
   interface CoinInterface {
     address: string | undefined;
-    name: string | undefined;
     symbol: string | undefined;
     balance: number | undefined;
   }
-
   // Stores data about their respective coin
   const [coin1, setCoin1] = React.useState<CoinInterface>({
     address: undefined,
-    name: undefined,
     symbol: undefined,
     balance: undefined,
   });
   const [coin2, setCoin2] = React.useState<CoinInterface>({
     address: undefined,
-    name: undefined,
     symbol: undefined,
     balance: undefined,
   });
 
-  const { walletAddress, setWallet } = useContext(AppContext);
+  // Stores the current reserves in the liquidity pool between coin1 and coin2
+  const [reserves, setReserves] = React.useState(["0.0", "0.0"]);
+
   // Stores the current value of their respective text box
   const [field1Value, setField1Value] = React.useState("");
   const [field2Value, setField2Value] = React.useState("");
@@ -208,6 +124,7 @@ function CoinSwapper(props: any): React.ReactElement {
     setCoin1(coin2);
     setCoin2(coin1);
     setField1Value(field2Value);
+    setReserves(reserves.reverse());
   };
 
   // These functions take an HTML event, pull the data out and puts it into a state variable.
@@ -231,13 +148,15 @@ function CoinSwapper(props: any): React.ReactElement {
   };
 
   // Determines whether the button should be enabled or not
-  const isButtonEnabled = async () => {
+  const isButtonEnabled = () => {
+
     // If both coins have been selected, and a valid float has been entered which is less than the user's balance, then return true
     const parsedInput1 = parseFloat(field1Value);
     const parsedInput2 = parseFloat(field2Value);
+
     return (
-      (coin1.name === "Ethereum" ||
-        coin2.name === "Ethereum") &&
+      coin1.address &&
+      coin2.address &&
       !Number.isNaN(parsedInput1) &&
       !Number.isNaN(parsedInput2) &&
       parsedInput1 > 0 &&
@@ -246,69 +165,34 @@ function CoinSwapper(props: any): React.ReactElement {
     );
   };
 
-  //  useEffect(() => {
-  //    setAvailableCoin(getTradableCoinInfo(tradeData));
-  //  }, [tradeData]);
-
   useEffect(() => {
-    if (Number.isNaN(parseFloat(field1Value))) {
-      setField2Value("");
-    } else if (parseFloat(field1Value) && coin1.name === "Ethereum" && coin2.name) {
-      getAmountSynthOut(coin2.name, field1Value).then(
-        (amount) => setField2Value(amount.toFixed(7))
-      ).catch((e: any) => {
-        console.log(e);
-        setField2Value("NA");
-      })
-    } else if (parseFloat(field1Value) && coin2.name === "Ethereum" && coin1.name) {
-      getAmountETHOut(coin1.name, field1Value).then(
-        (amount) => setField2Value(amount.toFixed(7))
-      ).catch((e: any) => {
-        console.log(e);
-        setField2Value("NA");
-      })
-    } else {
-      setField2Value("");
-    }
-  }, [field1Value, coin1, coin2]);
-
-  useEffect(() => {
-    readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
-      setCoin1({
-        address: undefined,
-        name: "Ethereum",
-        symbol: "ETH",
-        balance: data.toNumber(),
-      });
-    })
-
-    readWalletTokenBalance(walletAddress, instrument?.ticker).then((data) => {
-      setCoin2({
-        address: instrument?.address || undefined,
-        name: instrument?.ticker || undefined,
-        symbol: instrument?.symbol || undefined,
-        balance: data.toNumber(),
-      });
+    const ethCoin = DummyCoins.find((coin) => coin.name === "Ethereum");
+    setCoin1({
+      address: ethCoin?.address || undefined,
+      symbol: ethCoin?.name || undefined,
+      balance: 1000,
     });
 
-    // const coinTimeout = setTimeout(() => {
-    //   return () => clearTimeout(coinTimeout);
-    // });
-  }, [instrument, walletAddress]);
-
-  //    const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
-  //    setCoin2({
-  //      address: initCoin?.address || undefined,
-  //      symbol: initCoin?.name || undefined,
-  //      balance: initCoin ? 1000 : undefined,
-  //    });
-  //  }, [availbleCoinIn, instrument]);
-
+    const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
+    setCoin2({
+      address: initCoin?.address || undefined,
+      symbol: initCoin?.name || undefined,
+      balance: initCoin ? 1000 : undefined,
+    });
+  }, [availbleCoinIn, instrument]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
+  useEffect(() => {
+    const coinTimeout = setTimeout(() => {
+      console.log('props: ', props);
+      console.log("Checking balances...");
 
-  const onToken1Selected = (address: string, name: string, symbol: string) => {
+      return () => clearTimeout(coinTimeout);
+    });
+  });
+
+  const onToken1Selected = (address: string, name: string) => {
     // Close the dialog window
     setDialog1Open(false);
 
@@ -319,19 +203,15 @@ function CoinSwapper(props: any): React.ReactElement {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      readWalletTokenBalance(walletAddress, name).then((data) => {
-        setCoin1({
-          address,
-          name,
-          symbol,
-          balance: data.toNumber(),
-        });
-      })
-
+      setCoin1({
+        address,
+        symbol: name,
+        balance: 1000,
+      });
     }
   };
 
-  const onToken2Selected = (address: string, name: string, symbol: string) => {
+  const onToken2Selected = (address: string, name: string) => {
     // Close the dialog window
     setDialog2Open(false);
 
@@ -342,23 +222,20 @@ function CoinSwapper(props: any): React.ReactElement {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      readWalletTokenBalance(walletAddress, name).then((data) => {
-        setCoin2({
-          address,
-          name,
-          symbol,
-          balance: data.toNumber(),
-        });
-      })
+      setCoin2({
+        address,
+        symbol: name,
+        balance: 1000,
+      });
     }
   };
 
   const getCurrentInstrument = () => {
     let currInstrument;
-    if (coin1.name !== "Ethereum") {
-      currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin1.name) || defaultInstrument;
+    if (coin1.symbol !== "Ethereum") {
+      currInstrument = fakeTradeData.instruments.find((instrument) => instrument.ticker === coin1.symbol) || defaultInstrument;
     } else {
-      currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin2.name) || defaultInstrument;
+      currInstrument = fakeTradeData.instruments.find((instrument) => instrument.ticker === coin2.symbol) || defaultInstrument;
     }
     return currInstrument;
   }
@@ -373,13 +250,13 @@ function CoinSwapper(props: any): React.ReactElement {
       <CoinDialog
         open={dialog1Open}
         onClose={onToken1Selected}
-        coins={availableCoin}
+        coins={availbleCoinIn}
         signer="placeholder"
       />
       <CoinDialog
         open={dialog2Open}
         onClose={onToken2Selected}
-        coins={availableCoin}
+        coins={availbleCoinOut}
         signer="placeholder"
       />
       <div style={{ display: "flex", flexDirection: "row", height: "max-content", width: "21.75rem" }}>
@@ -392,29 +269,16 @@ function CoinSwapper(props: any): React.ReactElement {
             <Grid container direction="column" spacing={2}>
               <div className={classes.from}>From</div>
               <Grid item xs={12} className={classes.fullWidth}>
-                {/* <CoinField
+                <CoinField
                   activeField
                   value={field1Value}
                   onClick={() => setDialog1Open(true)}
                   onChange={handleChange.field1}
                   symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
-                /> */}
-                <div style={{ display: "flex", marginTop: "1.5rem" }}>
-                  {/* <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  input={<BootstrapInput />}
-                  defaultValue="10"
-                  style={{color: "#ffffff"}}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-
-                <BootstrapInput id="demo-customized-textbox" /> */}
+                />
+                {/* <div style={{ display: "flex" }}>
                   <SearchInput />
-                </div>
+                </div> */}
               </Grid>
 
               <IconButton onClick={switchFields} className={classes.switchButton}>
@@ -422,28 +286,15 @@ function CoinSwapper(props: any): React.ReactElement {
               </IconButton>
               <div className={classes.from}>To</div>
               <Grid item xs={12} className={classes.fullWidth}>
-                {/* <CoinField
+                <CoinField
                   activeField={false}
                   value={field2Value}
                   onClick={() => setDialog2Open(true)}
-                  // onChange={(e) => console.log(e)}
                   symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
-                /> */}
-
-                <div style={{ display: "flex", marginTop: "1.5rem" }}>
-                  <Select
-                    labelId="demo-customized-select-label"
-                    id="demo-customized-select"
-                    input={<BootstrapInput />}
-                    defaultValue="10"
-                    style={{ color: "#ffffff" }}
-                  >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                  </Select>
-                  <BootstrapInput id="demo-customized-textbox" />
-                </div>
+                />
+                {/* <div style={{ display: "flex" }}>
+                  <SearchInput />
+                </div> */}
               </Grid>
 
               <div style={{
@@ -456,7 +307,7 @@ function CoinSwapper(props: any): React.ReactElement {
                   color: "#FFFFFF",
                   marginTop: "2rem",
                 }}>
-                  {getCurrentInstrument().ticker}
+                  Crypto Punks
                 </div>
                 <div style={{
                   fontWeight: 400,
@@ -470,15 +321,22 @@ function CoinSwapper(props: any): React.ReactElement {
                 </div>
               </div>
 
-              <LoadingButton
+              <Button
                 size="large"
                 variant="text"
-                loading={loading}
-                valid={isButtonEnabled()}
-              // onClick={swap}
+                style={{
+                  background: "linear-gradient(97.27deg, #2F038C 44.35%, #0837A5 70.76%)",
+                  borderRadius: "0.42rem",
+                  fontWeight: 600,
+                  fontSize: "0.83rem",
+                  lineHeight: "1rem",
+                  color: "#FFFFFF",
+                  height: "3rem",
+                  marginLeft: "0.33rem",
+                }}
               >
                 Swap Now
-              </LoadingButton>
+              </Button>
             </Grid>
           </Paper>
 

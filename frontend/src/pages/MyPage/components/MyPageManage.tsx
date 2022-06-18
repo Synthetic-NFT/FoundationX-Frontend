@@ -97,19 +97,19 @@ export default function MyPageManage(): React.ReactElement {
 
   return (
     <>
-      <ReturnButton onClick={() => history.push('/trade')} textValue="Back" />
-      {match?.url !== WITHDRAW_URL && 
-      <Box
-        sx={{
-          borderBottom: 1,
-          borderColor: "divider",
-        }}
-      >
-        <Tabs centered value={match?.url === ETH_URL ? 0 : 1}>
-          <Tab label="Manage ETH Positions" onClick={() => onSwitch(ETH_URL)} />
-          <Tab label="Manage NFT Positions" onClick={() => onSwitch(NFT_URL)} />
-        </Tabs>
-      </Box>}
+      <ReturnButton onClick={() => history.push('/mypage')} textValue="Back" />
+      {match?.url !== WITHDRAW_URL &&
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+          }}
+        >
+          <Tabs centered value={match?.url === ETH_URL ? 0 : 1}>
+            <Tab label="Manage ETH Positions" onClick={() => onSwitch(ETH_URL)} />
+            <Tab label="Manage NFT Positions" onClick={() => onSwitch(NFT_URL)} />
+          </Tabs>
+        </Box>}
       <div
         style={{
           position: "relative",
@@ -126,10 +126,10 @@ export default function MyPageManage(): React.ReactElement {
             <InstrumentSell instrument={instrument} />
           </Route>
           <Route path="/mypage/manage/nft" exact>
-            <ClaimDetail instrument={instrument} buttonName="Reedem" haveAdd/>
+            <ClaimDetail instrument={instrument} buttonName="Reedem" haveAdd={false} openDialog />
           </Route>
           <Route path="/mypage/manage/withdraw" exact>
-            <MyPageWithdraw  instrument={instrument}/>
+            <MyPageWithdraw instrument={instrument} />
           </Route>
         </Switch>
       </div>
