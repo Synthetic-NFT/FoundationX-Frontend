@@ -15,6 +15,7 @@ import CreditCard from "../../../styles/images/CreditCard.png";
 import Send from "../../../styles/images/send.svg";
 import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
+import { connectWallet, getCurrentWalletConnected } from "../../../util/interact";
 import MyPageTable from "./MyPageTable";
 import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./tableColumns";
 
@@ -243,11 +244,13 @@ export default function MypPage(): React.ReactElement {
   const styles = useStyles();
 
   const { walletAddress, setWallet } = useContext(AppContext);
-  const [loginSuccess, setLoginSuccess] = useState(false);
+  // const [loginSuccess, setLoginSuccess] = useState(false);
   const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
   const [step, setStep] = useState(0);
-
+  const [status, setStatus] = useState("");
   const [loading, setIsLoading] = React.useState(false);
+  
+
   useEffect(() => {
     if (!loading) {
       setIsLoading(true);
@@ -256,11 +259,37 @@ export default function MypPage(): React.ReactElement {
         // setStep(0);
         setIsLoading(false);
       });
+      
+      const setWalletAndStatus = async () => {
+        const { address, status } = await getCurrentWalletConnected();
+        setWallet(address);
+        setStatus(status);
+      };
+      setWalletAndStatus();
+
+      if ((window as any).ethereum) {
+        (window as any).ethereum.on(
+          "accountsChanged",
+          (accounts: string | any[]) => {
+            if (accounts.length > 0) {
+              setWallet(accounts[0]);
+              setStatus("👆🏽 Write a message in the text-field above.");
+            } else {
+              setWallet("");
+              setStatus("🦊 Connect to Metamask using the top right button.");
+            }
+          },
+        );
+      } else {
+        setStatus("Not installed");
+      }
     }
-  }, [loading, setIsLoading, myPageData, setMyPageData, walletAddress]);
+  }, [loading, setIsLoading, myPageData, setMyPageData, walletAddress, setWallet, setStatus]);
   
-  function login() {
-    setLoginSuccess(true);
+  const login = async () => {
+    const walletResponse = await connectWallet();
+    setStatus(walletResponse.status);
+    setWallet(walletResponse.address);
   }
 
   function getOption() {
@@ -389,7 +418,7 @@ export default function MypPage(): React.ReactElement {
   return (
     <>
       {
-        !loginSuccess &&
+        walletAddress === "" &&
         <div className={styles.loginGroup} >
           <Button
             className={styles.button}
@@ -405,7 +434,7 @@ export default function MypPage(): React.ReactElement {
         </div>
       }
       {
-        loginSuccess && myPageData &&
+        walletAddress !== "" && myPageData &&
         <>
           <div className={styles.cardGroup}>
             <div className={styles.cardLeft} >
