@@ -16,6 +16,7 @@ import React from "react";
 
 import Ethereum from "../styles/images/Ethereum.svg";
 import Card from "./Card"
+import SearchInput from './SearchInput'
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   dialogContainer: {
@@ -156,9 +157,8 @@ function CardDialog(props: any) {
           <img src={data.img} alt="Ethereum" style={{height:"10rem", width:"10rem"}} />
         </Card>
         <div style={{marginLeft: "1.5rem"}}>
-          <div className={classes.name}>{data.name}</div>          
-          <div className={classes.id}>#{data.id}</div>
-          <div className={classes.price}>Floor Price: {data.price}</div>
+          <div className={classes.name}>{data.name}</div>
+          <SearchInput />
           <Button
             className={classes.button}
             size="small"

@@ -13,7 +13,7 @@ type ColumnConfigWithoutRenderers = {
   id: string;
   label: string;
   minWidth: number;
-  align?: "left"|"left";
+  align?: "left" | "left";
   tooltip?: string;
 };
 
@@ -42,7 +42,6 @@ export function DefaultHeaderRenderer({
         minWidth: config.minWidth,
         backgroundColor: "inherit",
         height: "3.17rem",
-        fontFamily: "Poppins",
         fontStyle: "normal",
         fontWeight: 400,
         fontSize: "0.75rem",
@@ -75,7 +74,6 @@ function TooltipHeaderRenderer({
         minWidth: config.minWidth,
         backgroundColor: "inherit",
         height: "3.17rem",
-        fontFamily: "Poppins",
         fontStyle: "normal",
         fontWeight: 400,
         fontSize: "0.75rem",
@@ -170,7 +168,7 @@ export function TickerCellRenderer({
   );
 }
 
-function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {  
+function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.poolPrice} UST</b>
@@ -178,7 +176,7 @@ function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {
   );
 }
 
-function OraclePriceCellRenderer({ row }: CellRendererProps): TableCellElement {  
+function OraclePriceCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.oraclePrice} UST</b>
@@ -186,7 +184,7 @@ function OraclePriceCellRenderer({ row }: CellRendererProps): TableCellElement {
   );
 }
 
-function BalanceCellRenderer({ row }: CellRendererProps): TableCellElement {  
+function BalanceCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.balance}</b>
@@ -194,7 +192,7 @@ function BalanceCellRenderer({ row }: CellRendererProps): TableCellElement {
   );
 }
 
-function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {  
+function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.value} UST</b>
@@ -202,7 +200,7 @@ function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {
   );
 }
 
-function CollateralCellRenderer({ row }: CellRendererProps): TableCellElement {  
+function CollateralCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
       <b>{row.collateral} UST</b>
@@ -213,7 +211,7 @@ function CollateralCellRenderer({ row }: CellRendererProps): TableCellElement {
 function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement {
   const history = useHistory();
   const styles = useStyles();
-  
+
   function handleSwapClick() {
     history.push(`/swap/order?ticker=${row.ticker}`);
     // history.push(`/trade/order/buy?ticker=${row.ticker}`);
@@ -253,9 +251,9 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
 function BorrowingActionCellRenderer({ row }: CellRendererProps): TableCellElement {
   const history = useHistory();
   const styles = useStyles();
-  
+
   function handleClick() {
-    history.push(`/mypage/manage/nft?ticker=${row.ticker}`);
+    history.push(`/mypage/manage/withdraw?ticker=${row.ticker}`);
   }
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE}>
@@ -302,30 +300,30 @@ export const holdingTableColumns: ColumnConfig[] = [
     headerRenderer: DefaultHeaderRenderer,
   },
   {
-    id: "poolPrice",
-    label: "Pool Price",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: PoolPriceCellRenderer,
-    headerRenderer: DefaultHeaderRenderer,
-  },
-  {
     id: "balance",
     label: "Balance",
     minWidth: 100,
     align: "left",
     cellRenderer: BalanceCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
+    headerRenderer: DefaultHeaderRenderer,
     tooltip: "Balance"
   },
   {
     id: "value",
-    label: "Value",
+    label: "Minted with ETH",
     minWidth: 100,
     align: "left",
     cellRenderer: ValueCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
+    headerRenderer: DefaultHeaderRenderer,
     tooltip: "Value"
+  },
+  {
+    id: "poolPrice",
+    label: "Token Price",
+    minWidth: 100,
+    align: "left",
+    cellRenderer: PoolPriceCellRenderer,
+    headerRenderer: DefaultHeaderRenderer,
   },
   {
     id: "action",
@@ -340,7 +338,7 @@ export const holdingTableColumns: ColumnConfig[] = [
 export const borrowingTableColumns: ColumnConfig[] = [
   {
     id: "ticker",
-    label: "Ticker",
+    label: "Pool",
     minWidth: 100,
     align: "left",
     cellRenderer: TickerCellRenderer,
@@ -348,29 +346,11 @@ export const borrowingTableColumns: ColumnConfig[] = [
   },
   {
     id: "oraclePrice",
-    label: "Pool Price",
+    label: "withdrawable",
     minWidth: 100,
     align: "left",
     cellRenderer: OraclePriceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
-  },
-  {
-    id: "borrowed",
-    label: "Balance",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: BalanceCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
-    tooltip: "Borrowed."
-  },
-  {
-    id: "collateralRatio",
-    label: "Value",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: ValueCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
-    tooltip: "Collateral Ration"
   },
   {
     id: "action",

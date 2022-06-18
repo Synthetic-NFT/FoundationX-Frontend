@@ -13,6 +13,7 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
 import PropTypes from "prop-types";
 import React from "react";
+
 import { TradeData, Instrument } from "../api";
 import CoinButton from "./CoinButton";
 
