@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 
 import ContractAddress from "./ContractAddress";
+import {loadActiveTokens} from "./interact";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -73,7 +74,7 @@ const OracleContract = new web3.eth.Contract(
 const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
-export const loadUserAllNFT = async (walletAddress: string, tickerID: string) => {
+export const loadUserGivenNFT = async (walletAddress: string, tickerID: string) => {
   const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();
   const tokenIDAndURI: {[key: string]: string} = {};
   for (let i = 0; i < balance; i += 1) {
@@ -85,6 +86,22 @@ export const loadUserAllNFT = async (walletAddress: string, tickerID: string) =>
     tokenIDAndURI[bnTokenID] = tokenURI;
   }
   return tokenIDAndURI;
+}
+
+export const loadUserAllNFT = async (walletAddress: string) => {
+  const activeTokens = await loadActiveTokens();
+  const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+  const allNFTPromises = []
+  for (let i = 0; i < tokenNames.length; i += 1){
+    allNFTPromises.push(loadUserGivenNFT(walletAddress, tokenNames[i]));
+  }
+  const allNFTIDAndURI = await Promise.all(allNFTPromises);
+  const infoDict: {[key: string]: any} = {};
+  for (let i = 0; i < tokenNames.length; i += 1) {
+    const tickerID = tokenNames[i];
+    infoDict[tickerID] = allNFTIDAndURI[i];
+  }
+  return infoDict;
 }
 
 export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], tickerID: string) => {

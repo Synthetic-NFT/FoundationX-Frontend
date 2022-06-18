@@ -301,6 +301,40 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "tokens",
+        "type": "string[]"
+      }
+    ],
+    "name": "listUserHoldingInfo",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "debtETH",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "debtNFT",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "tokenPrices",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string[]",
         "name": "_synthNames",
         "type": "string[]"

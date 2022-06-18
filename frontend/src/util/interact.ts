@@ -363,6 +363,11 @@ export const loadUserDebtDeposit = async (walletAddress: string, tickerIDs: stri
   return [res.debts, res.deposits, res.depositNFTs];
 };
 
+export const loadUserHoldingInfo = async (walletAddress: string, tickerIDs: string[]) => {
+  const res = await FactoryContract.methods.listUserHoldingInfo(walletAddress, tickerIDs).call();
+  return [res.debtETH, res.debtNFT, res.tokenPrices];
+};
+
 export const readWalletTokenBalance = async (walletAddress: string, tickerID: string|undefined) => {
   if(tickerID === "Ethereum") {
     const balance = await web3.eth.getBalance(walletAddress);

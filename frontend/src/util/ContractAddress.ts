@@ -68,5 +68,41 @@ const ContractAddress = {
         },
     ]
 }
+
+
+// const ContractAddress = {
+//     factory: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
+//     oracle: "0x884aa8b9613Ee02F2538417349c9e6cC4201E8fA",
+//     swapFactory: "0x36b58F5C1969B7b6591D752ea6F5486D069010AB",
+//     router: "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726",
+//     weth: "0x72EF93EAe807C850C1F8eC0209d9D5CCBc38f34D",
+//     tokens : [
+//         {
+//             name: "BoredApeYachtClub",
+//             synth: "0x1E607eb3384b1fcc759D1147d8DDbF8533EBa61F",
+//             vault: "0xCca4c1D853B5975360B9B7A58887df28ED2dEE38",
+//             reserve: "0xb5A4112892B0c3DcE9fF6B8c421A23B04E558e45",
+//             NFT: "0x2eE3380Cd4513cCECfc5853A80ECBA9debfE87Fa",
+//             lp: "0x4BC6fa21e17302b5393aB43188aA4FEe8a148b87"
+//         },
+//         {
+//             name: "MutantApeYachtClub",
+//             synth: "0x2a3C50121EE53c189D676f4503E4027169126A80",
+//             vault: "0x728c168433E97b07D799f189b108c2978a6A73F6",
+//             reserve: "0x0Fae427f19E8EC14a41Cc4D1b6029589e0291555",
+//             NFT: "0xEF0eaA3F9416235548B27dD80B179C8C0273e4a6",
+//             lp: "0xc47ce47619390542d76489670E1939D5A60173e6"
+//         },
+//         {
+//             name: "Otherdeed",
+//             synth: "0x49067Ba5653725e302fE0b6B5304E5a34a970fb2",
+//             vault: "0x93eF03Cdc328D0A3C13B1b689AEbd546150D33e4",
+//             reserve: "0x2bc3F5ceDfa2986725C77Df637340d0F25b675AF",
+//             NFT: "0xF85bb4e678466Fa402A1664cC84f3373faeE992C",
+//             lp: "0x469eb61bF8251bC1744Eb74b75cc8be4e2971819"
+//         },
+//     ]
+// }
+
 export default ContractAddress;
 

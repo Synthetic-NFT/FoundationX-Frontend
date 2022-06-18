@@ -6,12 +6,13 @@ import ContractAddress from "./util/ContractAddress";
 import {
   loadActiveTokens,
   loadPoolSynthPrice,
-  loadSynthPrice, loadUserDebtDeposit,
+  loadSynthPrice, loadUserDebtDeposit, loadUserHoldingInfo,
   readWalletLpBalance,
   readWalletTokenBalance
 } from "./util/interact";
 import {
-  loadUserAllNFT
+  loadUserAllNFT,
+  loadUserGivenNFT
 } from "./util/nft_interact";
 
 export type Instrument = {
@@ -103,7 +104,9 @@ export const blockchainAPI = {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
     // console.log("aaaaa", a)
     console.log("aaaa", await this.loadUserAllTokenPosition('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
-    console.log("aaaaa", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
+    console.log("aaaaa", await loadUserGivenNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
+    console.log("aa", await this.loadUserAllLpBalance('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
+    console.log("a", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'), await this.checkUserCanMintWithNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
 
     const activeTokens = await loadActiveTokens();
     const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
@@ -143,6 +146,21 @@ export const blockchainAPI = {
 
     return new Promise((resolve) => {
       resolve(tradeData);
+    });
+  },
+
+  async checkUserCanMintWithNFT(walletAddress: string): Promise<Boolean> {
+    const userNFT = await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
+    let totalBalance = 0;
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [ key, value ] of Object.entries(userNFT)) {
+      // do something with `key` and `value`
+      totalBalance += Object.keys(value).length;
+    }
+    const result = totalBalance > 0;
+
+    return new Promise((resolve) => {
+      resolve(result);
     });
   },
 
@@ -191,7 +209,7 @@ export const blockchainAPI = {
 
   async loadUserGivenTokenPosition(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: any[]}> {
     const tokenBalances = await this.loadUserGivenTokenBalance(walletAddress, tickerIDs);
-    const userDebtDeposit = await loadUserDebtDeposit(walletAddress, tickerIDs);
+    const userDebtDeposit = await loadUserHoldingInfo(walletAddress, tickerIDs);
     const result: { [key: string]: any[]} = {}
     for (let i = 0; i < tickerIDs.length; i += 1) {
       const tickerID = tickerIDs[i];
@@ -199,7 +217,7 @@ export const blockchainAPI = {
         tokenBalances[tickerID],
         convertWeiToString(userDebtDeposit[0][i]),
         convertWeiToString(userDebtDeposit[1][i]),
-        userDebtDeposit[2][i]
+        convertWeiToString(userDebtDeposit[2][i])
       ];
     }
     return new Promise((resolve) => {
