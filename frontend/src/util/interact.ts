@@ -359,8 +359,8 @@ export const loadUserOrderStat = async (address: string, tickerID: string) => {
 };
 
 export const loadUserDebtDeposit = async (walletAddress: string, tickerIDs: string[]) => {
-  const res = await FactoryContract.methods.listUserDebtDeposit(walletAddress, [tickerIDs]).call();
-  return [res.debt, res.deposits, res.depositsNFTs];
+  const res = await FactoryContract.methods.listUserDebtDeposit(walletAddress, tickerIDs).call();
+  return [res.debts, res.deposits, res.depositNFTs];
 };
 
 export const readWalletTokenBalance = async (walletAddress: string, tickerID: string|undefined) => {

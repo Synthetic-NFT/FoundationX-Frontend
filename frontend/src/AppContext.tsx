@@ -41,4 +41,9 @@ export function AppContextProvider({
 }
 
 // Notice that you should NEVER use this to communicate with the blockchain!
-export function convertWeiToFloat() {}
+export function convertWeiToString(a: any) {
+  return new BigNumber(a).div('1e18').toString();
+}
+export function convertWeiToNumber(a: any) {
+  return new BigNumber(a).div('1e18').toString();
+}

@@ -74,15 +74,14 @@ const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
 export const loadUserAllNFT = async (walletAddress: string, tickerID: string) => {
-  const res = await NFTContract.methods.balanceOf(walletAddress).call();
-  const balance = new BigNumber(res.balance).div('1e18').toNumber();
-  const tokenIDs = []
+  const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();
+  const tokenIDs = [];
   for (let i = 0; i < balance; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    const bnTokenID = await NFTContract.methods.tokenOfOwnerByIndex(walletAddress, i).call()
+    const bnTokenID = await NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call();
     tokenIDs.push(bnTokenID);
   }
-  return tokenIDs
+  return tokenIDs;
 }
 
 export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], tickerID: string) => {

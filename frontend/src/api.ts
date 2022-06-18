@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 
-import { AppData } from "./AppContext";
+import { AppData, convertWeiToNumber, convertWeiToString } from "./AppContext";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
 import ContractAddress from "./util/ContractAddress";
 import {
@@ -10,6 +10,9 @@ import {
   readWalletLpBalance,
   readWalletTokenBalance
 } from "./util/interact";
+import {
+  loadUserAllNFT
+} from "./util/nft_interact";
 
 export type Instrument = {
   ticker: string;
@@ -97,6 +100,9 @@ export type TradeData = {
 
 export const blockchainAPI = {
   async loadInstruments(): Promise<TradeData> {
+    // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
+    // console.log("aaaaa", a)
+    console.log("aaaa", await this.loadUserAllTokenPosition('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     const activeTokens = await loadActiveTokens();
     const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
     const oraclePricePromises = []
@@ -144,13 +150,13 @@ export const blockchainAPI = {
       tokenBalancePromises.push(readWalletTokenBalance(walletAddress, tickerIDs[i]));
     }
 
-    const bnAllTokenBalances = await Promise.all(tokenBalancePromises);
-    const allTokenBalances : { [key: string]: string } = {};
+    const allTokenBalances = await Promise.all(tokenBalancePromises);
+    const result : { [key: string]: string } = {};
     for(let i = 0; i < tickerIDs.length; i += 1) {
-      allTokenBalances[tickerIDs[i]] = new BigNumber(bnAllTokenBalances[i]).div('1e18').toString();
+      result[tickerIDs[i]] = allTokenBalances[i].toString();
     }
     return new Promise((resolve) => {
-      resolve(allTokenBalances);
+      resolve(result);
     });
   },
 
@@ -168,7 +174,7 @@ export const blockchainAPI = {
     const bnAllTokenBalances = await Promise.all(tokenBalancePromises);
     const allTokenBalances : { [key: string]: string } = {};
     for(let i = 0; i < tickerIDs.length; i += 1) {
-      allTokenBalances[tickerIDs[i]] = new BigNumber(bnAllTokenBalances[i]).div('1e18').toString();
+      allTokenBalances[tickerIDs[i]] = bnAllTokenBalances[i].toString();
     }
     return new Promise((resolve) => {
       resolve(allTokenBalances);
@@ -187,7 +193,12 @@ export const blockchainAPI = {
     const result: { [key: string]: any[]} = {}
     for (let i = 0; i < tickerIDs.length; i += 1) {
       const tickerID = tickerIDs[i];
-      result[tickerID] = [tokenBalances[tickerID]].concat(userDebtDeposit);
+      result[tickerID] = [
+        tokenBalances[tickerID],
+        convertWeiToString(userDebtDeposit[0][i]),
+        convertWeiToString(userDebtDeposit[1][i]),
+        userDebtDeposit[2][i]
+      ];
     }
     return new Promise((resolve) => {
       resolve(result);
