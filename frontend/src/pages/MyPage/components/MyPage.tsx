@@ -10,13 +10,13 @@ import React, { useContext, useEffect, useState } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
 import api, { MyPageData } from "../../../api";
+import {AppContext} from "../../../AppContext";
 import CreditCard from "../../../styles/images/CreditCard.png";
 import Send from "../../../styles/images/send.svg";
 import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
 import MyPageTable from "./MyPageTable";
 import {holdingTableColumns, borrowingTableColumns, governTableColumns} from "./tableColumns";
-import {AppContext} from "../../../AppContext";
 
 
 const useStyles = makeStyles({

@@ -5,22 +5,22 @@ import {
   makeStyles,
   Paper,
   Typography,
-  Button, Select, MenuItem  } from "@material-ui/core";
-
+  Button, Select, MenuItem
+} from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from "@material-ui/core/styles";
 import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
-import React, {useContext, useEffect} from "react";
+import React, { useContext, useEffect } from "react";
 
 import { defaultInstrument } from "../api";
 import type { TradeData } from "../api";
-import {AppContext} from "../AppContext";
+import { AppContext } from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import SearchInput from '../components/SearchInput'
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../constants/coins";
 import { fakeTradeData } from "../fakeData";
-import {TradeContext} from "../TradeContext";
+import { TradeContext } from "../TradeContext";
 import {
   getLpReserve,
   getAmountSynthOut,
@@ -129,10 +129,10 @@ const BootstrapInput = withStyles((theme) => ({
 }))(InputBase);
 
 interface CoinInterface {
-  address: string|undefined;
-  name: string|undefined;
-  symbol: string|undefined;
-  balance: number|undefined;
+  address: string | undefined;
+  name: string | undefined;
+  symbol: string | undefined;
+  balance: number | undefined;
 }
 
 const ethCoin: CoinInterface = {
@@ -142,7 +142,7 @@ const ethCoin: CoinInterface = {
   balance: undefined,
 }
 
-function getTradableCoinInfo(tradeData: TradeData): CoinInterface[]  {
+function getTradableCoinInfo(tradeData: TradeData): CoinInterface[] {
   const availableCoins = [ethCoin];
   for (let i = 0; i < tradeData.instruments.length; i += 1) {
     const instrument = tradeData.instruments[i];
@@ -161,7 +161,7 @@ function getTradableCoinInfo(tradeData: TradeData): CoinInterface[]  {
   return availableCoins;
 }
 
-function CoinSwapper(props: any) : React.ReactElement{
+function CoinSwapper(props: any): React.ReactElement {
   const classes = useStyles();
 
   const { instrument } = props;
@@ -175,6 +175,7 @@ function CoinSwapper(props: any) : React.ReactElement{
 
   interface CoinInterface {
     address: string | undefined;
+    name: string | undefined;
     symbol: string | undefined;
     balance: number | undefined;
   }
@@ -230,13 +231,13 @@ function CoinSwapper(props: any) : React.ReactElement{
   };
 
   // Determines whether the button should be enabled or not
-  const isButtonEnabled = async() => {
+  const isButtonEnabled = async () => {
     // If both coins have been selected, and a valid float has been entered which is less than the user's balance, then return true
     const parsedInput1 = parseFloat(field1Value);
     const parsedInput2 = parseFloat(field2Value);
     return (
-        (coin1.name === "Ethereum" ||
-      coin2.name === "Ethereum") &&
+      (coin1.name === "Ethereum" ||
+        coin2.name === "Ethereum") &&
       !Number.isNaN(parsedInput1) &&
       !Number.isNaN(parsedInput2) &&
       parsedInput1 > 0 &&
@@ -245,23 +246,23 @@ function CoinSwapper(props: any) : React.ReactElement{
     );
   };
 
-//  useEffect(() => {
-//    setAvailableCoin(getTradableCoinInfo(tradeData));
-//  }, [tradeData]);
+  //  useEffect(() => {
+  //    setAvailableCoin(getTradableCoinInfo(tradeData));
+  //  }, [tradeData]);
 
   useEffect(() => {
     if (Number.isNaN(parseFloat(field1Value))) {
       setField2Value("");
     } else if (parseFloat(field1Value) && coin1.name === "Ethereum" && coin2.name) {
       getAmountSynthOut(coin2.name, field1Value).then(
-          (amount) => setField2Value(amount.toFixed(7))
+        (amount) => setField2Value(amount.toFixed(7))
       ).catch((e: any) => {
         console.log(e);
         setField2Value("NA");
       })
     } else if (parseFloat(field1Value) && coin2.name === "Ethereum" && coin1.name) {
       getAmountETHOut(coin1.name, field1Value).then(
-          (amount) => setField2Value(amount.toFixed(7))
+        (amount) => setField2Value(amount.toFixed(7))
       ).catch((e: any) => {
         console.log(e);
         setField2Value("NA");
@@ -288,28 +289,24 @@ function CoinSwapper(props: any) : React.ReactElement{
         symbol: instrument?.symbol || undefined,
         balance: data.toNumber(),
       });
-    })
+    });
+
+    // const coinTimeout = setTimeout(() => {
+    //   return () => clearTimeout(coinTimeout);
+    // });
   }, [instrument, walletAddress]);
 
-//    const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
-//    setCoin2({
-//      address: initCoin?.address || undefined,
-//      symbol: initCoin?.name || undefined,
-//      balance: initCoin ? 1000 : undefined,
-//    });
-//  }, [availbleCoinIn, instrument]);
+  //    const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
+  //    setCoin2({
+  //      address: initCoin?.address || undefined,
+  //      symbol: initCoin?.name || undefined,
+  //      balance: initCoin ? 1000 : undefined,
+  //    });
+  //  }, [availbleCoinIn, instrument]);
 
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
-  useEffect(() => {
-    const coinTimeout = setTimeout(() => {
-      console.log('props: ', props);
-      console.log("Checking balances...");
-
-      return () => clearTimeout(coinTimeout);
-    });
-  });
 
   const onToken1Selected = (address: string, name: string, symbol: string) => {
     // Close the dialog window
@@ -433,20 +430,20 @@ function CoinSwapper(props: any) : React.ReactElement{
                   symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
                 /> */}
 
-                <div style={{display: "flex", marginTop: "1.5rem"}}>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  input={<BootstrapInput />}
-                  defaultValue="10"
-                  style={{color: "#ffffff"}}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-                <BootstrapInput id="demo-customized-textbox" />
-              </div>
+                <div style={{ display: "flex", marginTop: "1.5rem" }}>
+                  <Select
+                    labelId="demo-customized-select-label"
+                    id="demo-customized-select"
+                    input={<BootstrapInput />}
+                    defaultValue="10"
+                    style={{ color: "#ffffff" }}
+                  >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                  </Select>
+                  <BootstrapInput id="demo-customized-textbox" />
+                </div>
               </Grid>
 
               <div style={{
@@ -478,9 +475,9 @@ function CoinSwapper(props: any) : React.ReactElement{
                 variant="text"
                 loading={loading}
                 valid={isButtonEnabled()}
-                // onClick={swap}
+              // onClick={swap}
               >
-              Swap Now
+                Swap Now
               </LoadingButton>
             </Grid>
           </Paper>

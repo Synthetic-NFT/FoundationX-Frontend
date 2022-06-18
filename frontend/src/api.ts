@@ -1,7 +1,8 @@
-import { AppData } from "./AppContext";
 import { BigNumber } from "bignumber.js";
-import ContractAddress from "./util/ContractAddress";
+
+import { AppData } from "./AppContext";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
+import ContractAddress from "./util/ContractAddress";
 import {
   loadActiveTokens,
   loadPoolSynthPrice,
