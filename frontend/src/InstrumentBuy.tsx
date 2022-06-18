@@ -129,7 +129,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
           })
         }
       />
-      <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
+      <img src={Ethereum} alt="Ethereum" style={{ height: "1.67rem", width: "1.67rem" }} />
     </div>
   );
 }
@@ -231,7 +231,7 @@ function DebtField({ instrument }: { instrument: Instrument }) {
       <img
         src={NFTIcons.get(instrument.ticker)}
         alt={instrument.ticker}
-        style={{height:"1.67rem", width:"1.67rem"}}
+        style={{ height: "1.67rem", width: "1.67rem" }}
       />
     </div>
   );
@@ -259,7 +259,16 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
         state.collateral,
         state.ratio,
       );
-      console.log(mintSynthResponse);
+      console.log("mintSynthPressed response", mintSynthResponse);
+      if (mintSynthResponse) {
+        if (mintSynthResponse.status === 'success') {
+          // TODO show toast and back to mint page
+        } else {
+          // TODO show toast
+        } 
+      }
+    } else {
+      // TODO show toast
     }
   };
 
