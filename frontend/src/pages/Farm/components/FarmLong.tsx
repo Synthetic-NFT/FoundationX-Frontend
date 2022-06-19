@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument, getTradableCoinInfo, CoinInterface } from "../../../api";
+import {Instrument, getTradableCoinInfo, CoinInterface, ethCoin} from "../../../api";
 import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
 import { SearchInput } from '../../../components/SearchInput'
@@ -26,7 +26,7 @@ import {
 import Ethereum from "../../../styles/images/Ethereum.svg";
 import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
-import { addLiquidityETH, loadPoolSynthPrice } from "../../../util/farm_interact";
+import {addLiquidityETH, getFarmDesiredETH, loadPoolSynthPrice} from "../../../util/farm_interact";
 import { mintSynth } from "../../../util/interact";
 
 
@@ -391,33 +391,51 @@ export default function FarmLong({
   const [inst, setInst] = useState(instrument);
   const { tradeData } = useContext(TradeContext);
   const { walletAddress, setWallet } = useContext(AppContext);
-  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
+  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData, false));
   const [selectedTickerID, setSelectedTickerID] = useState("");
   const [poolPrice, setPoolPrice] = useState("");
-  const [farmValue, setFarmValue] = useState("");
+  const [tokenAValue, setTokenAValue] = useState("");
+  const [tokenBValue, setTokenBValue] = useState("");
+
   console.log("availableCoin*****", availableCoin);
 
+  useEffect(() => {
+    if (availableCoin.length>0) {
+      setSelectedTickerID(availableCoin[0].name?availableCoin[0].name : "")
+      if (selectedTickerID && selectedTickerID !== "") {
+        loadPoolSynthPrice(selectedTickerID).then((poolPrice) => {
+          setPoolPrice(poolPrice)
+        });
+      }
+    }
+  }, [availableCoin, selectedTickerID]);
+
+  useEffect(() => {
+    if (selectedTickerID && selectedTickerID !== "" && tokenAValue && tokenAValue !== "") {
+      getFarmDesiredETH(selectedTickerID, tokenAValue).then((tokenBValue) => {
+        setTokenBValue(tokenBValue);
+      })
+    }
+  }, [selectedTickerID, tokenAValue]);
+
   const startFarm = async () => {
-    // await addLiquidityETH(walletAddress, selectedTickerID, poolPrice, farmValue);
+    await addLiquidityETH(walletAddress, selectedTickerID, tokenAValue, tokenBValue);
   }
 
   const fromChanged = async (tickerId: string) => {
     setSelectedTickerID(tickerId);
     // API issue
-    // const result = await loadPoolSynthPrice(tickerId);
-    // setPoolPrice(result);
+    const result = await loadPoolSynthPrice(tickerId);
+    setPoolPrice(result);
   };
 
-  const changeFramValue = (value: string) => {
-    setFarmValue(value);
-  }
 
   function handleChange(id: string) {
     const inst: Instrument | undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
     setInst(inst)
   }
 
-  const defaultFarmValue = availableCoin.length > 1 ? availableCoin[1].name : availableCoin[0].name
+  const defaultFarmValue = availableCoin.length > 0 ? availableCoin[0].name : ""
 
   return (
     <div style={{ display: "flex", overflow: "hidden" }}>
@@ -430,7 +448,7 @@ export default function FarmLong({
               description=""
             />
             <div >
-              <SearchInput availableCoins={availableCoin} defaultValue={defaultFarmValue} onChange={fromChanged} valueChange={changeFramValue} />
+              <SearchInput availableCoins={availableCoin} defaultValue={defaultFarmValue} onChange={fromChanged} valueChange={setTokenAValue} />
             </div>
           </div>
         </div>
@@ -442,7 +460,7 @@ export default function FarmLong({
               description="An equivalent UST amount must be provided."
             />
             <div style={{ display: "flex", marginTop: "1.5rem" }}>
-              <SearchInput availableCoins={[availableCoin[0]]} defaultValue={availableCoin[0].name} disableInput />
+              <SearchInput availableCoins={[ethCoin]} defaultValue={ethCoin.name} disableInput />
             </div>
           </div>
         </div>
@@ -450,7 +468,7 @@ export default function FarmLong({
         <div className={styles.summary}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div>Pool Price</div>
-            <div>1 {selectedTickerID} = {poolPrice} UST</div>
+            <div> {selectedTickerID} = {poolPrice} ETH</div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div>TX Fees</div>

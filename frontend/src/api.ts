@@ -112,8 +112,8 @@ export const ethCoin: CoinInterface = {
   symbol: "ETH",
   balance: undefined,
 }
-export function getTradableCoinInfo(tradeData: TradeData): CoinInterface[] {
-  const availableCoins = [ethCoin];
+export function getTradableCoinInfo(tradeData: TradeData, includeETH: boolean = true): CoinInterface[] {
+  const availableCoins = includeETH? [ethCoin] : [];
   for (let i = 0; i < tradeData.instruments.length; i += 1) {
     const instrument = tradeData.instruments[i];
     if (instrument === defaultInstrument) {

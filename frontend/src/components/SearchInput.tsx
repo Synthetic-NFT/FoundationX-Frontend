@@ -62,12 +62,12 @@ function SearchInput(props: any) {
                 id="demo-customized-select"
                 input={<BootstrapInput />}
                 defaultValue={defaultValue}
-                onChange={()=>{onChange()}}
+                onChange={(e)=>{onChange(e)}}
                 style={{ color: "#ffffff" }}
             >
                 {availableCoins.map((item: CoinInterface) => <MenuItem key={item.symbol} value={item.name}>{item.name}</MenuItem>)}
             </Select>
-            <BootstrapInput id="demo-customized-textbox" onChange={() => {valueChange()}} disabled={disableInput}/>
+            <BootstrapInput id="demo-customized-textbox" onChange={(e) => {valueChange(e.target.value )}} disabled={disableInput}/>
         </FormControl>
     );
 }
