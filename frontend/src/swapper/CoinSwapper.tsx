@@ -5,18 +5,20 @@ import {
   makeStyles,
   Paper,
   Typography,
-} from "@material-ui/core";
-import { Button, Select, MenuItem } from "@material-ui/core";
+ Button, Select, MenuItem } from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from "@material-ui/core/styles";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 
-import { defaultInstrument } from "../api";
+import {defaultInstrument, TradeData} from "../api";
+import {AppContext} from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import { SearchInput } from '../components/SearchInput'
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../constants/coins";
 import { fakeTradeData } from "../fakeData";
+import { TradeContext } from "../TradeContext";
+import {getAmountETHOut, getAmountSynthOut, readWalletTokenBalance} from "../util/interact";
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
@@ -78,32 +80,65 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
+interface CoinInterface {
+  address: string | undefined;
+  name: string | undefined;
+  symbol: string | undefined;
+  balance: number | undefined;
+}
+
+const ethCoin: CoinInterface = {
+  address: undefined,
+  name: "Ethereum",
+  symbol: "ETH",
+  balance: undefined,
+}
+function getTradableCoinInfo(tradeData: TradeData): CoinInterface[] {
+  const availableCoins = [ethCoin];
+  for (let i = 0; i < tradeData.instruments.length; i += 1) {
+    const instrument = tradeData.instruments[i];
+    if (instrument === defaultInstrument) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+    const currCoin: CoinInterface = {
+      address: instrument.address,
+      name: instrument.ticker,
+      symbol: instrument.symbol,
+      balance: undefined,
+    }
+    availableCoins.push(currCoin);
+  }
+  return availableCoins;
+}
+
 function CoinSwapper(props: any): React.ReactElement {
   const classes = useStyles();
 
   const { instrument } = props;
+  const { tradeData } = useContext(TradeContext);
 
-  const availbleCoinIn = DummyCoins;
-  const availbleCoinOut = DummyCoins;
+  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
+  const { walletAddress, setWallet } = useContext(AppContext);
+  // const availbleCoinIn = DummyCoins;
+  // const availbleCoinOut = DummyCoins;
 
   // Stores a record of whether their respective dialog window is open
   const [dialog1Open, setDialog1Open] = React.useState(false);
   const [dialog2Open, setDialog2Open] = React.useState(false);
   const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
-  interface CoinInterface {
-    address: string | undefined;
-    symbol: string | undefined;
-    balance: number | undefined;
-  }
+
   // Stores data about their respective coin
   const [coin1, setCoin1] = React.useState<CoinInterface>({
     address: undefined,
+    name: undefined,
     symbol: undefined,
     balance: undefined,
   });
   const [coin2, setCoin2] = React.useState<CoinInterface>({
     address: undefined,
+    name: undefined,
     symbol: undefined,
     balance: undefined,
   });
@@ -155,31 +190,85 @@ function CoinSwapper(props: any): React.ReactElement {
     const parsedInput2 = parseFloat(field2Value);
 
     return (
-      coin1.address &&
-      coin2.address &&
-      !Number.isNaN(parsedInput1) &&
-      !Number.isNaN(parsedInput2) &&
-      parsedInput1 > 0 &&
-      // @ts-ignore
-      parsedInput1 <= coin1.balance
+        (coin1.name === "Ethereum" ||
+            coin2.name === "Ethereum") &&
+        !Number.isNaN(parsedInput1) &&
+        !Number.isNaN(parsedInput2) &&
+        parsedInput1 > 0 &&
+        // @ts-ignore
+        parsedInput1 <= coin1.balance
     );
   };
 
   useEffect(() => {
-    const ethCoin = DummyCoins.find((coin) => coin.name === "Ethereum");
-    setCoin1({
-      address: ethCoin?.address || undefined,
-      symbol: ethCoin?.name || undefined,
-      balance: 1000,
+    readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
+      setCoin1({
+        address: undefined,
+        name: "Ethereum",
+        symbol: "ETH",
+        balance: data.toNumber(),
+      });
+    })
+
+    readWalletTokenBalance(walletAddress, instrument?.ticker).then((data) => {
+      setCoin2({
+        address: instrument?.address || undefined,
+        name: instrument?.ticker || undefined,
+        symbol: instrument?.symbol || undefined,
+        balance: data.toNumber(),
+      });
     });
 
-    const initCoin = availbleCoinIn.find((coin) => coin.name === instrument?.ticker);
-    setCoin2({
-      address: initCoin?.address || undefined,
-      symbol: initCoin?.name || undefined,
-      balance: initCoin ? 1000 : undefined,
+    // const coinTimeout = setTimeout(() => {
+    //   return () => clearTimeout(coinTimeout);
+    // });
+  }, [instrument, walletAddress]);
+
+  useEffect(() => {
+    if (Number.isNaN(parseFloat(field1Value))) {
+      setField2Value("");
+    } else if (parseFloat(field1Value) && coin1.name === "Ethereum" && coin2.name) {
+      getAmountSynthOut(coin2.name, field1Value).then(
+          (amount) => setField2Value(amount.toFixed(7))
+      ).catch((e: any) => {
+        console.log(e);
+        setField2Value("NA");
+      })
+    } else if (parseFloat(field1Value) && coin2.name === "Ethereum" && coin1.name) {
+      getAmountETHOut(coin1.name, field1Value).then(
+          (amount) => setField2Value(amount.toFixed(7))
+      ).catch((e: any) => {
+        console.log(e);
+        setField2Value("NA");
+      })
+    } else {
+      setField2Value("");
+    }
+  }, [field1Value, coin1, coin2]);
+
+  useEffect(() => {
+    readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
+      setCoin1({
+        address: undefined,
+        name: "Ethereum",
+        symbol: "ETH",
+        balance: data.toNumber(),
+      });
+    })
+
+    readWalletTokenBalance(walletAddress, instrument?.ticker).then((data) => {
+      setCoin2({
+        address: instrument?.address || undefined,
+        name: instrument?.ticker || undefined,
+        symbol: instrument?.symbol || undefined,
+        balance: data.toNumber(),
+      });
     });
-  }, [availbleCoinIn, instrument]);
+
+    // const coinTimeout = setTimeout(() => {
+    //   return () => clearTimeout(coinTimeout);
+    // });
+  }, [instrument, walletAddress]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
@@ -192,7 +281,7 @@ function CoinSwapper(props: any): React.ReactElement {
     });
   });
 
-  const onToken1Selected = (address: string, name: string) => {
+  const onToken1Selected = (address: string, name: string, symbol: string) => {
     // Close the dialog window
     setDialog1Open(false);
 
@@ -203,15 +292,19 @@ function CoinSwapper(props: any): React.ReactElement {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      setCoin1({
-        address,
-        symbol: name,
-        balance: 1000,
-      });
+      readWalletTokenBalance(walletAddress, name).then((data) => {
+        setCoin1({
+          address,
+          name,
+          symbol,
+          balance: data.toNumber(),
+        });
+      })
+
     }
   };
 
-  const onToken2Selected = (address: string, name: string) => {
+  const onToken2Selected = (address: string, name: string, symbol: string) => {
     // Close the dialog window
     setDialog2Open(false);
 
@@ -222,20 +315,23 @@ function CoinSwapper(props: any): React.ReactElement {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      setCoin2({
-        address,
-        symbol: name,
-        balance: 1000,
-      });
+      readWalletTokenBalance(walletAddress, name).then((data) => {
+        setCoin2({
+          address,
+          name,
+          symbol,
+          balance: data.toNumber(),
+        });
+      })
     }
   };
 
   const getCurrentInstrument = () => {
     let currInstrument;
-    if (coin1.symbol !== "Ethereum") {
-      currInstrument = fakeTradeData.instruments.find((instrument) => instrument.ticker === coin1.symbol) || defaultInstrument;
+    if (coin1.name !== "Ethereum") {
+      currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin1.name) || defaultInstrument;
     } else {
-      currInstrument = fakeTradeData.instruments.find((instrument) => instrument.ticker === coin2.symbol) || defaultInstrument;
+      currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin2.name) || defaultInstrument;
     }
     return currInstrument;
   }
@@ -250,13 +346,13 @@ function CoinSwapper(props: any): React.ReactElement {
       <CoinDialog
         open={dialog1Open}
         onClose={onToken1Selected}
-        coins={availbleCoinIn}
+        coins={availableCoin}
         signer="placeholder"
       />
       <CoinDialog
         open={dialog2Open}
         onClose={onToken2Selected}
-        coins={availbleCoinOut}
+        coins={availableCoin}
         signer="placeholder"
       />
       <div style={{ display: "flex", flexDirection: "row", height: "max-content", width: "21.75rem" }}>
