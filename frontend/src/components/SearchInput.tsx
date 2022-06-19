@@ -67,7 +67,7 @@ function SearchInput(props: any) {
             >
                 {availableCoins.map((item: CoinInterface) => <MenuItem key={item.symbol} value={item.name}>{item.name}</MenuItem>)}
             </Select>
-            <BootstrapInput id="demo-customized-textbox" onChange={() => {valueChange()}} disable={disableInput}/>
+            <BootstrapInput id="demo-customized-textbox" onChange={() => {valueChange()}} disabled={disableInput}/>
         </FormControl>
     );
 }

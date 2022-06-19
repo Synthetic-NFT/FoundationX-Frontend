@@ -430,7 +430,7 @@ export default function FarmLong({
               description=""
             />
             <div >
-              <SearchInput availableCoins={availableCoin} defaultValue={defaultFarmValue} onChange={fromChanged} valueChange={changeFramValue} disableInput={false} />
+              <SearchInput availableCoins={availableCoin} defaultValue={defaultFarmValue} onChange={fromChanged} valueChange={changeFramValue} />
             </div>
           </div>
         </div>
