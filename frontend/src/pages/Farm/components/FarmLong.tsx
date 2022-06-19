@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "../../../api";
+import { Instrument, getTradableCoinInfo, CoinInterface } from "../../../api";
 import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
 import { SearchInput } from '../../../components/SearchInput'
@@ -26,7 +26,9 @@ import {
 import Ethereum from "../../../styles/images/Ethereum.svg";
 import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
+import { addLiquidityETH, loadPoolSynthPrice } from "../../../util/farm_interact";
 import { mintSynth } from "../../../util/interact";
+
 
 type BuySpecConfig = {
   minRatio: number;
@@ -327,81 +329,7 @@ function Card({
   );
 }
 
-function LongForm({ instrument, handleChange }: { instrument: Instrument, handleChange: Function }) {
-  const { walletAddress } = useContext(AppContext);
-  const fakeLimits = {
-    minRatio: 150,
-    safeRatio: 200,
-  };
 
-  const { tradeData } = useContext(TradeContext);
-  const { state, dispatch } = useContext(MintContext);
-
-  const mintSynthPressed = async () => {
-    if (state.collateralValid && state.ratioValid) {
-      const mintSynthResponse = await mintSynth(
-        walletAddress,
-        instrument.ticker,
-        state.collateral,
-        state.ratio,
-      );
-      console.log(mintSynthResponse);
-    }
-  };
-
-  // The place order button. We can connect it with the wallet connection flow.
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: 1,
-      }}
-    >
-      <div
-        style={{
-          borderRadius: "0.25rem",
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: theme.tradeFormBackgroundColor,
-          flexGrow: 1,
-        }}
-      >
-        <FieldLabel
-          title={`Provide ${instrument.fullName}`}
-          description="can be BOUGHT or BORROWED"
-        />
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={instrument.id}
-          label="Asset"
-          onChange={(e) => handleChange(e.target.value)}
-          style={{
-            marginTop: "0.67rem",
-            marginLeft: "1rem",
-            display: "flex",
-            flexGrow: 1,
-            flexDirection: "column",
-          }}
-        >
-          {tradeData?.instruments.map((row) => (
-            <MenuItem value={row.id}>{row.fullName}</MenuItem>
-          ))}
-        </Select>
-      </div>
-      <Button
-        style={{ marginTop: "1.33rem", width: "12.5rem", alignSelf: "center" }}
-        size="large"
-        variant="contained"
-        disabled={walletAddress === ""}
-        onClick={mintSynthPressed}
-      >
-        {walletAddress === "" ? "Wallet Not Connected" : "Place Order"}
-      </Button>
-    </div>
-  );
-}
 
 const useStyles = makeStyles({
   step: {
@@ -462,21 +390,37 @@ export default function FarmLong({
 
   const [inst, setInst] = useState(instrument);
   const { tradeData } = useContext(TradeContext);
+  const { walletAddress, setWallet } = useContext(AppContext);
+  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
+  const [selectedTickerID, setSelectedTickerID] = useState("");
+  const [poolPrice, setPoolPrice] = useState("");
+  const [farmValue, setFarmValue] = useState("");
+  console.log("availableCoin*****", availableCoin);
+
+  const startFarm = async () => {
+    // await addLiquidityETH(walletAddress, selectedTickerID, poolPrice, farmValue);
+  }
+
+  const fromChanged = async (tickerId: string) => {
+    setSelectedTickerID(tickerId);
+    // API issue
+    // const result = await loadPoolSynthPrice(tickerId);
+    // setPoolPrice(result);
+  };
+
+  const changeFramValue = (value: string) => {
+    setFarmValue(value);
+  }
+
   function handleChange(id: string) {
     const inst: Instrument | undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
     setInst(inst)
   }
-  const fakeLimits = {
-    minRatio: 150,
-    safeRatio: 200,
-  };
+
+  const defaultFarmValue = availableCoin.length > 1 ? availableCoin[1].name : availableCoin[0].name
 
   return (
     <div style={{ display: "flex", overflow: "hidden" }}>
-      {/* <MintContextProvider>
-        <LongForm instrument={inst} handleChange={(id: string) => handleChange(id)}/>
-      </MintContextProvider>
-      <InstrumentCard instrument={inst} /> */}
       <div>
         <div className={styles.step}>
           <div className={styles.stepNumber}>1</div>
@@ -486,24 +430,10 @@ export default function FarmLong({
               description=""
             />
             <div >
-              <SearchInput />
+              <SearchInput availableCoins={availableCoin} defaultValue={defaultFarmValue} onChange={fromChanged} valueChange={changeFramValue} disableInput={false} />
             </div>
           </div>
         </div>
-
-        {/* <div className={styles.step}>
-          <div className={styles.stepNumber}>2</div>
-          <div style={{marginLeft: "1.25rem"}}>
-            <FieldLabel
-              title="Set a Collateral Ratio"
-              description="Position will be liquidated below the minimum"
-            />
-            <div style={{display: "flex"}}>
-              <RatioField {...fakeLimits} instrument={instrument} />
-            </div>
-          </div>
-        </div> */}
-
         <div className={styles.step}>
           <div className={styles.stepNumber}>2</div>
           <div style={{ marginLeft: "1.25rem" }}>
@@ -512,15 +442,15 @@ export default function FarmLong({
               description="An equivalent UST amount must be provided."
             />
             <div style={{ display: "flex", marginTop: "1.5rem" }}>
-              <SearchInput />
+              <SearchInput availableCoins={[availableCoin[0]]} defaultValue={availableCoin[0].name} disableInput />
             </div>
           </div>
         </div>
 
         <div className={styles.summary}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div>Oracle Price</div>
-            <div>1 mApple = 140.94 UST</div>
+            <div>Pool Price</div>
+            <div>1 {selectedTickerID} = {poolPrice} UST</div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div>TX Fees</div>
@@ -531,6 +461,7 @@ export default function FarmLong({
           className={styles.button}
           size="large"
           variant="contained"
+          onClick={() => { startFarm() }}
         >
           Farm
         </Button>

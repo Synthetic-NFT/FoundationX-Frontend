@@ -4,6 +4,8 @@ import { withStyles } from "@material-ui/core/styles";
 import FormControl from '@mui/material/FormControl';
 import React from "react";
 
+import { CoinInterface } from "../api";
+
 const useStyles = makeStyles((theme) => ({
     formControl: {
         display: "flex !important",
@@ -52,21 +54,20 @@ const BootstrapInput = withStyles((theme) => ({
 
 function SearchInput(props: any) {
     const styles = useStyles();
-    const { children } = props;
+    const { availableCoins, defaultValue, onChange, valueChange, disableInput } = props;
     return (
         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} className={styles.formControl} style={{ flexDirection: "row", }}>
             <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
                 input={<BootstrapInput />}
-                defaultValue="10"
+                defaultValue={defaultValue}
+                onChange={()=>{onChange()}}
                 style={{ color: "#ffffff" }}
             >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {availableCoins.map((item: CoinInterface) => <MenuItem key={item.symbol} value={item.name}>{item.name}</MenuItem>)}
             </Select>
-            <BootstrapInput id="demo-customized-textbox" />
+            <BootstrapInput id="demo-customized-textbox" onChange={() => {valueChange()}} disable={disableInput}/>
         </FormControl>
     );
 }
