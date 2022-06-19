@@ -74,17 +74,42 @@ const OracleContract = new web3.eth.Contract(
 const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
+const getIPFSMetadataFromURL = (url: string) => fetch(url)
+    .then((response) => response.json())
+    .then((responseJson) => responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/"))
+    .catch((error) => {
+      console.error(error);
+    })
+
 export const loadUserGivenNFT = async (walletAddress: string, tickerID: string) => {
   const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();
   const tokenIDAndURI: {[key: string]: string} = {};
+  const tokenIDPromises = []
   for (let i = 0; i < balance; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    const bnTokenID = await NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call();
-    // eslint-disable-next-line no-await-in-loop
-    const tokenURI = await NFTContract[tickerID].methods.tokenURI(bnTokenID).call();
-    tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/");
-    tokenIDAndURI[bnTokenID] = tokenURI;
+    tokenIDPromises.push(NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call());
   }
+  const tokenIDs = await Promise.all(tokenIDPromises);
+
+  const tokenURIPromises = []
+  for (let i = 0; i < tokenIDs.length; i += 1) {
+    const tokenID = tokenIDs[i];
+    tokenURIPromises.push(NFTContract[tickerID].methods.tokenURI(tokenID).call());
+  }
+  const tokenURIs = await Promise.all(tokenURIPromises);
+
+  const fetchJSONPromises = []
+  for (let i = 0; i < tokenIDs.length; i += 1) {
+    const tokenID = tokenIDs[i];
+    const tokenURI = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
+    fetchJSONPromises.push(getIPFSMetadataFromURL(tokenURI));
+  }
+  const tokenImages = await Promise.all(fetchJSONPromises);
+
+  for (let i = 0; i < tokenIDs.length; i += 1) {
+    const tokenID = tokenIDs[i];
+    tokenIDAndURI[tokenID] = tokenImages[i];
+  }
+
   return tokenIDAndURI;
 }
 
@@ -102,6 +127,44 @@ export const loadUserAllNFT = async (walletAddress: string) => {
     infoDict[tickerID] = allNFTIDAndURI[i];
   }
   return infoDict;
+}
+
+
+
+export const userClaimNFT = async (walletAddress: string, tokenID: string, tickerID: string) => {
+  const mintParameters = {
+    to: NFTAddress[tickerID], // Required except during contract publications.
+    from: walletAddress, // must match user's active address.
+    data: NFTContract[tickerID].methods
+        .safeMint(walletAddress, tokenID)
+        .encodeABI(),
+  };
+  try {
+    const mintHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [mintParameters],
+    });
+    console.log(mintHash);
+    return {
+      status: "success",
+      // depositHash,
+      mintHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+}
+
+export const userClaimBatchNFT = async (walletAddress: string, tokenIDs: string[], tickerID: string) => {
+  const mintPromises = []
+  for (let i = 0; i < tokenIDs.length; i += 1) {
+    const tokenID = tokenIDs[i];
+    mintPromises.push(userClaimNFT(walletAddress, tokenID, tickerID))
+  }
+  const batchMintResult = await Promise.all(mintPromises);
+  return batchMintResult;
 }
 
 export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], tickerID: string) => {

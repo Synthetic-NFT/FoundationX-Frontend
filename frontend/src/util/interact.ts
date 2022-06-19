@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import {BigNumber} from "bignumber.js";
 
 import ContractAddress from "./ContractAddress";
 
@@ -327,17 +327,6 @@ export const loadSynthPrice = async (tickerID: string) => {
     .getSynthPriceToEth()
     .call();
   return synthPrice;
-};
-
-export const loadPoolSynthPrice = async (tickerID: string) => {
-  const lpReserve = await getLpReserve(tickerID);
-  // eslint-disable-next-line no-underscore-dangle
-  const synthReserve = lpReserve._reserve0;
-  // eslint-disable-next-line no-underscore-dangle
-  const ethReserve = lpReserve._reserve1;
-  const poolSynthPriceInETH = new BigNumber(ethReserve).div(synthReserve).toString();
-  return poolSynthPriceInETH;
-
 };
 
 
