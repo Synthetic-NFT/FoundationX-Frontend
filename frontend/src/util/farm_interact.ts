@@ -80,7 +80,7 @@ export const getFarmDesiredETH = async (tickerID: string, amountADesired: string
   const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
   // eslint-disable-next-line no-underscore-dangle
   const amountETHOptimal = await RouterContract.methods.quote(bnAmountADesired, lpReserve._reserve0, lpReserve._reserve1).call();
-  return [convertWeiToString(amountETHOptimal)];
+  return convertWeiToString(amountETHOptimal);
 }
 
 export const addLiquidityETH = async (walletAddress: string, tickerID: string, humanAmountADesired: string, humanAmountETHDesired: string) => {
