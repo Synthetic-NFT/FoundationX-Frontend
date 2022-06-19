@@ -149,7 +149,7 @@ export const blockchainAPI = {
     });
   },
 
-  async checkUserCanMintWithNFT(walletAddress: string): Promise<Boolean> {
+  async checkUserCanMintWithNFT(walletAddress: string): Promise<boolean> {
     const userNFT = await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
     let totalBalance = 0;
     // eslint-disable-next-line no-restricted-syntax

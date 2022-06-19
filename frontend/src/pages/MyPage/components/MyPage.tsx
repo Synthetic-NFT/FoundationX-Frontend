@@ -251,7 +251,7 @@ export default function MypPage(): React.ReactElement {
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState("");
   const [loading, setIsLoading] = React.useState(false);
-
+  const [canMintNFT, setCanMintNFT] = useState(false);
 
   useEffect(() => {
     const setWalletAndStatus = async () => {
@@ -280,7 +280,7 @@ export default function MypPage(): React.ReactElement {
       }
     }
     addWalletListener()
-  }, [])
+  }, [setWallet, setStatus])
 
   useEffect(() => {
     setIsLoading(true);
@@ -322,8 +322,12 @@ export default function MypPage(): React.ReactElement {
         setFarming(result);
         setIsLoading(false);
       });
+
+      blockchainAPI.checkUserCanMintWithNFT(walletAddress).then(canMint => {
+        setCanMintNFT(canMint);
+      })
     }
-  }, [setWallet, setStatus, walletAddress, setFarming, setHolding])
+  }, [setWallet, setStatus, walletAddress, setFarming, setHolding, setCanMintNFT])
 
 
   const login = async () => {
@@ -442,16 +446,10 @@ export default function MypPage(): React.ReactElement {
       </div>
     </div>
   )
-  const statusList = ['claim', 'trade', 'swap'];
-  const titleList = [
-    'You don’t have any NFT yet. Claim testing NFT now',
-    'Now you can mint sTokens with your NFTs',
-    'Now you can trade your sTokens',
-  ]
-  const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
+  const statusList = canMintNFT ? ['trade', 'swap']: ['claim'];
+  const titleList = canMintNFT ? [ 'Now you can mint sTokens with your NFTs', 'Now you can trade your sTokens', ]: [ 'You don’t have any NFT yet. Claim testing NFT now' ]
+  const buttonList = canMintNFT ? ['Mint sTokens with your NFTs', 'Trade your sTokens'] : ['Claim your NFT now']
   function handleClick() {
-    // const s = step + 1;
-    // setStep(s % 3);
     history.push(`/${statusList[step]}`);
   }
 
@@ -548,7 +546,8 @@ export default function MypPage(): React.ReactElement {
               >
                 {buttonList[step]}
               </Button>
-              <Button onClick={() => setStep((step + 1) % 3)} size="small">
+
+              <Button hidden={titleList.length <= 1} onClick={() => setStep((step + 1) % titleList.length)} size="small">
                 next step
               </Button>
             </div>

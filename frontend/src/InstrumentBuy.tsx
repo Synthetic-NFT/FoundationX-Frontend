@@ -191,7 +191,7 @@ function RatioField({
       <StyledTextField
         value={state.ratioValid ? state.ratio : ""}
         inputProps={{ min: 0, max: 12 }}
-        style={{ margin: "1rem", width: "2.67rem" }}
+        style={{ margin: "1rem", width: "3.4rem" }}
         label="Ratio"
         type="number"
         onChange={(e) =>
