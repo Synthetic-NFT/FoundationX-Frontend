@@ -47,3 +47,6 @@ export function convertWeiToString(a: any) {
 export function convertWeiToNumber(a: any) {
   return new BigNumber(a).div('1e18').toString();
 }
+export function convertStringToWei(a: any) {
+  return new BigNumber(a).times('1e18');
+}

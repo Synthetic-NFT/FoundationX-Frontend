@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
+import {BigNumber} from "bignumber.js";
 
-import {convertWeiToString} from "../AppContext";
 import ContractAddress from "./ContractAddress";
-import {loadActiveTokens} from "./interact";
+import {getLpReserve} from "./interact";
+import {convertWeiToString} from "../AppContext";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -123,3 +123,12 @@ export const addLiquidityETH = async (walletAddress: string, tickerID: string, h
   }
 }
 
+export const loadPoolSynthPrice = async (tickerID: string) => {
+  const lpReserve = await getLpReserve(tickerID);
+  // eslint-disable-next-line no-underscore-dangle
+  const synthReserve = lpReserve._reserve0;
+  // eslint-disable-next-line no-underscore-dangle
+  const ethReserve = lpReserve._reserve1;
+  const poolSynthPriceInETH = new BigNumber(ethReserve).div(synthReserve).toString();
+  return poolSynthPriceInETH;
+};

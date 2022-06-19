@@ -3,10 +3,8 @@ import { BigNumber } from "bignumber.js";
 import { AppData, convertWeiToNumber, convertWeiToString } from "./AppContext";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
 import ContractAddress from "./util/ContractAddress";
-import {getFarmDesiredETH} from "./util/farm_interact";
 import {
   loadActiveTokens,
-  loadPoolSynthPrice,
   loadSynthPrice, loadUserDebtDeposit, loadUserHoldingInfo,
   readWalletLpBalance,
   readWalletTokenBalance
@@ -15,6 +13,7 @@ import {
   loadUserAllNFT,
   loadUserGivenNFT
 } from "./util/nft_interact";
+import {getFarmDesiredETH, loadPoolSynthPrice} from "./util/farm_interact";
 
 export type Instrument = {
   ticker: string;
@@ -137,10 +136,10 @@ export const blockchainAPI = {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
     // console.log("aaaaa", a)
     // console.log("aaaa", await this.loadUserAllTokenPosition('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
-    // console.log("aaaaa", await loadUserGivenNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
+    console.log("aaaaa", await loadUserGivenNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
     // console.log("aa", await this.loadUserAllLpBalance('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     // console.log("a", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'), await this.checkUserCanMintWithNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
-    console.log("a", await getFarmDesiredETH("BoredApeYachtClub", "100"));
+    // console.log("a", await getFarmDesiredETH("BoredApeYachtClub", "100"));
     const activeTokens = await loadActiveTokens();
     const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
     const oraclePricePromises = []
