@@ -5,20 +5,21 @@ import {
   makeStyles,
   Paper,
   Typography,
- Button, Select, MenuItem } from "@material-ui/core";
+  Button, Select, MenuItem
+} from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from "@material-ui/core/styles";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import React, { useEffect, useContext } from "react";
 
-import {blockchainAPI, getTradableCoinInfo, CoinInterface, defaultInstrument, TradeData} from "../api";
-import {AppContext} from "../AppContext";
+import { blockchainAPI, getTradableCoinInfo, CoinInterface, defaultInstrument, TradeData } from "../api";
+import { AppContext } from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import { SearchInput } from '../components/SearchInput'
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../constants/coins";
 import { fakeTradeData } from "../fakeData";
 import { TradeContext } from "../TradeContext";
-import {getAmountETHOut, getAmountSynthOut, readWalletTokenBalance} from "../util/interact";
+import { getAmountETHOut, getAmountSynthOut, readWalletTokenBalance, simpleSwapExactETHForTokens, simpleSwapExactTokensForETH } from "../util/interact";
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
@@ -159,13 +160,13 @@ function CoinSwapper(props: any): React.ReactElement {
     const parsedInput2 = parseFloat(field2Value);
 
     return (
-        (coin1.name === "Ethereum" ||
-            coin2.name === "Ethereum") &&
-        !Number.isNaN(parsedInput1) &&
-        !Number.isNaN(parsedInput2) &&
-        parsedInput1 > 0 &&
-        // @ts-ignore
-        parsedInput1 <= coin1.balance
+      (coin1.name === "Ethereum" ||
+        coin2.name === "Ethereum") &&
+      !Number.isNaN(parsedInput1) &&
+      !Number.isNaN(parsedInput2) &&
+      parsedInput1 > 0 &&
+      // @ts-ignore
+      parsedInput1 <= coin1.balance
     );
   };
 
@@ -198,14 +199,14 @@ function CoinSwapper(props: any): React.ReactElement {
       setField2Value("");
     } else if (parseFloat(field1Value) && coin1.name === "Ethereum" && coin2.name) {
       getAmountSynthOut(coin2.name, field1Value).then(
-          (amount) => setField2Value(amount.toFixed(7))
+        (amount) => setField2Value(amount.toFixed(7))
       ).catch((e: any) => {
         console.log(e);
         setField2Value("NA");
       })
     } else if (parseFloat(field1Value) && coin2.name === "Ethereum" && coin1.name) {
       getAmountETHOut(coin1.name, field1Value).then(
-          (amount) => setField2Value(amount.toFixed(7))
+        (amount) => setField2Value(amount.toFixed(7))
       ).catch((e: any) => {
         console.log(e);
         setField2Value("NA");
@@ -305,6 +306,22 @@ function CoinSwapper(props: any): React.ReactElement {
     return currInstrument;
   }
 
+  const swapNow = async () => {
+    if (coin1.name !== "Ethereum") {
+      if (coin1.symbol !== undefined) {
+        const result = await simpleSwapExactTokensForETH(walletAddress, field1Value, coin1.symbol);
+        console.log("simpleSwapExactTokensForETH", result)
+      } else {
+        console.log("[Error] coin1.symbol is undefined");
+      }
+    } else if (coin2.symbol !== undefined) {
+      const result = await simpleSwapExactETHForTokens(walletAddress, field1Value, coin2.symbol);
+      console.log("simpleSwapExactTokensForETH", result)
+    } else {
+      console.log("[Error] coin2.symbol is undefined");
+    }
+  }
+
   // @ts-ignore
   return (
     <div style={{
@@ -398,6 +415,9 @@ function CoinSwapper(props: any): React.ReactElement {
                   color: "#FFFFFF",
                   height: "3rem",
                   marginLeft: "0.33rem",
+                }}
+                onClick={() => {
+                  swapNow()
                 }}
               >
                 Swap Now
