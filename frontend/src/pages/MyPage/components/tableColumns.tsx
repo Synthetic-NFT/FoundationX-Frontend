@@ -12,7 +12,7 @@ import theme from "../../../theme";
 type ColumnConfigWithoutRenderers = {
   id: string;
   label: string;
-  minWidth: number;
+  minWidth: string;
   align?: "left" | "left";
   tooltip?: string;
 };
@@ -39,15 +39,14 @@ export function DefaultHeaderRenderer({
     <TableCell
       align={config.align}
       style={{
-        minWidth: config.minWidth,
+        width: config.minWidth,
         backgroundColor: "inherit",
         height: "3.17rem",
         fontStyle: "normal",
         fontWeight: 400,
         fontSize: "0.75rem",
         lineHeight: "1rem",
-        color: "#FFFFFF",
-        paddingLeft: "2.67rem"
+        color: "#FFFFFF"
       }}
     >
       <div
@@ -78,8 +77,7 @@ function TooltipHeaderRenderer({
         fontWeight: 400,
         fontSize: "0.75rem",
         lineHeight: "1rem",
-        color: "#FFFFFF",
-        paddingLeft: "2.67rem"
+        color: "#FFFFFF"
       }}
     >
       <div
@@ -112,8 +110,7 @@ function TooltipHeaderRenderer({
 export const TABLE_CELL_STYLE = {
   color: theme.tableRowPrimaryTextColor,
   borderColor: theme.tableBorderColor,
-  height: "3.67rem",
-  paddingLeft: "2.67rem",
+  height: "3.67rem"
 };
 
 export const TABLE_CELL_STYLE_HOVER = {
@@ -229,6 +226,7 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
         style={{
           background: "#4340CB",
           borderRadius: "2.08rem",
+          marginRight: "0.4rem"
         }}
       >
         Swap
@@ -294,7 +292,7 @@ export const holdingTableColumns: ColumnConfig[] = [
   {
     id: "ticker",
     label: "Ticker",
-    minWidth: 100,
+    minWidth: "20%",
     align: "left",
     cellRenderer: TickerCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -302,7 +300,7 @@ export const holdingTableColumns: ColumnConfig[] = [
   {
     id: "balance",
     label: "Balance",
-    minWidth: 100,
+    minWidth: "17%",
     align: "left",
     cellRenderer: BalanceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -311,7 +309,7 @@ export const holdingTableColumns: ColumnConfig[] = [
   {
     id: "value",
     label: "Minted with ETH",
-    minWidth: 100,
+    minWidth: "17%",
     align: "left",
     cellRenderer: ValueCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -320,7 +318,7 @@ export const holdingTableColumns: ColumnConfig[] = [
   {
     id: "poolPrice",
     label: "Token Price",
-    minWidth: 100,
+    minWidth: "17%",
     align: "left",
     cellRenderer: PoolPriceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -328,7 +326,7 @@ export const holdingTableColumns: ColumnConfig[] = [
   {
     id: "action",
     label: "Action",
-    minWidth: 100,
+    minWidth: "29%",
     align: "left",
     cellRenderer: HoldingActionCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -339,7 +337,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
   {
     id: "ticker",
     label: "Pool",
-    minWidth: 100,
+    minWidth: "34%",
     align: "left",
     cellRenderer: TickerCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -347,7 +345,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
   {
     id: "oraclePrice",
     label: "withdrawable",
-    minWidth: 100,
+    minWidth: "33%",
     align: "left",
     cellRenderer: OraclePriceCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
@@ -355,63 +353,63 @@ export const borrowingTableColumns: ColumnConfig[] = [
   {
     id: "action",
     label: "Action",
-    minWidth: 100,
+    minWidth: "33%",
     align: "left",
     cellRenderer: BorrowingActionCellRenderer,
     headerRenderer: DefaultHeaderRenderer,
   },
 ];
 
-export const governTableColumns: ColumnConfig[] = [
-  {
-    id: "ticker",
-    label: "Ticker",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: TickerCellRenderer,
-    headerRenderer: DefaultHeaderRenderer,
-  },
-  {
-    id: "oraclePrice",
-    label: "Oracle Price",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: OraclePriceCellRenderer,
-    headerRenderer: DefaultHeaderRenderer,
-  },
-  {
-    id: "borrowed",
-    label: "Borrowed",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: BorrowedCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
-    tooltip: "Borrowed."
-  },
-  {
-    id: "collateral",
-    label: "Collateral",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: CollateralCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
-    tooltip: "Collateral."
-  },
-  {
-    id: "collateralRatio",
-    label: "Collateral Ratio",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: CollateralRatioCellRenderer,
-    headerRenderer: TooltipHeaderRenderer,
-    tooltip: "Collateral Ration"
-  },
-  {
-    id: "action",
-    label: "Action",
-    minWidth: 100,
-    align: "left",
-    cellRenderer: BorrowingActionCellRenderer,
-    headerRenderer: DefaultHeaderRenderer,
-  },
-];
+// export const governTableColumns: ColumnConfig[] = [
+//   {
+//     id: "ticker",
+//     label: "Ticker",
+//     minWidth: "17%",
+//     align: "left",
+//     cellRenderer: TickerCellRenderer,
+//     headerRenderer: DefaultHeaderRenderer,
+//   },
+//   {
+//     id: "oraclePrice",
+//     label: "Oracle Price",
+//     minWidth: "17%",
+//     align: "left",
+//     cellRenderer: OraclePriceCellRenderer,
+//     headerRenderer: DefaultHeaderRenderer,
+//   },
+//   {
+//     id: "borrowed",
+//     label: "Borrowed",
+//     minWidth: "17%",
+//     align: "left",
+//     cellRenderer: BorrowedCellRenderer,
+//     headerRenderer: TooltipHeaderRenderer,
+//     tooltip: "Borrowed."
+//   },
+//   {
+//     id: "collateral",
+//     label: "Collateral",
+//     minWidth: "17%",
+//     align: "left",
+//     cellRenderer: CollateralCellRenderer,
+//     headerRenderer: TooltipHeaderRenderer,
+//     tooltip: "Collateral."
+//   },
+//   {
+//     id: "collateralRatio",
+//     label: "Collateral Ratio",
+//     minWidth: "18%",
+//     align: "left",
+//     cellRenderer: CollateralRatioCellRenderer,
+//     headerRenderer: TooltipHeaderRenderer,
+//     tooltip: "Collateral Ration"
+//   },
+//   {
+//     id: "action",
+//     label: "Action",
+//     minWidth: "17%",
+//     align: "left",
+//     cellRenderer: BorrowingActionCellRenderer,
+//     headerRenderer: DefaultHeaderRenderer,
+//   },
+// ];
