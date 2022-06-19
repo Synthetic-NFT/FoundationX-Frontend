@@ -1,6 +1,7 @@
 import {BigNumber} from "bignumber.js";
 
 import ContractAddress from "./ContractAddress";
+import {convertStringToWei} from "../AppContext";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -91,14 +92,13 @@ export const getAmountETHOut = async(tickerID: string, amountSynth: string) => {
   return res;
 }
 
-export const swapExactETHForTokens = async(amountIn: string, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: Date) => {
-  const bnAmountOutMin = new BigNumber(amountOutMin).times("1e18");
+export const swapExactETHForTokens = async(amountIn: BigNumber, amountOutMin: BigNumber, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
   const swapParameters = {
     to: RouterAddress, // Required except during contract publications.
     from: addressFrom, // must match user's active address.
-    value: web3.utils.toHex(web3.utils.toWei(amountIn, "ether")), // how much the user is depositing
+    value: web3.utils.toHex(amountIn), // how much the user is depositing
     data: RouterContract.methods
-        .swapExactETHForTokens(bnAmountOutMin, [WETHAddress, SynthAddress[tickerID]], addressTo, deadline)
+        .swapExactETHForTokens(amountOutMin, [WETHAddress, SynthAddress[tickerID]], addressTo, deadline)
         .encodeABI(),
   };
   try {
@@ -117,12 +117,19 @@ export const swapExactETHForTokens = async(amountIn: string, amountOutMin: strin
   }
 }
 
-export const approveToken = async(amount: string, tickerID: string, userAddress: string, callerAddress: string) => {
-  const bnAmount = new BigNumber(amount).times("1e18");
+export const simpleSwapExactETHForTokens = async(walletAddress: string, amountIn: string, tickerID: string) => {
+  const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
+  // eslint-disable-next-line no-underscore-dangle
+  const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
+  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9');
+  await swapExactETHForTokens(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now()+60)
+}
+
+export const approveToken = async(amount: BigNumber, tickerID: string, userAddress: string, callerAddress: string) => {
   const approveParameters = {
     to: SynthAddress[tickerID], // Required except during contract publications.
     from: userAddress, // must match user's active address.
-    data: SynthContract[tickerID].methods.approve(callerAddress, bnAmount).encodeABI(),
+    data: SynthContract[tickerID].methods.approve(callerAddress, amount).encodeABI(),
   };
 
   // sign the transaction
@@ -142,14 +149,14 @@ export const approveToken = async(amount: string, tickerID: string, userAddress:
   }
 }
 
-export const swapExactTokensForETH = async(amountIn: string, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: Date) => {
-  const bnAmountOutMin = new BigNumber(amountOutMin).times("1e18");
-  const bnAmountIn = new BigNumber(amountIn).times("1e18");
+
+
+export const swapExactTokensForETH = async(amountIn: BigNumber, amountOutMin: BigNumber, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
   const swapParameters = {
     to: RouterAddress, // Required except during contract publications.
     from: addressFrom, // must match user's active address.
     data: RouterContract.methods
-        .swapExactTokensForETH(bnAmountIn, bnAmountOutMin,[SynthAddress[tickerID], WETHAddress], addressTo, deadline)
+        .swapExactTokensForETH(amountIn, amountOutMin,[SynthAddress[tickerID], WETHAddress], addressTo, deadline)
         .encodeABI(),
   };
   try {
@@ -167,6 +174,14 @@ export const swapExactTokensForETH = async(amountIn: string, amountOutMin: strin
       status: (error as any).message,
     };
   }
+}
+
+export const simpleSwapExactTokensForETH = async(walletAddress: string, amountIn: string, tickerID: string) => {
+  const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
+  // eslint-disable-next-line no-underscore-dangle
+  const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
+  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9');
+  await swapExactTokensForETH(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now()+60)
 }
 
 export const mintSynth = async (
