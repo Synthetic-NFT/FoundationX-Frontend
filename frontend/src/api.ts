@@ -99,6 +99,38 @@ export type TradeData = {
   instruments: Instrument[];
 };
 
+export interface CoinInterface {
+  address: string | undefined;
+  name: string | undefined;
+  symbol: string | undefined;
+  balance: number | undefined;
+}
+
+export const ethCoin: CoinInterface = {
+  address: undefined,
+  name: "Ethereum",
+  symbol: "ETH",
+  balance: undefined,
+}
+export function getTradableCoinInfo(tradeData: TradeData): CoinInterface[] {
+  const availableCoins = [ethCoin];
+  for (let i = 0; i < tradeData.instruments.length; i += 1) {
+    const instrument = tradeData.instruments[i];
+    if (instrument === defaultInstrument) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+    const currCoin: CoinInterface = {
+      address: instrument.address,
+      name: instrument.ticker,
+      symbol: instrument.symbol,
+      balance: undefined,
+    }
+    availableCoins.push(currCoin);
+  }
+  return availableCoins;
+}
+
 export const blockchainAPI = {
   async loadInstruments(): Promise<TradeData> {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");

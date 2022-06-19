@@ -11,7 +11,7 @@ import { withStyles } from "@material-ui/core/styles";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import React, { useEffect, useContext } from "react";
 
-import {defaultInstrument, TradeData} from "../api";
+import {blockchainAPI, getTradableCoinInfo, CoinInterface, defaultInstrument, TradeData} from "../api";
 import {AppContext} from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import { SearchInput } from '../components/SearchInput'
@@ -80,37 +80,7 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-interface CoinInterface {
-  address: string | undefined;
-  name: string | undefined;
-  symbol: string | undefined;
-  balance: number | undefined;
-}
 
-const ethCoin: CoinInterface = {
-  address: undefined,
-  name: "Ethereum",
-  symbol: "ETH",
-  balance: undefined,
-}
-function getTradableCoinInfo(tradeData: TradeData): CoinInterface[] {
-  const availableCoins = [ethCoin];
-  for (let i = 0; i < tradeData.instruments.length; i += 1) {
-    const instrument = tradeData.instruments[i];
-    if (instrument === defaultInstrument) {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-    const currCoin: CoinInterface = {
-      address: instrument.address,
-      name: instrument.ticker,
-      symbol: instrument.symbol,
-      balance: undefined,
-    }
-    availableCoins.push(currCoin);
-  }
-  return availableCoins;
-}
 
 function CoinSwapper(props: any): React.ReactElement {
   const classes = useStyles();
