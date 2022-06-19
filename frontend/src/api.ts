@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { AppData, convertWeiToNumber, convertWeiToString } from "./AppContext";
 import { fakeAppData, fakeTradeData, fakeMyPageData } from "./fakeData";
 import ContractAddress from "./util/ContractAddress";
+import {getFarmDesiredETH} from "./util/farm_interact";
 import {
   loadActiveTokens,
   loadPoolSynthPrice,
@@ -14,7 +15,6 @@ import {
   loadUserAllNFT,
   loadUserGivenNFT
 } from "./util/nft_interact";
-import {getFarmDesiredETH} from "./util/farm_interact";
 
 export type Instrument = {
   ticker: string;

@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 
+import {convertWeiToString} from "../AppContext";
 import ContractAddress from "./ContractAddress";
 import {loadActiveTokens} from "./interact";
-import {convertWeiToString} from "../AppContext";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
