@@ -87,7 +87,6 @@ function CoinSwapper(props: any): React.ReactElement {
 
   const { instrument } = props;
   const { tradeData } = useContext(TradeContext);
-
   const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
   const { walletAddress, setWallet } = useContext(AppContext);
   // const availbleCoinIn = DummyCoins;
