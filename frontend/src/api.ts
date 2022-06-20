@@ -11,6 +11,7 @@ import {
   readWalletTokenBalance
 } from "./util/interact";
 import {
+  loadUnclaimedGivenNFT,
   loadUserAllNFT,
   loadUserGivenNFT
 } from "./util/nft_interact";
@@ -107,7 +108,7 @@ export interface CoinInterface {
 }
 
 export const ethCoin: CoinInterface = {
-  address: undefined,
+  address: "Ethereum",
   name: "Ethereum",
   symbol: "ETH",
   balance: undefined,
@@ -136,7 +137,9 @@ export const blockchainAPI = {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
     // console.log("aaaaa", a)
     // console.log("aaaa", await this.loadUserAllTokenPosition('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
-    console.log("aaaaa", await loadUserGivenNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
+    console.log("aaaa", await loadUnclaimedGivenNFT('BoredApeYachtClub', 1));
+
+    // console.log("aaaaa", await loadUserGivenNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
     // console.log("aa", await this.loadUserAllLpBalance('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     // console.log("a", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'), await this.checkUserCanMintWithNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     // console.log("a", await getFarmDesiredETH("BoredApeYachtClub", "100"));

@@ -47,7 +47,7 @@ const ContractAddress = {
             synth: "0x998abeb3E57409262aE5b751f60747921B33613E",
             vault: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
             reserve: "0xf5059a5D33d5853360D16C683c16e67980206f36",
-            NFT: "0x95401dc811bb5740090279Ba06cfA8fcF6113778",
+            NFT: "0x2f8D338360D095a72680A943A22fE6a0d398a0B4",
             lp: "0x638659FE28CE6Ae8E49C6B85C7d26d805678DA4d"
         },
         {
@@ -55,7 +55,7 @@ const ContractAddress = {
             synth: "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
             vault: "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
             reserve: "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
-            NFT: "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+            NFT: "0x44863F234b137A395e5c98359d16057A9A1fAc55",
             lp: "0x1631F6D51446de8A21E8507CdD5b46B36ee58987"
         },
         {
@@ -63,7 +63,7 @@ const ContractAddress = {
             synth: "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
             vault: "0xFD471836031dc5108809D173A067e8486B9047A3",
             reserve: "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
-            NFT: "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3",
+            NFT: "0x1c39BA375faB6a9f6E0c01B9F49d488e101C2011",
             lp: "0x8a647b509D0619b41Dad21065bF456A96308fE9A"
         },
     ]

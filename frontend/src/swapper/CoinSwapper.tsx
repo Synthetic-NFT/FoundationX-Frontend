@@ -12,7 +12,7 @@ import { withStyles } from "@material-ui/core/styles";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import React, { useEffect, useContext } from "react";
 
-import { blockchainAPI, getTradableCoinInfo, CoinInterface, defaultInstrument, TradeData } from "../api";
+import {blockchainAPI, getTradableCoinInfo, CoinInterface, defaultInstrument, TradeData, ethCoin} from "../api";
 import { AppContext } from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import { SearchInput } from '../components/SearchInput'
@@ -173,9 +173,7 @@ function CoinSwapper(props: any): React.ReactElement {
   useEffect(() => {
     readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
       setCoin1({
-        address: undefined,
-        name: "Ethereum",
-        symbol: "ETH",
+        ...ethCoin,
         balance: data.toNumber(),
       });
     })
@@ -219,9 +217,7 @@ function CoinSwapper(props: any): React.ReactElement {
   useEffect(() => {
     readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
       setCoin1({
-        address: undefined,
-        name: "Ethereum",
-        symbol: "ETH",
+        ...ethCoin,
         balance: data.toNumber(),
       });
     })
@@ -270,7 +266,14 @@ function CoinSwapper(props: any): React.ReactElement {
           balance: data.toNumber(),
         });
       })
-
+    }
+    else if (name === "Ethereum") {
+      readWalletTokenBalance(walletAddress, name).then((data) => {
+        setCoin1({
+          ... ethCoin,
+          balance: data.toNumber(),
+        });
+      })
     }
   };
 
@@ -290,6 +293,14 @@ function CoinSwapper(props: any): React.ReactElement {
           address,
           name,
           symbol,
+          balance: data.toNumber(),
+        });
+      })
+    }
+    else if (name === "Ethereum") {
+      readWalletTokenBalance(walletAddress, name).then((data) => {
+        setCoin1({
+          ... ethCoin,
           balance: data.toNumber(),
         });
       })

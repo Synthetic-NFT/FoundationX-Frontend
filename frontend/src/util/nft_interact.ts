@@ -24,6 +24,7 @@ const SwapFactoryABI = require("../abi/contracts/core/UniswapV2Factory.sol/Unisw
 const LpPairABI = require("../abi/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json");
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
 const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
+const MockNFTABI = require("../abi/contracts/mocks/MockNFT.sol/MockNFT.json");
 const OracleABI = require("../abi/contracts/mocks/MockOracle.sol/MockOracle.json");
 const RouterABI = require("../abi/contracts/periphery/UniswapV2Router02.sol/UniswapV2Router02.json");
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
@@ -59,7 +60,7 @@ for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
   SynthContract[name] = new web3.eth.Contract(SynthABI, ContractAddress.tokens[i].synth);
   VaultContract[name] = new web3.eth.Contract(VaultABI, ContractAddress.tokens[i].vault);
   LpPairContract[name] = new web3.eth.Contract(LpPairABI, ContractAddress.tokens[i].lp);
-  NFTContract[name] = new web3.eth.Contract(IERC721EnumerableABI, ContractAddress.tokens[i].NFT);
+  NFTContract[name] = new web3.eth.Contract(MockNFTABI, ContractAddress.tokens[i].NFT);
 
 }
 
@@ -75,11 +76,23 @@ const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
 const getIPFSMetadataFromURL = (url: string) => fetch(url)
-    .then((response) => response.json())
-    .then((responseJson) => responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/"))
+    .then((response) => {
+      // const temp = response.json();
+      return response.json()
+    })
+    .then((responseJson) => {
+      // console.log("ppp", responseJson);
+      // const temp = responseJson;
+      return responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+    })
     .catch((error) => {
       console.error(error);
     })
+
+export const loadUnclaimedGivenNFT = async ( tickerID: string, pageIndex: number) => {
+  const {_tokenIds, _tokenURIs} = await NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex)).call();
+  return [_tokenIds, _tokenURIs];
+}
 
 export const loadUserGivenNFT = async (walletAddress: string, tickerID: string) => {
   const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();

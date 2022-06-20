@@ -62,7 +62,7 @@ function SearchInput(props: any) {
                 id="demo-customized-select"
                 input={<BootstrapInput />}
                 defaultValue={defaultValue}
-                onChange={(e)=>{onChange(e)}}
+                onChange={(e)=>{onChange(e.target.value )}}
                 style={{ color: "#ffffff" }}
             >
                 {availableCoins.map((item: CoinInterface) => <MenuItem key={item.symbol} value={item.name}>{item.name}</MenuItem>)}
