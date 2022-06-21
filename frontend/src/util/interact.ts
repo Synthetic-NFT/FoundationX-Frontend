@@ -2,6 +2,7 @@ import {BigNumber} from "bignumber.js";
 
 import {convertStringToWei} from "../AppContext";
 import ContractAddress from "./ContractAddress";
+import {fakeTradeData} from "../fakeData";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -92,7 +93,7 @@ export const getAmountETHOut = async(tickerID: string, amountSynth: string) => {
   return res;
 }
 
-export const swapExactETHForTokens = async(amountIn: BigNumber, amountOutMin: BigNumber, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
+export const swapExactETHForTokens = async(amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
   const swapParameters = {
     to: RouterAddress, // Required except during contract publications.
     from: addressFrom, // must match user's active address.
@@ -121,7 +122,7 @@ export const simpleSwapExactETHForTokens = async(walletAddress: string, amountIn
   const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
   // eslint-disable-next-line no-underscore-dangle
   const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
-  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9');
+  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0) ;
   await swapExactETHForTokens(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now()+60)
 }
 
@@ -151,7 +152,7 @@ export const approveToken = async(amount: BigNumber, tickerID: string, userAddre
 
 
 
-export const swapExactTokensForETH = async(amountIn: BigNumber, amountOutMin: BigNumber, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
+export const swapExactTokensForETH = async(amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
   const swapParameters = {
     to: RouterAddress, // Required except during contract publications.
     from: addressFrom, // must match user's active address.
@@ -180,7 +181,7 @@ export const simpleSwapExactTokensForETH = async(walletAddress: string, amountIn
   const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
   // eslint-disable-next-line no-underscore-dangle
   const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
-  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9');
+  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0) ;
   await swapExactTokensForETH(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now()+60)
 }
 
@@ -372,17 +373,57 @@ export const loadUserHoldingInfo = async (walletAddress: string, tickerIDs: stri
   return [res.debtETH, res.debtNFT, res.tokenPrices];
 };
 
-export const readWalletTokenBalance = async (walletAddress: string, tickerID: string|undefined) => {
+export function readWalletTokenBalance(walletAddress: string, tickerID: (string | undefined)): Promise<BigNumber> {
+  if (walletAddress === "") {
+    return new Promise(resolve => {resolve(new BigNumber("0"))});
+  }
+
   if(tickerID === "Ethereum") {
-    const balance = await web3.eth.getBalance(walletAddress);
-    return new BigNumber(balance).div('1e18');
+    return new Promise((resolve) => {
+      web3.eth.getBalance(walletAddress).then((balance: string) => {
+        resolve(new BigNumber(balance).div('1e18'))
+      }).catch((error: any) => {
+        console.error(error);
+      })
+    });
   }
   if(tickerID == null) {
-    return new BigNumber('0');
+    return new Promise((resolve) => {
+      resolve(new BigNumber("0"))
+    })
   }
-  const balance = await SynthContract[tickerID].methods.balanceOf(walletAddress).call();
-  return new BigNumber(balance).div('1e18');
+  return new Promise((resolve) => {
+    SynthContract[tickerID].methods.balanceOf(walletAddress).call().then((balance: string) => {
+      resolve(new BigNumber(balance).div('1e18'));
+    }).catch((error: any) => {
+      console.error(error);
+    })
+  })
 };
+
+// export const readWalletTokenBalance: (walletAddress: string, tickerID: (string | undefined)) => Promise<unknown> = async (walletAddress: string, tickerID: string|undefined) => {
+//   if(tickerID === "Ethereum") {
+//     return new Promise((resolve) => {
+//       web3.eth.getBalance(walletAddress).then((balance: string) => {
+//         resolve(new BigNumber(balance).div('1e18'))
+//       }).catch((error: any) => {
+//         console.error(error);
+//       })
+//     });
+//   }
+//   if(tickerID == null) {
+//     return new Promise((resolve) => {
+//       resolve(new BigNumber("0"))
+//     })
+//   }
+//   return new Promise((resolve) => {
+//     SynthContract[tickerID].methods.balanceOf(walletAddress).call().then((balance: string) => {
+//       resolve(balance);
+//     }).catch((error: any) => {
+//       console.error(error);
+//     })
+//   })
+// };
 
 export const readWalletLpBalance = async (walletAddress: string, tickerID: string|undefined) => {
   if(tickerID == null) {

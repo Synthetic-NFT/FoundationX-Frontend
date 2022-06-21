@@ -200,18 +200,18 @@ export const blockchainAPI = {
   },
 
   async loadUserGivenTokenBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
-    const tokenBalancePromises = []
+    const tokenBalancePromises: Promise<BigNumber>[] = []
     for(let i = 0; i < tickerIDs.length; i += 1) {
       tokenBalancePromises.push(readWalletTokenBalance(walletAddress, tickerIDs[i]));
     }
-
-    const allTokenBalances = await Promise.all(tokenBalancePromises);
-    const result : { [key: string]: string } = {};
-    for(let i = 0; i < tickerIDs.length; i += 1) {
-      result[tickerIDs[i]] = allTokenBalances[i].toString();
-    }
     return new Promise((resolve) => {
-      resolve(result);
+      Promise.all(tokenBalancePromises).then(allTokenBalances => {
+        const result : { [key: string]: string } = {};
+        for(let i = 0; i < allTokenBalances.length; i += 1) {
+          result[tickerIDs[i]] = allTokenBalances[i].toString();
+        }
+        resolve(result);
+      }).catch(error => console.error(error));
     });
   },
 

@@ -1,5 +1,6 @@
-import { BigNumber } from "bignumber.js";
-import React from "react";
+import {BigNumber} from "bignumber.js";
+import React, {useEffect} from "react";
+
 
 export type AppData = {
   userName: string;
@@ -31,9 +32,10 @@ export function AppContextProvider({
   const [appData, setAppData] = React.useState<AppData | null>(null);
   const [walletAddress, setWallet] = React.useState<string>("");
   const [unit] = React.useState<BigNumber>(new BigNumber("1e18"));
+
   return (
     <AppContext.Provider
-      value={{ appData, setAppData, walletAddress, setWallet, unit }}
+      value={{ appData, setAppData, walletAddress, setWallet, unit}}
     >
       {children}
     </AppContext.Provider>

@@ -2,7 +2,7 @@ import {BigNumber} from "bignumber.js";
 
 import {convertWeiToString} from "../AppContext";
 import ContractAddress from "./ContractAddress";
-import {getLpReserve} from "./interact";
+import {approveToken, getLpReserve} from "./interact";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -75,28 +75,42 @@ const OracleContract = new web3.eth.Contract(
 const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
-export const getFarmDesiredETH = async (tickerID: string, amountADesired: string) => {
-  const bnAmountADesired = new BigNumber(amountADesired).times('1e18');
-  const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
-  // eslint-disable-next-line no-underscore-dangle
-  const amountETHOptimal = await RouterContract.methods.quote(bnAmountADesired, lpReserve._reserve0, lpReserve._reserve1).call();
-  return convertWeiToString(amountETHOptimal);
+export function getFarmDesiredETH(tickerID: string, amountADesired: string): Promise<string> {
+  return new Promise(resolve => {
+    const bnAmountADesired = new BigNumber(amountADesired).times('1e18');
+    LpPairContract[tickerID].methods.getReserves().call()
+        .then((lpReserve: { _reserve0: any; _reserve1: any; }) => {
+          // eslint-disable-next-line no-underscore-dangle
+          const [reserveA, reserveB] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
+
+          RouterContract.methods.quote(bnAmountADesired, reserveA, reserveB).call()
+              .then((amountETHOptimal: any) => {
+                resolve(convertWeiToString(amountETHOptimal));
+              })
+              .catch((error: any) => console.error(error));
+        })
+        .catch((error: any) => console.error(error));
+
+  });
+
 }
 
 export const addLiquidityETH = async (walletAddress: string, tickerID: string, humanAmountADesired: string, humanAmountETHDesired: string) => {
   const amountADesired = new BigNumber(humanAmountADesired).times('1e18')
   const amountETHDesired = new BigNumber(humanAmountETHDesired).times('1e18')
-  const amountAMin = amountADesired.times('0.95');
-  const amountETHMin = amountETHDesired.times('0.95');
+  const amountAMin = amountADesired.times('0.95').toFixed(0) ;
+  const amountETHMin = amountETHDesired.times('0.95').toFixed(0) ;
+
+  await approveToken(amountADesired, tickerID, walletAddress, RouterAddress);
 
   const farmParameters = {
     to: RouterAddress, // Required except during contract publications.
     from: walletAddress, // must match user's active address.
-    value: web3.utils.toHex(amountETHDesired), // how much the user is depositing
+    value: web3.utils.toHex(amountETHDesired.toFixed(0) ), // how much the user is depositing
     data: RouterContract.methods
         .addLiquidityETH(
           SynthAddress[tickerID],
-          amountADesired,
+          amountADesired.toFixed(),
           amountAMin,
           amountETHMin,
           walletAddress,
@@ -123,12 +137,15 @@ export const addLiquidityETH = async (walletAddress: string, tickerID: string, h
   }
 }
 
-export const loadPoolSynthPrice = async (tickerID: string) => {
-  const lpReserve = await getLpReserve(tickerID);
-  // eslint-disable-next-line no-underscore-dangle
-  const synthReserve = lpReserve._reserve0;
-  // eslint-disable-next-line no-underscore-dangle
-  const ethReserve = lpReserve._reserve1;
-  const poolSynthPriceInETH = new BigNumber(ethReserve).div(synthReserve).toString();
-  return poolSynthPriceInETH;
+export function loadPoolSynthPrice(tickerID: string): Promise<string> {
+  return new Promise(resolve => {
+    getLpReserve((tickerID)).then( lpReserve=> {
+      // eslint-disable-next-line no-underscore-dangle
+      const [synthReserve, ethReserve] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
+      const poolSynthPriceInETH = new BigNumber(ethReserve).div(synthReserve).toString();
+      resolve(poolSynthPriceInETH);
+    }).catch(error => {
+      console.error(error);
+    });
+  });
 };

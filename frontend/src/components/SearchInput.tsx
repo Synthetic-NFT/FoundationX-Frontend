@@ -2,7 +2,7 @@ import { Button, Select, MenuItem, makeStyles } from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from "@material-ui/core/styles";
 import FormControl from '@mui/material/FormControl';
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import { CoinInterface } from "../api";
 
@@ -54,7 +54,10 @@ const BootstrapInput = withStyles((theme) => ({
 
 function SearchInput(props: any) {
     const styles = useStyles();
-    const { availableCoins, defaultValue, onChange, valueChange, disableInput } = props;
+    const { availableCoins, defaultValue, onChange, valueChange, disableInput, value } = props;
+    if (!defaultValue) {
+        return null;
+    }
     return (
         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} className={styles.formControl} style={{ flexDirection: "row", }}>
             <Select
@@ -67,7 +70,7 @@ function SearchInput(props: any) {
             >
                 {availableCoins.map((item: CoinInterface) => <MenuItem key={item.symbol} value={item.name}>{item.name}</MenuItem>)}
             </Select>
-            <BootstrapInput id="demo-customized-textbox" onChange={(e) => {valueChange(e.target.value )}} disabled={disableInput}/>
+            <BootstrapInput id="demo-customized-textbox" placeholder="0" value={value} onChange={(e) => {valueChange(e.target.value )}} disabled={disableInput}/>
         </FormControl>
     );
 }

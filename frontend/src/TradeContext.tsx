@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 
-import type { TradeData } from "./api";
-import api, { blockchainAPI, defaultInstrument } from "./api";
+import {blockchainAPI, defaultInstrument, TradeData} from "./api";
 
 export const defaultTradeData: TradeData = {
   instruments: [defaultInstrument]
 };
-
 export const TradeContext = React.createContext<{
   tradeData: TradeData;
   setTradeData: (_: TradeData) => void;

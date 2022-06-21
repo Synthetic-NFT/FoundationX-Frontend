@@ -11,6 +11,7 @@ import instrumentTableColumns from "./instrumentTableColumns";
 import swapInstrumenttableColumns from "./SwapInstrumenttableColumns";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
+import { AppContext } from "./AppContext";
 
 export default function SwapInstrumentTable({
     onRowClick,

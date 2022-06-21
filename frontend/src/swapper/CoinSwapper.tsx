@@ -171,26 +171,24 @@ function CoinSwapper(props: any): React.ReactElement {
   };
 
   useEffect(() => {
-    readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
-      setCoin1({
-        ...ethCoin,
-        balance: data.toNumber(),
+    const availableCoins = getTradableCoinInfo(tradeData);
+    setAvailableCoin(availableCoins);
+    if(availableCoins[0]){
+      readWalletTokenBalance(walletAddress, availableCoins[0].name).then((data) => {
+        setCoin1({
+          ...availableCoins[0],
+          balance: data.toNumber(),
+        });
+      })    }
+    if(availableCoins[1]){
+      readWalletTokenBalance(walletAddress, availableCoins[1].name).then((data) => {
+        setCoin2({
+          ...availableCoins[1],
+          balance: data.toNumber(),
+        });
       });
-    })
-
-    readWalletTokenBalance(walletAddress, instrument?.ticker).then((data) => {
-      setCoin2({
-        address: instrument?.address || undefined,
-        name: instrument?.ticker || undefined,
-        symbol: instrument?.symbol || undefined,
-        balance: data.toNumber(),
-      });
-    });
-
-    // const coinTimeout = setTimeout(() => {
-    //   return () => clearTimeout(coinTimeout);
-    // });
-  }, [instrument, walletAddress]);
+    }
+  }, [tradeData, walletAddress]);
 
   useEffect(() => {
     if (Number.isNaN(parseFloat(field1Value))) {
@@ -214,27 +212,6 @@ function CoinSwapper(props: any): React.ReactElement {
     }
   }, [field1Value, coin1, coin2]);
 
-  useEffect(() => {
-    readWalletTokenBalance(walletAddress, "Ethereum").then((data) => {
-      setCoin1({
-        ...ethCoin,
-        balance: data.toNumber(),
-      });
-    })
-
-    readWalletTokenBalance(walletAddress, instrument?.ticker).then((data) => {
-      setCoin2({
-        address: instrument?.address || undefined,
-        name: instrument?.ticker || undefined,
-        symbol: instrument?.symbol || undefined,
-        balance: data.toNumber(),
-      });
-    });
-
-    // const coinTimeout = setTimeout(() => {
-    //   return () => clearTimeout(coinTimeout);
-    // });
-  }, [instrument, walletAddress]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
@@ -306,16 +283,16 @@ function CoinSwapper(props: any): React.ReactElement {
       })
     }
   };
+  // const getCurrentInstrument = () => {
+  //   let currInstrument;
+  //   if (coin1.name !== "Ethereum") {
+  //     currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin1.name) || defaultInstrument;
+  //   } else {
+  //     currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin2.name) || defaultInstrument;
+  //   }
+  //   return currInstrument;
+  // }
 
-  const getCurrentInstrument = () => {
-    let currInstrument;
-    if (coin1.name !== "Ethereum") {
-      currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin1.name) || defaultInstrument;
-    } else {
-      currInstrument = tradeData?.instruments.find((instrument) => instrument.ticker === coin2.name) || defaultInstrument;
-    }
-    return currInstrument;
-  }
 
   const swapNow = async () => {
     if (coin1.name !== "Ethereum") {
@@ -393,25 +370,25 @@ function CoinSwapper(props: any): React.ReactElement {
               <div style={{
                 marginLeft: "1rem",
               }}>
-                <div style={{
-                  fontWeight: 600,
-                  fontSize: "0.83rem",
-                  lineHeight: "1.25rem",
-                  color: "#FFFFFF",
-                  marginTop: "2rem",
-                }}>
-                  Crypto Punks
-                </div>
-                <div style={{
-                  fontWeight: 400,
-                  fontSize: "0.58rem",
-                  lineHeight: "0.875rem",
-                  color: "#FFFFFF",
-                  marginTop: "0.42rem",
-                  marginBottom: "2rem",
-                }}>
-                  {getCurrentInstrument().address}
-                </div>
+                {/*<div style={{*/}
+                {/*  fontWeight: 600,*/}
+                {/*  fontSize: "0.83rem",*/}
+                {/*  lineHeight: "1.25rem",*/}
+                {/*  color: "#FFFFFF",*/}
+                {/*  marginTop: "2rem",*/}
+                {/*}}>*/}
+                {/*  Crypto Punks*/}
+                {/*</div>*/}
+                {/*<div style={{*/}
+                {/*  fontWeight: 400,*/}
+                {/*  fontSize: "0.58rem",*/}
+                {/*  lineHeight: "0.875rem",*/}
+                {/*  color: "#FFFFFF",*/}
+                {/*  marginTop: "0.42rem",*/}
+                {/*  marginBottom: "2rem",*/}
+                {/*}}>*/}
+                {/*  {getCurrentInstrument().address}*/}
+                {/*</div>*/}
               </div>
 
               <Button

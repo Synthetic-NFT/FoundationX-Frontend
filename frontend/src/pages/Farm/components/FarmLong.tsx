@@ -10,7 +10,7 @@ import { StylesContext } from "@material-ui/styles";
 import { TextField } from "@mui/material";
 import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
-import React, { useContext, useEffect, useState } from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 
 import {Instrument, getTradableCoinInfo, CoinInterface, ethCoin} from "../../../api";
 import { AppContext } from "../../../AppContext";
@@ -393,33 +393,45 @@ export default function FarmLong({
   const { walletAddress, setWallet } = useContext(AppContext);
   const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData, false));
   const [selectedTickerID, setSelectedTickerID] = useState("");
+  const [selectedToken, setSelectedToken] = useState<CoinInterface>();
+
   const [poolPrice, setPoolPrice] = useState("");
   const [tokenAValue, setTokenAValue] = useState("");
   const [tokenBValue, setTokenBValue] = useState("");
 
-  console.log("availableCoin*****", availableCoin);
+
+  const handleInstrumentChange = useCallback((tickerId) => {
+    const inst: Instrument | undefined = tradeData?.instruments.find(item => item.ticker === tickerId) || instrument;
+    setInst(inst)
+  }, [instrument, tradeData?.instruments]);
+
 
   useEffect(() => {
     if (availableCoin.length>0) {
-      setSelectedTickerID(availableCoin[0].name?availableCoin[0].name : "")
-      if (selectedTickerID && selectedTickerID !== "") {
+      if (selectedTickerID) {
         loadPoolSynthPrice(selectedTickerID).then((poolPrice) => {
           setPoolPrice(poolPrice)
         });
+        if (tokenAValue && tokenAValue !== "") {
+          getFarmDesiredETH(selectedTickerID, tokenAValue).then((tokenBValue) => {
+            setTokenBValue(tokenBValue);
+          })
+        }
+      } else {
+        loadPoolSynthPrice(availableCoin[0]?.name || "").then((poolPrice) => {
+          setPoolPrice(poolPrice);
+        }).catch(error => console.error(error));
+        // handleInstrumentChange(availableCoin[0]?.name||"")
+        setSelectedTickerID(availableCoin[0]?.name || "")
       }
+      handleInstrumentChange(selectedTickerID);
     }
-  }, [availableCoin, selectedTickerID]);
+  }, [availableCoin, handleInstrumentChange, selectedTickerID, tokenAValue]);
 
   useEffect(() => {
-    if (selectedTickerID && selectedTickerID !== "" && tokenAValue && tokenAValue !== "") {
-      getFarmDesiredETH(selectedTickerID, tokenAValue).then((tokenBValue) => {
-        setTokenBValue(tokenBValue);
-      })
-    }
-    if (selectedTickerID && selectedTickerID !== "") {
-      loadPoolSynthPrice(selectedTickerID).then((result) => {setPoolPrice(result)});
-    }
-  }, [selectedTickerID, tokenAValue]);
+    setAvailableCoin(getTradableCoinInfo(tradeData, false))
+  }, [tradeData]);
+
 
   const startFarm = async () => {
     await addLiquidityETH(walletAddress, selectedTickerID, tokenAValue, tokenBValue);
@@ -427,18 +439,11 @@ export default function FarmLong({
 
   const fromChanged = async (tickerId: string) => {
     setSelectedTickerID(tickerId);
-    // API issue
-    const result = await loadPoolSynthPrice(tickerId);
-    setPoolPrice(result);
+    // // API issue
+    // loadPoolSynthPrice(tickerId).then(result => {setPoolPrice(result)});
   };
 
 
-  function handleChange(id: string) {
-    const inst: Instrument | undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
-    setInst(inst)
-  }
-
-  const defaultFarmValue = availableCoin.length > 0 ? availableCoin[0].name : ""
 
   return (
     <div style={{ display: "flex", overflow: "hidden" }}>
@@ -451,7 +456,7 @@ export default function FarmLong({
               description=""
             />
             <div >
-              <SearchInput availableCoins={availableCoin} defaultValue={defaultFarmValue} onChange={fromChanged} valueChange={setTokenAValue} />
+              <SearchInput availableCoins={availableCoin} defaultValue={inst.ticker} onChange={fromChanged} valueChange={setTokenAValue} />
             </div>
           </div>
         </div>
@@ -463,7 +468,7 @@ export default function FarmLong({
               description="An equivalent UST amount must be provided."
             />
             <div style={{ display: "flex", marginTop: "1.5rem" }}>
-              <SearchInput availableCoins={[ethCoin]} defaultValue={ethCoin.name} disableInput />
+              <SearchInput availableCoins={[ethCoin]} defaultValue={ethCoin.name} value={tokenBValue} disableInput />
             </div>
           </div>
         </div>
