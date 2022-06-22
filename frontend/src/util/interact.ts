@@ -25,11 +25,11 @@ const LpPairABI = require("../abi/contracts/core/UniswapV2Pair.sol/UniswapV2Pair
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
 const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
 const OracleABI = require("../abi/contracts/mocks/MockOracle.sol/MockOracle.json");
+const MockWETHABI = require("../abi/contracts/mocks/MockWETH.sol/MockWETH.json");
 const RouterABI = require("../abi/contracts/periphery/UniswapV2Router02.sol/UniswapV2Router02.json");
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 const VaultABI = require("../abi/contracts/Vault.sol/Vault.json");
-const MockWETHABI = require("../abi/contracts/mocks/MockWETH.sol/MockWETH.json");
 
 const WETHAddress = ContractAddress.weth;
 const FactoryAddress = ContractAddress.factory;

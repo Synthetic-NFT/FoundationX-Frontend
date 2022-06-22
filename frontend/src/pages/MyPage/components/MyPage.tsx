@@ -15,10 +15,10 @@ import CreditCard from "../../../styles/images/CreditCard.png";
 import Send from "../../../styles/images/send.svg";
 import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
+import {TradeContext} from "../../../TradeContext";
 import { connectWallet, getCurrentWalletConnected } from "../../../util/interact";
 import MyPageTable from "./MyPageTable";
 import { holdingTableColumns, borrowingTableColumns } from "./tableColumns";
-import {TradeContext} from "../../../TradeContext";
 
 
 const useStyles = makeStyles({
