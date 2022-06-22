@@ -106,11 +106,11 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
-export default function BoredApe(props: any) : React.ReactElement{
+export default function ClaimPage(props: any) : React.ReactElement{
   const classes = useStyles();
   const history = useHistory();
 
-  const { instrument, buttonName, haveAdd } = props;
+  const { collection, buttonName, haveAdd } = props;
   const [selectCards, setSelectCards] = React.useState<string[]>([]);
 
   interface Card {
@@ -119,12 +119,7 @@ export default function BoredApe(props: any) : React.ReactElement{
   }
 
   useEffect(() => {
-    const coinTimeout = setTimeout(() => {
-      console.log('props: ', props);
-      console.log("Checking balances...");
-
-      return () => clearTimeout(coinTimeout);
-    });
+    const coinTimeout = setTimeout(() => () => clearTimeout(coinTimeout));
   });
 
   function handleCardClick(item:Card) {

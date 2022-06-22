@@ -12,7 +12,15 @@ import { withStyles } from "@material-ui/core/styles";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import React, { useEffect, useContext } from "react";
 
-import {blockchainAPI, getTradableCoinInfo, CoinInterface, defaultInstrument, TradeData, ethCoin} from "../api";
+import {
+  blockchainAPI,
+  getTradableCoinInfo,
+  CoinInterface,
+  defaultInstrument,
+  TradeData,
+  ethCoin,
+  getCoinFromInstrument
+} from "../api";
 import { AppContext } from "../AppContext";
 import LoadingButton from "../components/LoadingButton";
 import { SearchInput } from '../components/SearchInput'
@@ -100,18 +108,8 @@ function CoinSwapper(props: any): React.ReactElement {
 
 
   // Stores data about their respective coin
-  const [coin1, setCoin1] = React.useState<CoinInterface>({
-    address: undefined,
-    name: undefined,
-    symbol: undefined,
-    balance: undefined,
-  });
-  const [coin2, setCoin2] = React.useState<CoinInterface>({
-    address: undefined,
-    name: undefined,
-    symbol: undefined,
-    balance: undefined,
-  });
+  const [coin1, setCoin1] = React.useState<CoinInterface>(ethCoin);
+  const [coin2, setCoin2] = React.useState<CoinInterface>(getCoinFromInstrument(instrument));
 
   // Stores the current reserves in the liquidity pool between coin1 and coin2
   const [reserves, setReserves] = React.useState(["0.0", "0.0"]);

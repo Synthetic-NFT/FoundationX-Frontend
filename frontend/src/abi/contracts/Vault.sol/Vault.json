@@ -325,6 +325,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "WETHAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -556,6 +569,32 @@
       }
     ],
     "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_NFTAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setNFTAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_WETHAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setWETHAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

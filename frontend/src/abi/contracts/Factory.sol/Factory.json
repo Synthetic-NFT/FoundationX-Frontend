@@ -259,6 +259,11 @@
         "internalType": "address[]",
         "name": "reserveAddresses",
         "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "nftAddresses",
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",

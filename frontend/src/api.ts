@@ -30,8 +30,51 @@ export type Instrument = {
   vaultAddress: string;
   address: string;
   reserveAddress: string;
+  nftAddress: string;
 };
 
+export type NFTCollection = {
+  ticker: string;
+  symbol: string;
+  id: string;
+  price: string;
+  nftAddress: string;
+  img: string;
+  limit: number;
+};
+export const defaultNFTCollection = {
+  ticker: "BoredApeYachtClub",
+  symbol: "BAYC",
+  id: "BoredApeYachtClub",
+  price: "",
+  nftAddress: "",
+  img: "",
+  limit: 1,
+}
+export const ethCollection = {
+  ticker: "Ethereum",
+  symbol: "ETH",
+  id: "Etherem",
+  price: "",
+  nftAddress: "",
+  img: "",
+  limit: 100,
+}
+
+export type OneNFT = {
+  ticker: string;
+  symbol: string;
+  tokenID: string;
+  tokenURI: string;
+  nftAddress: string;
+};
+export const defaultOneNFT = {
+  ticker: "",
+  symbol: "",
+  tokenID: "",
+  tokenURI: "",
+  nftAddress: "",
+}
 export const defaultInstrument: Instrument = {
   ticker: "",
   fullName: "",
@@ -46,6 +89,24 @@ export const defaultInstrument: Instrument = {
   vaultAddress: "",
   address: "",
   reserveAddress: "",
+  nftAddress: "",
+};
+
+export const ethInstrument: Instrument = {
+  ticker: "Ethereum",
+  fullName: "Ethereum",
+  symbol: "ETH",
+  id: "Ethereum",
+  price: "",
+  poolPrice: "",
+  fee: 0,
+  long: 0,
+  short: 0,
+  premium: 0,
+  vaultAddress: "",
+  address: "",
+  reserveAddress: "",
+  nftAddress: "",
 };
 
 export type MyPageData = {
@@ -84,6 +145,7 @@ export type BorrowingData = {
 
 export type MyPageTableData = {
   ticker: string;
+  instrument: Instrument;
   oraclePrice: string;
   borrowed: {
     meth: string;
@@ -132,6 +194,41 @@ export function getTradableCoinInfo(tradeData: TradeData, includeETH: boolean = 
   return availableCoins;
 }
 
+export function getSupportedNFTCollections(tradeData: TradeData): NFTCollection[] {
+  const nftCollections = [];
+  if (!tradeData || tradeData.instruments.length === 0) {
+    return [defaultNFTCollection];
+  }
+  for (let i = 0; i < tradeData.instruments.length; i += 1) {
+    const instrument = tradeData.instruments[i];
+    if (instrument === defaultInstrument) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+    const currNFTCollection: NFTCollection = {
+      ticker: instrument.ticker,
+      symbol: instrument.symbol,
+      id: instrument.id,
+      price: instrument.price,
+      nftAddress: instrument.nftAddress,
+      img: "",
+      limit: 1,
+    }
+    nftCollections.push(currNFTCollection);
+  }
+  return nftCollections;
+}
+
+export function getCoinFromInstrument(instrument: Instrument): CoinInterface {
+  const currCoin: CoinInterface = {
+    address: instrument?.address||undefined,
+    name: instrument?.ticker||undefined,
+    symbol: instrument?.symbol||undefined,
+    balance: undefined,
+  }
+  return currCoin;
+}
+
 export const blockchainAPI = {
   async loadInstruments(): Promise<TradeData> {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
@@ -144,7 +241,8 @@ export const blockchainAPI = {
     // console.log("a", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'), await this.checkUserCanMintWithNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     // console.log("a", await getFarmDesiredETH("BoredApeYachtClub", "100"));
     const activeTokens = await loadActiveTokens();
-    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses, nftAddresses} = activeTokens;
+    // console.log(nftAddresses, "aaaa")
     const oraclePricePromises = []
     const poolPricePromises = []
     await loadPoolSynthPrice(tokenNames[0])
@@ -165,7 +263,7 @@ export const blockchainAPI = {
         ticker: tokenNames[i],
         fullName: tokenNames[i],
         symbol: tokenSymbols[i],
-        id: i.toString(),
+        id: tokenNames[i],
         price: new BigNumber(allOraclePrices[i]).div('1e18').toString(),
         poolPrice: allPoolPrices[i],
         fee: 0,
@@ -175,6 +273,7 @@ export const blockchainAPI = {
         vaultAddress: vaultAddresses[i],
         address: synthAddresses[i],
         reserveAddress: reserveAddresses[i],
+        nftAddress: nftAddresses[i]
       }
       tradeData.instruments.push(currInstrument);
     }
@@ -278,11 +377,11 @@ const fakeAPI = {
       setTimeout(() => resolve(), 1000);
     });
   },
-  async loadInstruments(): Promise<TradeData> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(fakeTradeData), 100);
-    });
-  },
+  // async loadInstruments(): Promise<TradeData> {
+  //   return new Promise((resolve) => {
+  //     setTimeout(() => resolve(fakeTradeData), 100);
+  //   });
+  // },
   async loadMyPageData(): Promise<MyPageData> {
     return new Promise((resolve) => {
       setTimeout(() => resolve(fakeMyPageData), 100);

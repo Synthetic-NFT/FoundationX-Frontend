@@ -18,6 +18,7 @@ import theme from "../../../theme";
 import { connectWallet, getCurrentWalletConnected } from "../../../util/interact";
 import MyPageTable from "./MyPageTable";
 import { holdingTableColumns, borrowingTableColumns } from "./tableColumns";
+import {TradeContext} from "../../../TradeContext";
 
 
 const useStyles = makeStyles({
@@ -247,6 +248,7 @@ export default function MypPage(): React.ReactElement {
   // const [loginSuccess, setLoginSuccess] = useState(false);
   // const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
   const [holding, setHolding] = useState({});
+  const { tradeData } = useContext(TradeContext);
   const [farming, setFarming] = useState({});
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState("");
@@ -291,8 +293,12 @@ export default function MypPage(): React.ReactElement {
           // eslint-disable-next-line no-restricted-syntax
           for (const key of Object.keys(holdings)) {
             const item = holdings[key];
+            const instrument = tradeData?.instruments.find(
+                (instrument: { ticker: string; }) => instrument.ticker === key,
+            );
             const target = {
               "ticker": key,
+              "instrument": instrument,
               "balance": Number(item[0]).toFixed(2),
               "value": Number(item[1]).toFixed(2),
               "poolPrice": Number(item[3]).toFixed(2)
@@ -327,7 +333,7 @@ export default function MypPage(): React.ReactElement {
         setCanMintNFT(canMint);
       })
     }
-  }, [setWallet, setStatus, walletAddress, setFarming, setHolding, setCanMintNFT])
+  }, [setWallet, setStatus, walletAddress, setFarming, setHolding, setCanMintNFT, tradeData])
 
 
   const login = async () => {
