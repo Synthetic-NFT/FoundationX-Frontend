@@ -370,25 +370,25 @@ function CoinSwapper(props: any): React.ReactElement {
               <div style={{
                 marginLeft: "1rem",
               }}>
-                {/*<div style={{*/}
-                {/*  fontWeight: 600,*/}
-                {/*  fontSize: "0.83rem",*/}
-                {/*  lineHeight: "1.25rem",*/}
-                {/*  color: "#FFFFFF",*/}
-                {/*  marginTop: "2rem",*/}
-                {/*}}>*/}
-                {/*  Crypto Punks*/}
-                {/*</div>*/}
-                {/*<div style={{*/}
-                {/*  fontWeight: 400,*/}
-                {/*  fontSize: "0.58rem",*/}
-                {/*  lineHeight: "0.875rem",*/}
-                {/*  color: "#FFFFFF",*/}
-                {/*  marginTop: "0.42rem",*/}
-                {/*  marginBottom: "2rem",*/}
-                {/*}}>*/}
-                {/*  {getCurrentInstrument().address}*/}
-                {/*</div>*/}
+                {/* <div style={{
+                  fontWeight: 600,
+                  fontSize: "0.83rem",
+                  lineHeight: "1.25rem",
+                  color: "#FFFFFF",
+                  marginTop: "2rem",
+                }}>
+                  Crypto Punks
+                </div>
+                <div style={{
+                  fontWeight: 400,
+                  fontSize: "0.58rem",
+                  lineHeight: "0.875rem",
+                  color: "#FFFFFF",
+                  marginTop: "0.42rem",
+                  marginBottom: "2rem",
+                }}>
+                  {getCurrentInstrument().address}
+                </div> */}
               </div>
 
               <Button

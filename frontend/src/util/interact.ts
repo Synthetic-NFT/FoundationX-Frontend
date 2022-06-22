@@ -1,8 +1,8 @@
 import {BigNumber} from "bignumber.js";
 
 import {convertStringToWei} from "../AppContext";
-import ContractAddress from "./ContractAddress";
 import {fakeTradeData} from "../fakeData";
+import ContractAddress from "./ContractAddress";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 

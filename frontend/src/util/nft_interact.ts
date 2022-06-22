@@ -76,15 +76,15 @@ const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
 const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
 const getIPFSMetadataFromURL = (url: string) => fetch(url)
-    .then((response) => {
+    .then((response) => 
       // const temp = response.json();
-      return response.json()
-    })
-    .then((responseJson) => {
+       response.json()
+    )
+    .then((responseJson) => 
       // console.log("ppp", responseJson);
       // const temp = responseJson;
-      return responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/")
-    })
+       responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/")
+    )
     .catch((error) => {
       console.error(error);
     })
