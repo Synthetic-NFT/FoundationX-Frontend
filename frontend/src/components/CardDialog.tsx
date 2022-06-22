@@ -145,7 +145,7 @@ function CardDialog(props: any) {
 
   return (
     <Dialog
-      open={data.id}
+      open={data.ticker}
       onClose={() => exit(undefined, undefined)}
       fullWidth
       maxWidth="sm"

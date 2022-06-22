@@ -10,12 +10,19 @@ import {
 import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { Button } from "@mui/material";
-import React, { useEffect } from "react";
+import React, {useContext, useEffect} from "react";
 import {
   useHistory,
 } from "react-router-dom";
 
-import { defaultInstrument } from "../../../api";
+import {
+  ethCoin,
+  ethInstrument,
+  defaultInstrument,
+  getTradableCoinInfo,
+  Instrument,
+  getSupportedNFTCollections, NFTCollection, ethCollection
+} from "../../../api";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../../../constants/coins";
@@ -23,8 +30,11 @@ import { fakeTradeData } from "../../../fakeData";
 import Add from "../../../styles/images/add.svg";
 import Azuki from "../../../styles/images/Azuki.jpeg";
 import BoredApeYachtClub from "../../../styles/images/BoredApeYachtClub.png";
-import CryptoPunks from "../../../styles/images/CryptoPunks.png";
 import Ethereum from "../../../styles/images/Ethereum.svg";
+import MutantApeYachtClub from "../../../styles/images/MutantApeYachtClub.png";
+import Otherdeed from "../../../styles/images/Otherdeed.png";
+
+import {TradeContext} from "../../../TradeContext";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -85,14 +95,19 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
 // @ts-ignore
 const useStyles = makeStyles(styles);
 
+
+
+
 function ClaimDetail(props: any): React.ReactElement {
   const classes = useStyles();
   const history = useHistory();
 
-  const { instrument, buttonName, haveAdd, openDialog } = props;
+  const { buttonName, haveAdd, openDialog, onCollectionSelect } = props;
+  const {tradeData} = useContext(TradeContext);
+  const [availableNFTCollection, setAvailableNFTCollection] = React.useState<NFTCollection[]>(getSupportedNFTCollections(tradeData));
 
-  const availbleCoinIn = DummyCoins;
-  const availbleCoinOut = DummyCoins;
+  const [availableCoin, setAvailableCoin] = React.useState<CoinInterface[]>(getTradableCoinInfo(tradeData));
+
 
   // Stores a record of whether their respective dialog window is open
   const [dialog, setDialog] = React.useState({});
@@ -114,10 +129,21 @@ function ClaimDetail(props: any): React.ReactElement {
     symbol: undefined,
     balance: undefined,
   });
+  ethCollection.img = Ethereum;
 
   useEffect(() => {
+    const availableCoins = getTradableCoinInfo(tradeData);
+    setAvailableCoin(availableCoins);
 
-  }, [availbleCoinIn, instrument]);
+    // @ts-ignore
+    const images = require.context('../../../styles/images', true);
+    const availableNFTCollection = getSupportedNFTCollections(tradeData);
+    for (let i = 0; i < availableNFTCollection.length; i += 1) {
+      const nftCollection = availableNFTCollection[i];
+      nftCollection.img = images(`./${nftCollection?.ticker||"BoredApeYachtClub"}.png`).default;
+    }
+    setAvailableNFTCollection(availableNFTCollection);
+  }, [tradeData]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
@@ -130,50 +156,16 @@ function ClaimDetail(props: any): React.ReactElement {
     });
   });
 
-  function handleCardClick(item: any) {
+  function handleCardClick(item: NFTCollection) {
     if (openDialog) {
       setDialog(item)
-    } else if (item.name === "ETH") {
+    } else if (item.ticker === "Ethereum") {
       setDialog(item)
     } else {
-      history.push('/claim/boredApe');
+      onCollectionSelect(item);
     }
   }
 
-  const data = [
-    {
-      name: "ETH",
-      id: "1",
-      price: "0.1",
-      img: BoredApeYachtClub,
-    },
-    {
-      name: "Naruto Todorki1",
-      id: "2",
-      price: "0.1",
-      img: BoredApeYachtClub,
-    },
-    {
-      name: "Naruto Todorki2",
-      id: "3",
-      price: "0.2",
-      img: Azuki,
-    }
-    ,
-    {
-      name: "Naruto Todorki3",
-      id: "4",
-      price: "0.3",
-      img: CryptoPunks,
-    }
-    ,
-    {
-      name: "Naruto Todorki4",
-      id: "5",
-      price: "0.4",
-      img: CryptoPunks,
-    }
-  ]
   // @ts-ignore
   return (
     <div style={{
@@ -183,7 +175,7 @@ function ClaimDetail(props: any): React.ReactElement {
       <CardDialog
         data={dialog}
         onClose={() => setDialog({})}
-        coins={availbleCoinIn}
+        coins={[ethCoin]}
         signer="placeholder"
         buttonName={buttonName}
       />
@@ -208,7 +200,7 @@ function ClaimDetail(props: any): React.ReactElement {
           <div className={classes.id}> </div>
         </Grid>}
         {
-          data.map(item =>
+          ([ethCollection].concat(availableNFTCollection)).map(item =>
           (
             <Grid
               item
@@ -216,16 +208,17 @@ function ClaimDetail(props: any): React.ReactElement {
               sm={3}
               md={3}
               lg={3}
-              key={item.id}
+              key={item.ticker}
               spacing={2}
               style={{ padding: "0.5rem" }}
               alignItems="center"
               onClick={() => handleCardClick(item)}
             >
               <Card cardStyl="">
-                <img src={item.img} alt={item.name} style={{ height: "100%", width: "100%" }} />
+                {/* eslint-disable-next-line global-require,import/no-dynamic-require */}
+                <img src={item.img} alt={item.ticker} style={{ height: "100%", width: "100%" }} />
               </Card>
-              <div className={classes.id}>#{item.id}</div>
+              <div className={classes.id}>{item.ticker}</div>
             </Grid>
           )
           )

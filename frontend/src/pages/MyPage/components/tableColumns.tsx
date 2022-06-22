@@ -3,11 +3,16 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import { Button, IconButton, Snackbar, Tooltip } from "@mui/material";
 import TableCell from "@mui/material/TableCell";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import {Route, Switch, useHistory} from "react-router-dom";
 
 import { HoldingData, BorrowingData, MyPageTableData } from "../../../api";
 import { NFTIcons } from "../../../fakeData";
+import CoinSwapper from "../../../swapper/CoinSwapper";
 import theme from "../../../theme";
+import ClaimTable from "../../Claim/components/ClaimTable";
+import ReturnButton from "../../../components/ReturnButton";
+import ClaimDetail from "../../Claim/components/ClaimDetail";
+import ClaimPage from "../../Claim/components/ClaimPage";
 
 type ColumnConfigWithoutRenderers = {
   id: string;
@@ -168,7 +173,7 @@ export function TickerCellRenderer({
 function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
-      <b>{row.poolPrice} UST</b>
+      <b>{row.poolPrice} ETH</b>
     </TableCell>
   );
 }
@@ -176,7 +181,7 @@ function PoolPriceCellRenderer({ row }: CellRendererProps): TableCellElement {
 function OraclePriceCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
-      <b>{row.oraclePrice} UST</b>
+      <b>{row.oraclePrice}</b>
     </TableCell>
   );
 }
@@ -192,7 +197,7 @@ function BalanceCellRenderer({ row }: CellRendererProps): TableCellElement {
 function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
-      <b>{row.value} UST</b>
+      <b>{row.value} ETH</b>
     </TableCell>
   );
 }
@@ -200,7 +205,7 @@ function ValueCellRenderer({ row }: CellRendererProps): TableCellElement {
 function CollateralCellRenderer({ row }: CellRendererProps): TableCellElement {
   return (
     <TableCell align="left" style={TABLE_CELL_STYLE} >
-      <b>{row.collateral} UST</b>
+      <b>{row.collateral} ETH</b>
     </TableCell>
   );
 }
@@ -210,8 +215,29 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
   const styles = useStyles();
 
   function handleSwapClick() {
-    history.push(`/swap/order?ticker=${row.ticker}`);
+    // history.push(`/swap`);
+    history.push(
+    '/swap', row.instrument
+    )
+  // return (
+  //   <Switch>
+  //       history.push(
+  //           '/swap', row.instrument
+  //       )
+  //       <Route path={`/swap`}>
+  //           <CoinSwapper instrument={row.instrument} />
+  //       </Route>
+  //   </Switch>
+  // );
     // history.push(`/trade/order/buy?ticker=${row.ticker}`);
+    //
+    //   return (
+    //       <Switch>
+    //           <Route path={`/swap`}>
+    //               <CoinSwapper instrument={row.instrument} />
+    //           </Route>
+    //       </Switch>
+    //   );
   }
   function handleManageClick() {
     history.push(`/mypage/manage/nft?ticker=${row.ticker}`);
@@ -344,7 +370,7 @@ export const borrowingTableColumns: ColumnConfig[] = [
   },
   {
     id: "oraclePrice",
-    label: "withdrawable",
+    label: "Withdrawable",
     minWidth: "33%",
     align: "left",
     cellRenderer: OraclePriceCellRenderer,

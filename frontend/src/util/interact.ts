@@ -29,6 +29,7 @@ const RouterABI = require("../abi/contracts/periphery/UniswapV2Router02.sol/Unis
 const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
 const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
 const VaultABI = require("../abi/contracts/Vault.sol/Vault.json");
+const MockWETHABI = require("../abi/contracts/mocks/MockWETH.sol/MockWETH.json");
 
 const WETHAddress = ContractAddress.weth;
 const FactoryAddress = ContractAddress.factory;
@@ -57,7 +58,10 @@ for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
   VaultContract[name] = new web3.eth.Contract(VaultABI, ContractAddress.tokens[i].vault);
   LpPairContract[name] = new web3.eth.Contract(LpPairABI, ContractAddress.tokens[i].lp);
 }
-
+export const WETHContract = new web3.eth.Contract(
+    MockWETHABI,
+    WETHAddress,
+);
 export const FactoryContract = new web3.eth.Contract(
   FactoryABI,
   FactoryAddress,
@@ -296,12 +300,17 @@ export const manageSynth = async (
   const bnTargetCRatio = new BigNumber(targetCRatio).times('1e18').div('100').toFixed(0).toString();
   const bnTargetDeposit = new BigNumber(targetDeposit).times('1e18').toFixed(0).toString();
   const bnTargetDebt = new BigNumber(targetDebt).times('1e18').toFixed(0).toString();
-  const bnApproveAmount = new BigNumber(originalDebt).times('1e18').minus(new BigNumber(targetDebt).times('1e18'))
+  // const bnApproveAmount = new BigNumber(originalDebt).times('1e18').minus(new BigNumber(targetDebt).times('1e18'))
+  const bnApproveAmount = new BigNumber(originalDebt).times('1e18')
+  const a = await VaultContract[tickerID].methods.WETHAddress().call();
+  const b = await WETHContract.methods.balanceOf(VaultAddress[tickerID]).call();
+  const c = await ReserveContract[tickerID].methods.getMinterDepositETH(address).call();
 
+  const d = await ReserveContract[tickerID].methods.getMinterDebtETH(address).call();
   const manageParameters = {
-    to: FactoryAddress, // Required except during contract publications.
+    to: VaultAddress[tickerID], // Required except during contract publications.
     from: address, // must match user's active address.
-    data: VaultContract[tickerID].methods.userManageSynth(bnTargetCRatio, bnTargetDeposit).encodeABI(),
+    data: VaultContract[tickerID].methods.userManageSynthETH(bnTargetCRatio, bnTargetDeposit).encodeABI(),
   };
 
 
@@ -312,7 +321,7 @@ export const manageSynth = async (
       const approveParameters = {
         to: SynthAddress[tickerID], // Required except during contract publications.
         from: address, // must match user's active address.
-        data: SynthContract[tickerID].methods.approve(FactoryAddress, bnApproveAmount.toString()).encodeABI(),
+        data: SynthContract[tickerID].methods.approve(VaultAddress[tickerID], bnApproveAmount.toString()).encodeABI(),
       };
       const approveHash = await (window as any).ethereum.request({
         method: "eth_sendTransaction",
