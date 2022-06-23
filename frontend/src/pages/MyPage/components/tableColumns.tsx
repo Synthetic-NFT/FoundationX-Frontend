@@ -6,13 +6,13 @@ import React from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
 
 import { HoldingData, BorrowingData, MyPageTableData } from "../../../api";
+import ReturnButton from "../../../components/ReturnButton";
 import { NFTIcons } from "../../../fakeData";
 import CoinSwapper from "../../../swapper/CoinSwapper";
 import theme from "../../../theme";
-import ClaimTable from "../../Claim/components/ClaimTable";
-import ReturnButton from "../../../components/ReturnButton";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
 import ClaimPage from "../../Claim/components/ClaimPage";
+import ClaimTable from "../../Claim/components/ClaimTable";
 
 type ColumnConfigWithoutRenderers = {
   id: string;

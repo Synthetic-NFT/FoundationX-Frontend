@@ -87,9 +87,11 @@ export function getFarmDesiredETH(tickerID: string, amountADesired: string): Pro
               .then((amountETHOptimal: any) => {
                 resolve(convertWeiToString(amountETHOptimal));
               })
+              // eslint-disable-next-line no-console
               .catch((error: any) => console.error(error));
         })
-        .catch((error: any) => console.error(error));
+        // eslint-disable-next-line no-console
+        .catch((error: any) => { console.error(error)} );
 
   });
 

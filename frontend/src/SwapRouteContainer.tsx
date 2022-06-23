@@ -21,24 +21,21 @@ export default function SwapRouteContainer(): React.ReactElement {
 
     return (
         <Switch>
-            {/* we need the exact here because we only want to match `/trade/`. Without it, this
-       * will also match "/trade/order".
-       */}
-            {/*<Route path="/swap" exact>*/}
-            {/*    <SwapInstrumentTable*/}
-            {/*        onRowClick={(instrument) => {*/}
-            {/*            // We are at "/trade". When clicking an instrument in the table, we go to the*/}
-            {/*            // order page by navigating to "/trade/order/buy" and set the ticker of the*/}
-            {/*            // insturment being clicked.*/}
-            {/*            // <CoinSwapper instrument={instrument} />*/}
-            {/*            history.push("/swap/order", instrument);*/}
-            {/*            setSelectedInstrument(instrument);*/}
-            {/*            // history.push(`/trade/order/buy?ticker=${instrument.ticker}`);*/}
-            {/*        }}*/}
-            {/*    />*/}
-            {/*</Route>*/}
+            {/* <Route path="/swap" exact>
+               <SwapInstrumentTable
+                   onRowClick={(instrument) => {
+                        // We are at "/trade". When clicking an instrument in the table, we go to the
+                        // order page by navigating to "/trade/order/buy" and set the ticker of the
+                        // insturment being clicked.
+                        // <CoinSwapper instrument={instrument} />
+                        history.push("/swap/order", instrument);
+                        setSelectedInstrument(instrument);
+                        // history.push(`/trade/order/buy?ticker=${instrument.ticker}`);
+                    }}
+                />
+            </Route> */}
               <Route path="/swap">
-                {/*<ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/swap');}} textValue="Back" />*/}
+                {/* <ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/swap');}} textValue="Back" /> */}
                 <CoinSwapper instrument={selectedInstrument} />
               </Route>
         </Switch>

@@ -478,10 +478,10 @@ export default function FarmLong({
             <div>Pool Price</div>
             <div> {selectedTickerID} = {poolPrice} ETH</div>
           </div>
-          {/*<div style={{ display: "flex", justifyContent: "space-between" }}>*/}
-          {/*  <div>TX Fees</div>*/}
-          {/*  <div>0.20 UST</div>*/}
-          {/*</div>*/}
+          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
+           <div>TX Fees</div>
+           <div>0.20 UST</div>
+          </div> */}
         </div>
         <Button
           className={styles.button}

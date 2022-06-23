@@ -33,7 +33,6 @@ import BoredApeYachtClub from "../../../styles/images/BoredApeYachtClub.png";
 import Ethereum from "../../../styles/images/Ethereum.svg";
 import MutantApeYachtClub from "../../../styles/images/MutantApeYachtClub.png";
 import Otherdeed from "../../../styles/images/Otherdeed.png";
-
 import {TradeContext} from "../../../TradeContext";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
