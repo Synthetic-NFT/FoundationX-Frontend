@@ -4,8 +4,7 @@ import {convertWeiToString} from "../AppContext";
 import web3, {
   LpPairContract,
   RouterAddress,
-  RouterContract,
-  SynthAddress,
+  RouterContract, SynthAddress,
   WETHAddress
 } from "../constants/web3Instance";
 import {approveToken, getLpReserve} from "./interact";
@@ -15,6 +14,7 @@ BigNumber.config({ DECIMAL_PLACES: 19 });
 // const { BigNumber } = require("@ethersproject");
 
 
+// const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
 
 

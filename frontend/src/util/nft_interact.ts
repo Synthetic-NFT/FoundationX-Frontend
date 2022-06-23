@@ -7,6 +7,7 @@ import {loadActiveTokens} from "./interact";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
+// const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
 const getIPFSMetadataFromURL = (url: string) => fetch(url)
     .then((response) => 

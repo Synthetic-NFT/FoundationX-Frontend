@@ -3,16 +3,15 @@ import {BigNumber} from "bignumber.js";
 import ContractAddress from "../constants/ContractAddress";
 import web3Instance, {
   FactoryAddress, FactoryContract, LpPairContract, ReserveContract,
-  RouterContract,
-  SynthAddress,
-  SynthContract, VaultAddress,
-  VaultContract, WETHAddress, WETHContract
+  RouterContract, SynthAddress, SynthContract, VaultAddress, VaultContract,
+  WETHAddress, WETHContract
 } from "../constants/web3Instance";
 import web3 from "../constants/web3Instance";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
 
+// const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
 export const loadActiveTokens = async () => {
   const res = await FactoryContract.methods.listTokenAddressInfo().call();

@@ -5,11 +5,12 @@ import ContractAddress from "../constants/ContractAddress";
 import web3, {
     LpPairContract,
     RouterAddress,
-    RouterContract,
-    SynthAddress,
+    RouterContract, SynthAddress,
     WETHAddress
 } from "../constants/web3Instance";
 import {approveToken} from "./interact";
+
+// const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
 export const swapExactETHForTokens = async (amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
     const swapParameters = {
