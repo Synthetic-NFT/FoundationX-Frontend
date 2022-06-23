@@ -63,14 +63,13 @@ export const ethCollection = {
 
 export type OneNFT = {
   ticker: string;
-  symbol: string;
   tokenID: string;
   tokenURI: string;
   nftAddress: string;
 };
+
 export const defaultOneNFT = {
   ticker: "",
-  symbol: "",
   tokenID: "",
   tokenURI: "",
   nftAddress: "",
@@ -234,7 +233,7 @@ export const blockchainAPI = {
     // const a = await loadUserAllNFT("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "BoredApeYachtClub");
     // console.log("aaaaa", a)
     // console.log("aaaa", await this.loadUserAllTokenPosition('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
-    console.log("aaaa", await loadUnclaimedGivenNFT('BoredApeYachtClub', 1));
+    // console.log("aaaa", await loadUnclaimedGivenNFT('BoredApeYachtClub', 1));
 
     // console.log("aaaaa", await loadUserGivenNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266', "BoredApeYachtClub"));
     // console.log("aa", await this.loadUserAllLpBalance('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
@@ -284,7 +283,7 @@ export const blockchainAPI = {
   },
 
   async checkUserCanMintWithNFT(walletAddress: string): Promise<boolean> {
-    const userNFT = await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
+    const userNFT = await loadUserAllNFT(walletAddress);
     let totalBalance = 0;
     // eslint-disable-next-line no-restricted-syntax
     for (const [ key, value ] of Object.entries(userNFT)) {

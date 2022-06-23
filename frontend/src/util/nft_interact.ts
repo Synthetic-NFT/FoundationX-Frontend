@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 
 import ContractAddress from "./ContractAddress";
 import {loadActiveTokens} from "./interact";
+import {OneNFT} from "../api";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -89,42 +90,140 @@ const getIPFSMetadataFromURL = (url: string) => fetch(url)
       console.error(error);
     })
 
-export const loadUnclaimedGivenNFT = async ( tickerID: string, pageIndex: number) => {
-  const {_tokenIds, _tokenURIs} = await NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex)).call();
-  return [_tokenIds, _tokenURIs];
+// export const loadUnclaimedGivenNFT = async ( tickerID: string, pageIndex: number) => {
+//   const {_tokenIds, _tokenURIs} = await NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex)).call();
+//   const res = []
+//   for (let i = 0; i < _tokenIds.length; i += 1) {
+//     res.push({
+//       tokenId: _tokenIds[i],
+//       tokenURI: _tokenURIs[i]
+//     })
+//   }
+//   console.log(await getIPFSMetadataFromURL(res[0].tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/")))
+//
+//   return res;
+// }
+
+export function loadUnclaimedGivenNFT( tickerID: string, pageIndex: number): Promise<any[]> {
+  return new Promise(resolve => {
+    NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex)).call().then((result: any) => {
+      const {_tokenIds, _tokenURIs} = result;
+      const imgFromTokenURIPromises = []
+      for (let i = 0; i < _tokenURIs.length; i += 1) {
+        imgFromTokenURIPromises.push(getIPFSMetadataFromURL(_tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/")))
+      }
+      Promise.all(imgFromTokenURIPromises).then(listOfImgSrc => {
+        const res = []
+        for (let i = 0; i < _tokenIds.length; i += 1) {
+          res.push({
+            tokenId: _tokenIds[i],
+            img: listOfImgSrc[i]
+          })
+        }
+        resolve(res);
+      })
+    })
+  })
 }
 
-export const loadUserGivenNFT = async (walletAddress: string, tickerID: string) => {
-  const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();
-  const tokenIDAndURI: {[key: string]: string} = {};
-  const tokenIDPromises = []
-  for (let i = 0; i < balance; i += 1) {
-    tokenIDPromises.push(NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call());
-  }
-  const tokenIDs = await Promise.all(tokenIDPromises);
-
-  const tokenURIPromises = []
-  for (let i = 0; i < tokenIDs.length; i += 1) {
-    const tokenID = tokenIDs[i];
-    tokenURIPromises.push(NFTContract[tickerID].methods.tokenURI(tokenID).call());
-  }
-  const tokenURIs = await Promise.all(tokenURIPromises);
-
-  const fetchJSONPromises = []
-  for (let i = 0; i < tokenIDs.length; i += 1) {
-    const tokenID = tokenIDs[i];
-    const tokenURI = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
-    fetchJSONPromises.push(getIPFSMetadataFromURL(tokenURI));
-  }
-  const tokenImages = await Promise.all(fetchJSONPromises);
-
-  for (let i = 0; i < tokenIDs.length; i += 1) {
-    const tokenID = tokenIDs[i];
-    tokenIDAndURI[tokenID] = tokenImages[i];
-  }
-
-  return tokenIDAndURI;
+export function loadUserGivenNFT(walletAddress: string, tickerID: string): Promise<OneNFT[]> {
+  const balancePromise = NFTContract[tickerID].methods.balanceOf(walletAddress).call();
+  return balancePromise.then((balance: any) => {
+    if (balance === "0") {
+      return []
+    }
+    const tokenIDPromises = Promise.all(Array.from({length:parseInt(balance)},(v,k)=>k).map(i => NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call()))
+    return tokenIDPromises.then(tokenIDs => {
+      const tokenURIPromises = Promise.all(tokenIDs.map(tokenId => NFTContract[tickerID].methods.tokenURI(tokenId).call()))
+      return tokenURIPromises.then(tokenURIs => {
+        const fetchJSONPromises = []
+        for (let i = 0; i < tokenURIs.length; i += 1) {
+          const tokenURI = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
+          fetchJSONPromises.push(getIPFSMetadataFromURL(tokenURI));
+        }
+        return Promise.all(fetchJSONPromises).then(tokenImages => {
+          const oneNFTs = []
+          for (let i = 0; i < tokenIDs.length; i += 1) {
+            oneNFTs.push({
+              ticker: tickerID,
+              tokenID: tokenIDs[i],
+              tokenURI: tokenImages[i],
+              nftAddress: NFTAddress[i],
+            })
+          }
+          return oneNFTs;
+        })
+      })
+    })
+  })
 }
+
+// export function loadUserGivenNFT(walletAddress: string, tickerID: string): Promise<OneNFT[]> {
+//   return new Promise(resolve => {
+//     const balancePromise = NFTContract[tickerID].methods.balanceOf(walletAddress).call();
+//     balancePromise.then((balance: any)=>{
+//       if (balance === "0") {
+//         resolve([])
+//       }
+//       const tokenIDPromises = Promise.all(Array.from(balance, Number).map(i => NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call()))
+//       tokenIDPromises.then(tokenIDs => {
+//         const tokenURIPromises = Promise.all(Array.from(tokenIDs, Number).map(tokenId => NFTContract[tickerID].methods.tokenURI(tokenId).call()))
+//         tokenURIPromises.then(tokenURIs => {
+//           const fetchJSONPromises = []
+//           for (let i = 0; i < tokenURIs.length; i += 1) {
+//             const tokenURI = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
+//             fetchJSONPromises.push(getIPFSMetadataFromURL(tokenURI));
+//           }
+//           Promise.all(fetchJSONPromises).then(tokenImages => {
+//             const oneNFTs = []
+//             for (let i = 0; i < tokenIDs.length; i += 1) {
+//               oneNFTs.push({
+//                 ticker: tickerID,
+//                 tokenID: tokenIDs[i],
+//                 tokenURI: tokenImages[i],
+//                 nftAddress: NFTAddress[i],
+//               })
+//             }
+//             resolve(oneNFTs);
+//           })
+//         })
+//       })
+//     })
+//   })
+// }
+
+//
+// export const loadUserGivenNFT = async (walletAddress: string, tickerID: string) => {
+//   const balance = await NFTContract[tickerID].methods.balanceOf(walletAddress).call();
+//   const tokenIDAndURI: {[key: string]: string} = {};
+//   const tokenIDPromises = []
+//   for (let i = 0; i < balance; i += 1) {
+//     tokenIDPromises.push(NFTContract[tickerID].methods.tokenOfOwnerByIndex(walletAddress, i).call());
+//   }
+//   const tokenIDs = await Promise.all(tokenIDPromises);
+//
+//   const tokenURIPromises = []
+//   for (let i = 0; i < tokenIDs.length; i += 1) {
+//     const tokenID = tokenIDs[i];
+//     tokenURIPromises.push(NFTContract[tickerID].methods.tokenURI(tokenID).call());
+//   }
+//   const tokenURIs = await Promise.all(tokenURIPromises);
+//
+//   const fetchJSONPromises = []
+//   for (let i = 0; i < tokenIDs.length; i += 1) {
+//     const tokenID = tokenIDs[i];
+//     const tokenURI = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
+//     fetchJSONPromises.push(getIPFSMetadataFromURL(tokenURI));
+//   }
+//   const tokenImages = await Promise.all(fetchJSONPromises);
+//
+//   for (let i = 0; i < tokenIDs.length; i += 1) {
+//     const tokenID = tokenIDs[i];
+//     tokenIDAndURI[tokenID] = tokenImages[i];
+//   }
+//
+//   return tokenIDAndURI;
+// }
 
 export const loadUserAllNFT = async (walletAddress: string) => {
   const activeTokens = await loadActiveTokens();

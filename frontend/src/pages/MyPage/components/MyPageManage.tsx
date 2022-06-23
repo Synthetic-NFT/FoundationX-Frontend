@@ -21,6 +21,7 @@ import { TradeContext } from "../../../TradeContext";
 import { loadSynthPrice } from "../../../util/interact";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
 import MyPageWithdraw from "./MyPageWithdraw";
+import MyPageManageNFT from "./MyPageManageNFT";
 
 const Tab = styled(TabUnstyled)`
   color: rgba(255, 255, 255, 0.52);
@@ -126,7 +127,7 @@ export default function MyPageManage(): React.ReactElement {
             <InstrumentSell instrument={instrument} />
           </Route>
           <Route path="/mypage/manage/nft" exact>
-            <ClaimDetail instrument={instrument} buttonName="Reedem" haveAdd={false} openDialog />
+            <MyPageManageNFT instrument={instrument} buttonName="Redeem" haveAdd={false} openDialog />
           </Route>
           <Route path="/mypage/manage/withdraw" exact>
             <MyPageWithdraw instrument={instrument} />

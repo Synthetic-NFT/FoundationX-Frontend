@@ -29,24 +29,4 @@ export default function ClaimRouteContainer(): React.ReactElement {
             </Route>
         </Switch>
     );
-
-    // return (
-    //     <Switch>
-    //         <Route path="/claim" exact>
-    //             <ClaimTable
-    //                 onRowClick={(instrument) => {
-    //                     history.push("/claim/detail", instrument);
-    //                     setSelectedInstrument(instrument);
-    //                 }}
-    //             />
-    //         </Route>
-    //         <Route path="/claim/detail">
-    //             <ReturnButton onClick={() => {setSelectedInstrument(undefined); history.push('/claim');}} textValue="Back" />
-    //             <ClaimDetail instrument={selectedInstrument} buttonName="Claim"/>
-    //         </Route>
-    //         <Route path="/claim/boredApe">
-    //             <BoredApe/>
-    //         </Route>
-    //     </Switch>
-    // );
 }

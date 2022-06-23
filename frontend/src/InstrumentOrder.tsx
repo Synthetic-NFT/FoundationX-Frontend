@@ -20,6 +20,7 @@ import ClaimDetail from "./pages/Claim/components/ClaimDetail";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
 import { loadSynthPrice } from "./util/interact";
+import MyPageManageNFT from "./pages/MyPage/components/MyPageManageNFT";
 
 // Apart from `useStyles`, this shows an example of using styled for custom component, which
 // can be more flexible.
@@ -136,7 +137,8 @@ export default function InstrumentOrder(): React.ReactElement {
           </Route>
           <Route path="/trade/order/sell" exact>
             {/* <InstrumentSell instrument={instrument} /> */}
-            <ClaimDetail instrument={instrument} buttonName="Reedem" haveAdd={false} openDialog />
+            <MyPageManageNFT instrument={instrument} buttonName="Mint" haveAdd={false} openDialog />
+            {/*<ClaimDetail instrument={instrument} buttonName="Reedem" haveAdd={false} openDialog />*/}
           </Route>
         </Switch>
       </div>
