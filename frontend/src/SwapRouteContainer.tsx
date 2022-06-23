@@ -1,12 +1,12 @@
 import React from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
 
-import { Instrument } from "./api";
 import ReturnButton from './components/ReturnButton';
 import InstrumentOrder from "./InstrumentOrder";
 import {InstrumentTable} from "./InstrumentTable";
 import SwapInstrumentTable from "./SwapInstrumentTable";
 import CoinSwapper from "./swapper/CoinSwapper";
+import {Instrument} from "./util/dataStructures";
 
 export default function SwapRouteContainer(): React.ReactElement {
   // return (

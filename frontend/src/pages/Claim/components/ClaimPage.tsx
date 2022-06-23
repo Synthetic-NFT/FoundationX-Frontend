@@ -15,7 +15,6 @@ import {
   useHistory,
 } from "react-router-dom";
 
-import { defaultInstrument } from "../../../api";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
 import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../../../constants/coins";
@@ -27,6 +26,7 @@ import CryptoPunks from "../../../styles/images/CryptoPunks.png";
 import Ethereum from "../../../styles/images/Ethereum.svg";
 import {loadUnclaimedGivenNFT, userClaimBatchNFT} from "../../../util/nft_interact";
 import {AppContext} from "../../../AppContext";
+import {defaultInstrument} from "../../../util/dataStructures";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {

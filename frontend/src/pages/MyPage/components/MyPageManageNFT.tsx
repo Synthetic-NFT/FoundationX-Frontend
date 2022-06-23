@@ -7,15 +7,13 @@ import {
   useHistory,
 } from "react-router-dom";
 
-import {
- OneNFT
-} from "../../../api";
 import {AppContext} from "../../../AppContext";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
 import {TradeContext} from "../../../TradeContext";
 import {loadUserGivenNFT} from "../../../util/nft_interact";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
+import {OneNFT} from "../../../util/dataStructures";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -83,7 +81,7 @@ function MyPageManageNFT(props: any): React.ReactElement {
   const classes = useStyles();
   const history = useHistory();
 
-  const { instrument, buttonName } = props;
+  const { instrument, buttonName, onButtonClick } = props;
   const {tradeData} = useContext(TradeContext);
   const {walletAddress} = useContext(AppContext);
   const [depositedNFTs, setDepositedNFTs] = React.useState<OneNFT[]>([]);
@@ -110,6 +108,10 @@ function MyPageManageNFT(props: any): React.ReactElement {
   });
 
   function handleCardClick(item: OneNFT) {
+    setDialog(item)
+  }
+
+  function handleButtonClick(item: OneNFT) {
     setDialog(item)
   }
 

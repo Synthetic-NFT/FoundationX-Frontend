@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import FormControl from '@mui/material/FormControl';
 import React, {useEffect, useState} from "react";
 
-import { CoinInterface } from "../api";
+import {CoinInterface} from "../util/dataStructures";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {

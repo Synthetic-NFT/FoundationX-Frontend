@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
 import React, {useCallback, useContext, useEffect, useState} from "react";
 
-import {Instrument, getTradableCoinInfo, CoinInterface, ethCoin} from "../../../api";
+import {getTradableCoinInfo} from "../../../api";
 import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
 import { SearchInput } from '../../../components/SearchInput'
@@ -28,6 +28,7 @@ import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
 import {addLiquidityETH, getFarmDesiredETH, loadPoolSynthPrice} from "../../../util/farm_interact";
 import { mintSynth } from "../../../util/interact";
+import {CoinInterface, ethCoin, Instrument} from "../../../util/dataStructures";
 
 
 type BuySpecConfig = {

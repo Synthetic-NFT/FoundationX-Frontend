@@ -1,77 +1,18 @@
 import {BigNumber} from "bignumber.js";
 
-import {convertStringToWei} from "../AppContext";
-import {fakeTradeData} from "../fakeData";
-import ContractAddress from "./ContractAddress";
+import ContractAddress from "../constants/ContractAddress";
+import web3Instance, {
+  FactoryAddress, FactoryContract, LpPairContract, ReserveContract,
+  RouterContract,
+  SynthAddress,
+  SynthContract, VaultAddress,
+  VaultContract, WETHAddress, WETHContract
+} from "../constants/web3Instance";
+import web3 from "../constants/web3Instance";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
-require("dotenv").config();
-// const { BigNumber } = require("@ethersproject");
 
-const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-// eslint-disable-next-line import/order
-const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-// const BN = require('bn.js');
-
-// console.trace(alchemyKey);
-// const web3 = createAlchemyWeb3(alchemyKey);
-const Web3 = require("web3");
-
-const web3 = new Web3("http://localhost:8545");
-
-const SwapFactoryABI = require("../abi/contracts/core/UniswapV2Factory.sol/UniswapV2Factory.json");
-const LpPairABI = require("../abi/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json");
-const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
-const LiquidationABI = require("../abi/contracts/Liquidation.sol/Liquidation.json");
-const OracleABI = require("../abi/contracts/mocks/MockOracle.sol/MockOracle.json");
-const MockWETHABI = require("../abi/contracts/mocks/MockWETH.sol/MockWETH.json");
-const RouterABI = require("../abi/contracts/periphery/UniswapV2Router02.sol/UniswapV2Router02.json");
-const ReserveABI = require("../abi/contracts/Reserve.sol/Reserve.json");
-const SynthABI = require("../abi/contracts/Synth.sol/Synth.json");
-const VaultABI = require("../abi/contracts/Vault.sol/Vault.json");
-
-const WETHAddress = ContractAddress.weth;
-const FactoryAddress = ContractAddress.factory;
-const OracleAddress = ContractAddress.oracle;
-const SwapFactoryAddress = ContractAddress.swapFactory;
-const RouterAddress = ContractAddress.router;
-
-const ReserveAddress: { [key: string]: any } = {};
-const SynthAddress: { [key: string]: any } = {};
-const VaultAddress: { [key: string]: any } = {};
-
-const ReserveContract: { [key: string]: any } = {};
-const SynthContract: { [key: string]: any } = {};
-const VaultContract: { [key: string]: any } = {};
-const LpPairContract: { [key: string]: any } = {};
-
-
-for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
-  const { name } = ContractAddress.tokens[i];
-  ReserveAddress[name] = ContractAddress.tokens[i].reserve;
-  SynthAddress[name] = ContractAddress.tokens[i].synth;
-  VaultAddress[name] = ContractAddress.tokens[i].vault;
-
-  ReserveContract[name] = new web3.eth.Contract(ReserveABI, ContractAddress.tokens[i].reserve);
-  SynthContract[name] = new web3.eth.Contract(SynthABI, ContractAddress.tokens[i].synth);
-  VaultContract[name] = new web3.eth.Contract(VaultABI, ContractAddress.tokens[i].vault);
-  LpPairContract[name] = new web3.eth.Contract(LpPairABI, ContractAddress.tokens[i].lp);
-}
-export const WETHContract = new web3.eth.Contract(
-    MockWETHABI,
-    WETHAddress,
-);
-export const FactoryContract = new web3.eth.Contract(
-  FactoryABI,
-  FactoryAddress,
-);
-const OracleContract = new web3.eth.Contract(
-    OracleABI,
-    ContractAddress.oracle,
-);
-const RouterContract = new web3.eth.Contract(RouterABI, RouterAddress);
-const SwapFactoryContract = new web3.eth.Contract(SwapFactoryABI, SwapFactoryAddress);
 
 export const loadActiveTokens = async () => {
   const res = await FactoryContract.methods.listTokenAddressInfo().call();
@@ -95,39 +36,6 @@ export const getAmountETHOut = async(tickerID: string, amountSynth: string) => {
   const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountSynth, [SynthAddress[tickerID], WETHAddress]).call();
   const res = new BigNumber( amountsOut[1]).div("1e18");
   return res;
-}
-
-export const swapExactETHForTokens = async(amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
-  const swapParameters = {
-    to: RouterAddress, // Required except during contract publications.
-    from: addressFrom, // must match user's active address.
-    value: web3.utils.toHex(amountIn), // how much the user is depositing
-    data: RouterContract.methods
-        .swapExactETHForTokens(amountOutMin, [WETHAddress, SynthAddress[tickerID]], addressTo, deadline)
-        .encodeABI(),
-  };
-  try {
-    const swapHash = await (window as any).ethereum.request({
-      method: "eth_sendTransaction",
-      params: [swapParameters],
-    });
-    return {
-      status: "success",
-      swapHash,
-    };
-  } catch (error) {
-    return {
-      status: (error as any).message,
-    };
-  }
-}
-
-export const simpleSwapExactETHForTokens = async(walletAddress: string, amountIn: string, tickerID: string) => {
-  const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
-  // eslint-disable-next-line no-underscore-dangle
-  const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
-  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0) ;
-  await swapExactETHForTokens(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now()+60)
 }
 
 export const approveToken = async(amount: BigNumber, tickerID: string, userAddress: string, callerAddress: string) => {
@@ -155,39 +63,6 @@ export const approveToken = async(amount: BigNumber, tickerID: string, userAddre
 }
 
 
-
-export const swapExactTokensForETH = async(amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
-  const swapParameters = {
-    to: RouterAddress, // Required except during contract publications.
-    from: addressFrom, // must match user's active address.
-    data: RouterContract.methods
-        .swapExactTokensForETH(amountIn, amountOutMin,[SynthAddress[tickerID], WETHAddress], addressTo, deadline)
-        .encodeABI(),
-  };
-  try {
-    const approveStatus = approveToken(amountIn, tickerID, addressFrom, ContractAddress.router);
-    const swapHash = await (window as any).ethereum.request({
-      method: "eth_sendTransaction",
-      params: [swapParameters],
-    });
-    return {
-      status: "success",
-      swapHash,
-    };
-  } catch (error) {
-    return {
-      status: (error as any).message,
-    };
-  }
-}
-
-export const simpleSwapExactTokensForETH = async(walletAddress: string, amountIn: string, tickerID: string) => {
-  const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
-  // eslint-disable-next-line no-underscore-dangle
-  const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
-  const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0) ;
-  await swapExactTokensForETH(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now()+60)
-}
 
 export const mintSynth = async (
   address: string | null,
@@ -410,29 +285,6 @@ export function readWalletTokenBalance(walletAddress: string, tickerID: (string 
   })
 };
 
-// export const readWalletTokenBalance: (walletAddress: string, tickerID: (string | undefined)) => Promise<unknown> = async (walletAddress: string, tickerID: string|undefined) => {
-//   if(tickerID === "Ethereum") {
-//     return new Promise((resolve) => {
-//       web3.eth.getBalance(walletAddress).then((balance: string) => {
-//         resolve(new BigNumber(balance).div('1e18'))
-//       }).catch((error: any) => {
-//         console.error(error);
-//       })
-//     });
-//   }
-//   if(tickerID == null) {
-//     return new Promise((resolve) => {
-//       resolve(new BigNumber("0"))
-//     })
-//   }
-//   return new Promise((resolve) => {
-//     SynthContract[tickerID].methods.balanceOf(walletAddress).call().then((balance: string) => {
-//       resolve(balance);
-//     }).catch((error: any) => {
-//       console.error(error);
-//     })
-//   })
-// };
 
 export const readWalletLpBalance = async (walletAddress: string, tickerID: string|undefined) => {
   if(tickerID == null) {

@@ -5,13 +5,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "./api";
 import { AppContext } from "./AppContext";
 import { SearchBar, simpleFilter } from "./InstrumentTable";
 import instrumentTableColumns from "./instrumentTableColumns";
 import swapInstrumenttableColumns from "./SwapInstrumenttableColumns";
 import theme from "./theme";
 import { TradeContext } from "./TradeContext";
+import {Instrument} from "./util/dataStructures";
 
 export default function SwapInstrumentTable({
     onRowClick,

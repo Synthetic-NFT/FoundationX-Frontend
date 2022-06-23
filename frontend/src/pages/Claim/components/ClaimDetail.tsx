@@ -16,12 +16,8 @@ import {
 } from "react-router-dom";
 
 import {
-  ethCoin,
-  ethInstrument,
-  defaultInstrument,
   getTradableCoinInfo,
-  Instrument,
-  getSupportedNFTCollections, NFTCollection, ethCollection
+  getSupportedNFTCollections
 } from "../../../api";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
@@ -34,6 +30,14 @@ import Ethereum from "../../../styles/images/Ethereum.svg";
 import MutantApeYachtClub from "../../../styles/images/MutantApeYachtClub.png";
 import Otherdeed from "../../../styles/images/Otherdeed.png";
 import {TradeContext} from "../../../TradeContext";
+import {
+  defaultInstrument,
+  ethCoin,
+  ethCollection,
+  ethInstrument,
+  Instrument,
+  NFTCollection
+} from "../../../util/dataStructures";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {

@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 
-import {blockchainAPI, defaultInstrument, TradeData} from "./api";
+import {blockchainAPI} from "./api";
+import {defaultInstrument, TradeData} from "./util/dataStructures";
 
 export const defaultTradeData: TradeData = {
   instruments: [defaultInstrument]

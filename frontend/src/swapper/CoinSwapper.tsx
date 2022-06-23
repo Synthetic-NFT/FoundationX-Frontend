@@ -15,10 +15,6 @@ import React, { useEffect, useContext } from "react";
 import {
   blockchainAPI,
   getTradableCoinInfo,
-  CoinInterface,
-  defaultInstrument,
-  TradeData,
-  ethCoin,
   getCoinFromInstrument
 } from "../api";
 import { AppContext } from "../AppContext";
@@ -27,10 +23,12 @@ import { SearchInput } from '../components/SearchInput'
 import { AUTONITYCoins, GÖRLICoins, DummyCoins } from "../constants/coins";
 import { fakeTradeData } from "../fakeData";
 import { TradeContext } from "../TradeContext";
-import { getAmountETHOut, getAmountSynthOut, readWalletTokenBalance, simpleSwapExactETHForTokens, simpleSwapExactTokensForETH } from "../util/interact";
+import { getAmountETHOut, getAmountSynthOut, readWalletTokenBalance} from "../util/interact";
 import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
+import {simpleSwapExactETHForTokens, simpleSwapExactTokensForETH} from "../util/swap_interact";
+import {CoinInterface, defaultInstrument, ethCoin, TradeData} from "../util/dataStructures";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {

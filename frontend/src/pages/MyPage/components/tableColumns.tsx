@@ -5,7 +5,6 @@ import TableCell from "@mui/material/TableCell";
 import React from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
 
-import { HoldingData, BorrowingData, MyPageTableData } from "../../../api";
 import ReturnButton from "../../../components/ReturnButton";
 import { NFTIcons } from "../../../fakeData";
 import CoinSwapper from "../../../swapper/CoinSwapper";
@@ -13,6 +12,7 @@ import theme from "../../../theme";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
 import ClaimPage from "../../Claim/components/ClaimPage";
 import ClaimTable from "../../Claim/components/ClaimTable";
+import {BorrowingData, HoldingData, MyPageTableData} from "../../../util/dataStructures";
 
 type ColumnConfigWithoutRenderers = {
   id: string;

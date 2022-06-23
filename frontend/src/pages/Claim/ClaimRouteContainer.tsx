@@ -1,11 +1,11 @@
 import React from "react";
 import {Route, Switch, useHistory} from "react-router-dom";
 
-import {Instrument, NFTCollection} from "../../api";
 import ReturnButton from '../../components/ReturnButton';
 import ClaimDetail from "./components/ClaimDetail";
 import ClaimPage from "./components/ClaimPage";
 import ClaimTable from "./components/ClaimTable";
+import {Instrument, NFTCollection} from "../../util/dataStructures";
 
 export default function ClaimRouteContainer(): React.ReactElement {
 

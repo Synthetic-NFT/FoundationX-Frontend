@@ -14,8 +14,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import PropTypes from "prop-types";
 import React from "react";
 
-import { TradeData, Instrument } from "../api";
 import CoinButton from "./CoinButton";
+import {Instrument, TradeData} from "../util/dataStructures";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   dialogContainer: {

@@ -7,7 +7,6 @@ import { TextField } from "@mui/material";
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect } from "react";
 
-import { Instrument } from "./api";
 import { AppContext } from "./AppContext";
 // eslint-disable-next-line import/default
 import { NFTIcons } from "./fakeData";
@@ -20,6 +19,7 @@ import {
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
 import { mintSynth } from "./util/interact";
+import {Instrument} from "./util/dataStructures";
 
 type BuySpecConfig = {
   minRatio: number;
