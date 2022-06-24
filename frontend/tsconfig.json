@@ -7,6 +7,10 @@
       "DOM.Iterable",
       "ESNext"
     ],
+    "types": [
+      "node",
+      "webpack-env" // here
+    ],
     "baseUrl": ".",
     "allowJs": false,
     "skipLibCheck": true,

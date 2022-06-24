@@ -1,14 +1,31 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 
-import type { TradeData } from "./api";
-import api from "./api";
+import {blockchainAPI} from "./api";
+import {defaultInstrument, TradeData} from "./util/dataStructures";
 
+export const defaultTradeData: TradeData = {
+  instruments: [defaultInstrument]
+};
 export const TradeContext = React.createContext<{
-  tradeData: TradeData | null;
-  setTradeData: (_: TradeData | null) => void;
+  tradeData: TradeData;
+  setTradeData: (_: TradeData) => void;
 }>({
-  tradeData: null,
-  setTradeData: () => {},
+  tradeData: defaultTradeData,
+  setTradeData: () => { },
+});
+
+export type TokenAddress = {
+  address: string;
+  vaultAddress: string;
+  reserveAddress: string;
+};
+
+export const OnChainAddressContext = React.createContext<{
+  tokenAddresses: Map<string, TokenAddress> | null;
+  setTokenAddresses: (_: Map<string, TokenAddress> | null) => void;
+}>({
+  tokenAddresses: null,
+  setTokenAddresses: () => { },
 });
 
 // Provides the data of the instruments available for trade.
@@ -17,19 +34,17 @@ export function TradeContextProvider({
 }: {
   children: React.ReactElement | null;
 }) {
-  const [tradeData, setTradeData] = React.useState<TradeData | null>(null);
-  const [loading, setIsLoading] = React.useState(false);
-  // Automatically kicks off the loading upon rendering since we don't need to wait for
-  // an user action (such as connecting wallet).
+  const [tradeData, setTradeData] = React.useState<TradeData>(defaultTradeData);
+  const [tradeDataLoading, setIsTradeDataLoading] = React.useState(false);
   useEffect(() => {
-    if (!loading && tradeData == null) {
-      setIsLoading(true);
-      api.loadInstruments().then((tradeData) => {
+    if (!tradeDataLoading && tradeData === defaultTradeData) {
+      setIsTradeDataLoading(true);
+      blockchainAPI.loadInstruments().then((tradeData) => {
         setTradeData(tradeData);
-        setIsLoading(false);
+        setIsTradeDataLoading(false);
       });
     }
-  }, [loading, setIsLoading, tradeData, setTradeData]);
+  }, [tradeDataLoading, setIsTradeDataLoading, tradeData, setTradeData]);
 
   return (
     <TradeContext.Provider value={{ tradeData, setTradeData }}>

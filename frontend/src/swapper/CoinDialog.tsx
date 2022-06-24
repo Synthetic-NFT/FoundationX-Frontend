@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import CoinButton from "./CoinButton";
+import {Instrument, TradeData} from "../util/dataStructures";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   dialogContainer: {
@@ -126,39 +127,39 @@ function CoinDialog(props: any) {
 
 
   // Resets any fields in the dialog (in case it's opened in the future) and calls the `onClose` prop
-  const exit = (value: string|undefined, name: string|undefined) => {
+  const exit = (value: string|undefined, name: string|undefined, symbol: string|undefined) => {
     setError("");
     setAddress("");
-    onClose(value, name);
+    onClose(value, name, symbol);
   };
 
   // Called when the user tries to input a custom address, this function will validate the address and will either
   // then close the dialog and return the validated address, or will display an error.
-  const submit = () => {
-    exit("placeholder", "placeholder");
-  };
+  // const submit = () => {
+  //   exit("placeholder", "placeholder", undefined);
+  // };
 
   return (
     <Dialog
       open={open}
-      onClose={() => exit(undefined, undefined)}
+      onClose={() => exit(undefined, undefined, undefined)}
       fullWidth
       maxWidth="sm"
       classes={{ paper: classes.dialogContainer }}
     >
 
-      <DialogTitle onClose={() => exit(undefined, undefined)}>Select Coin</DialogTitle>
+      <DialogTitle onClose={() => exit(undefined, undefined, undefined)}>Select Coin</DialogTitle>
       <div className={classes.coinContainer}>
         <Grid container direction="column" spacing={1} alignContent="center">
           <Grid item className={classes.coinList}>
             <Grid container direction="column">
               {/* Maps all of the tokens in the constants file to buttons */}
-              {coins.map((coin: {name:string, abbr:string, address:string}) => (
+              {coins.map((coin: {name:string, symbol:string, address:string}) => (
                 <Grid item key={coin.name} xs={12}>
                   <CoinButton
                     coinName={coin.name}
-                    coinAbbr={coin.abbr}
-                    onClick={() => exit(coin.address, coin.abbr)}
+                    coinAbbr={coin.symbol}
+                    onClick={() => exit(coin.address, coin.name, coin.symbol)}
                   />
                 </Grid>
               ))}
@@ -173,7 +174,8 @@ function CoinDialog(props: any) {
 CoinDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  coins: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  coins: PropTypes.array.isRequired,
   signer: PropTypes.string.isRequired,
 };
 

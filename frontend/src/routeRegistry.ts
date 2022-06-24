@@ -28,9 +28,11 @@ type Route = {
   RouteContainer?: React.FunctionComponent;
 };
 
-const tradeRoute = "/trade";
+const mintRoute = "/mint";
 const myPageRoute = "/myPage";
-
+const swapRoute = "/swap";
+const farmRoute = "/farm";
+const claimRoute = "/claim";
 // automatically nav to defaultRoute when loading "/"
 export const defaultRoute = myPageRoute;
 
@@ -38,12 +40,6 @@ export const defaultRoute = myPageRoute;
 // (e.g. the trade route has `/trade/buy` and `/trade/sell`). The RouteContainer is rendered
 // if the route matches.
 export const routes: Route[] = [
-  // {
-  //   path: "/wallet",
-  //   label: "Wallet",
-  //   icon: AccountBalanceWalletIcon,
-  //   RouteContainer: WalletRouteContainer,
-  // },
   {
     path: myPageRoute,
     label: "My Page",
@@ -51,25 +47,25 @@ export const routes: Route[] = [
     RouteContainer: MyPageRouteContainer,
   },
   {
-    path: tradeRoute,
+    path: mintRoute,
     label: "Mint",
     icon: Trade,
     RouteContainer: TradeRouteContainer,
   },
   {
-    path: "/swap",
+    path: swapRoute,
     label: "Swap",
     icon: Swap,
     RouteContainer: SwapRouteContainer,
   },
   {
-    path: "/farm",
+    path: farmRoute,
     label: "Farm",
     icon: Farm,
     RouteContainer: FarmRouteContainer,
   },
   {
-    path: "/claim",
+    path: claimRoute,
     label: "Claim",
     icon: Claim,
     RouteContainer: ClaimRouteContainer,

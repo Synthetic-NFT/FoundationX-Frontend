@@ -5,9 +5,9 @@ import TableCell from "@mui/material/TableCell";
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-import { Instrument } from "../../../api";
 import { NFTIcons } from "../../../fakeData";
 import theme from "../../../theme";
+import {Instrument} from "../../../util/dataStructures";
 
 type ColumnConfigWithoutRenderers = {
   id: string;

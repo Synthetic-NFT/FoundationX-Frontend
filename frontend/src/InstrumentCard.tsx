@@ -1,8 +1,8 @@
 import React from "react";
 
-import { Instrument } from "./api";
 import { NFTIcons } from "./fakeData";
 import theme from "./theme";
+import {Instrument} from "./util/dataStructures";
 
 // export default function InstrumentCard({
 //   instrument,

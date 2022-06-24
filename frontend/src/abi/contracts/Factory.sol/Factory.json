@@ -40,25 +40,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "Received",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "bytes32",
         "name": "role",
@@ -158,72 +139,7 @@
   },
   {
     "inputs": [],
-    "name": "ERR_BURNING_EXCEED_DEBT",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ERR_INVALID_TARGET_COLLATERAL_RATIO",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ERR_INVALID_TARGET_DEPOSIT",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ERR_NOT_ENOUGH_SYNTH_TO_MINT",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "ERR_SYNTH_NOT_AVAILABLE",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ERR_USER_UNDER_COLLATERALIZED",
     "outputs": [
       {
         "internalType": "string",
@@ -237,12 +153,12 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "synthName",
-        "type": "string"
+        "internalType": "string[]",
+        "name": "synthNames",
+        "type": "string[]"
       }
     ],
-    "name": "delistSynth",
+    "name": "delistVaults",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -316,26 +232,159 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "listTokenAddressInfo",
+    "outputs": [
       {
-        "internalType": "string",
-        "name": "synthName",
-        "type": "string"
+        "internalType": "string[]",
+        "name": "tokenNames",
+        "type": "string[]"
       },
       {
-        "internalType": "contract Synth",
-        "name": "synth",
-        "type": "address"
+        "internalType": "string[]",
+        "name": "tokenSymbols",
+        "type": "string[]"
       },
       {
-        "internalType": "contract Reserve",
-        "name": "reserve",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "vaultAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "synthAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "reserveAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "nftAddresses",
+        "type": "address[]"
       }
     ],
-    "name": "listSynth",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "tokens",
+        "type": "string[]"
+      }
+    ],
+    "name": "listUserDebtDeposit",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "debts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "deposits",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[][]",
+        "name": "depositNFTs",
+        "type": "uint256[][]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "string[]",
+        "name": "tokens",
+        "type": "string[]"
+      }
+    ],
+    "name": "listUserHoldingInfo",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "debtETH",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "debtNFT",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "tokenPrices",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "_synthNames",
+        "type": "string[]"
+      },
+      {
+        "internalType": "contract Vault[]",
+        "name": "_vaults",
+        "type": "address[]"
+      }
+    ],
+    "name": "listVaults",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "listedTokens",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "numListedTokens",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -436,92 +485,5 @@
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "synthName",
-        "type": "string"
-      }
-    ],
-    "name": "userBurnSynth",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "synthName",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "synthAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "userLiquidate",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "synthName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "targetCollateralRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "targetDebt",
-        "type": "uint256"
-      }
-    ],
-    "name": "userManageSynth",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "synthName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "targetCollateralRatio",
-        "type": "uint256"
-      }
-    ],
-    "name": "userMintSynth",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
   }
 ]

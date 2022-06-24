@@ -5,11 +5,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "../../../api";
 import { SearchBar, simpleFilter } from "../../../InstrumentTable";
 import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
 import tableColumns from "./tableColumns";
+import {Instrument} from "../../../util/dataStructures";
 
 export default function ClaimTable({
     onRowClick,

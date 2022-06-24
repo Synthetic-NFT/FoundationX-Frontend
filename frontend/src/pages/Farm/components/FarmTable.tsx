@@ -8,10 +8,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument, TradeData } from "../../../api";
 import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
 import FarmTableColumns from "./tableColumns";
+import {Instrument, TradeData} from "../../../util/dataStructures";
 
 export function SearchBar({
   onSearch,

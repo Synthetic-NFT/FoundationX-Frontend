@@ -2,7 +2,9 @@ import { Button, Select, MenuItem, makeStyles } from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
 import { withStyles } from "@material-ui/core/styles";
 import FormControl from '@mui/material/FormControl';
-import React from "react";
+import React, {useEffect, useState} from "react";
+
+import {CoinInterface} from "../util/dataStructures";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -52,21 +54,23 @@ const BootstrapInput = withStyles((theme) => ({
 
 function SearchInput(props: any) {
     const styles = useStyles();
-    const { children } = props;
+    const { availableCoins, defaultValue, onChange, valueChange, disableInput, value } = props;
+    if (!defaultValue) {
+        return null;
+    }
     return (
         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} className={styles.formControl} style={{ flexDirection: "row", }}>
             <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
                 input={<BootstrapInput />}
-                defaultValue="10"
+                defaultValue={defaultValue}
+                onChange={(e)=>{onChange(e.target.value )}}
                 style={{ color: "#ffffff" }}
             >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {availableCoins.map((item: CoinInterface) => <MenuItem key={item.symbol} value={item.name}>{item.name}</MenuItem>)}
             </Select>
-            <BootstrapInput id="demo-customized-textbox" />
+            <BootstrapInput id="demo-customized-textbox" placeholder="0" value={value} onChange={(e) => {valueChange(e.target.value )}} disabled={disableInput}/>
         </FormControl>
     );
 }

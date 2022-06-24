@@ -7,7 +7,6 @@ import { TextField } from "@mui/material";
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect } from "react";
 
-import { Instrument } from "./api";
 import { AppContext } from "./AppContext";
 // eslint-disable-next-line import/default
 import { NFTIcons } from "./fakeData";
@@ -20,6 +19,7 @@ import {
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
 import { mintSynth } from "./util/interact";
+import {Instrument} from "./util/dataStructures";
 
 type BuySpecConfig = {
   minRatio: number;
@@ -129,7 +129,7 @@ function CollateralField({ instrument }: { instrument: Instrument }) {
           })
         }
       />
-      <img src={Ethereum} alt="Ethereum" style={{height:"1.67rem", width:"1.67rem"}} />
+      <img src={Ethereum} alt="Ethereum" style={{ height: "1.67rem", width: "1.67rem" }} />
     </div>
   );
 }
@@ -191,7 +191,7 @@ function RatioField({
       <StyledTextField
         value={state.ratioValid ? state.ratio : ""}
         inputProps={{ min: 0, max: 12 }}
-        style={{ margin: "1rem", width: "2.67rem" }}
+        style={{ margin: "1rem", width: "3.4rem" }}
         label="Ratio"
         type="number"
         onChange={(e) =>
@@ -231,7 +231,7 @@ function DebtField({ instrument }: { instrument: Instrument }) {
       <img
         src={NFTIcons.get(instrument.ticker)}
         alt={instrument.ticker}
-        style={{height:"1.67rem", width:"1.67rem"}}
+        style={{ height: "1.67rem", width: "1.67rem" }}
       />
     </div>
   );
@@ -259,7 +259,16 @@ function BuyForm({ instrument }: { instrument: Instrument }) {
         state.collateral,
         state.ratio,
       );
-      console.log(mintSynthResponse);
+      console.log("mintSynthPressed response", mintSynthResponse);
+      if (mintSynthResponse) {
+        if (mintSynthResponse.status === 'success') {
+          // TODO show toast and back to mint page
+        } else {
+          // TODO show toast
+        } 
+      }
+    } else {
+      // TODO show toast
     }
   };
 

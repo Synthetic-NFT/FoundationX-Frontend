@@ -12,17 +12,17 @@ export default function TradeRouteContainer(): React.ReactElement {
       {/* we need the exact here because we only want to match `/trade/`. Without it, this
        * will also match "/trade/order".
        */}
-      <Route path="/trade" exact>
+      <Route path="/mint" exact>
         <InstrumentTable
           onRowClick={(instrument) => {
             // We are at "/trade". When clicking an instrument in the table, we go to the
             // order page by navigating to "/trade/order/buy" and set the ticker of the
             // insturment being clicked.
-            history.push(`/trade/order/buy?ticker=${instrument.ticker}`);
+            history.push(`/mint/order/with_eth?ticker=${instrument.ticker}`);
           }}
         />
       </Route>
-      <Route path="/trade/order">
+      <Route path="/mint/order">
         <InstrumentOrder />
       </Route>
     </Switch>

@@ -12,7 +12,6 @@ import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "../../../api";
 import { AppContext } from "../../../AppContext";
 // eslint-disable-next-line import/default
 import { SearchInput, BootstrapInput } from '../../../components/SearchInput'
@@ -27,6 +26,7 @@ import Ethereum from "../../../styles/images/Ethereum.svg";
 import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
 import { mintSynth } from "../../../util/interact";
+import {Instrument} from "../../../util/dataStructures";
 
 type BuySpecConfig = {
   minRatio: number;

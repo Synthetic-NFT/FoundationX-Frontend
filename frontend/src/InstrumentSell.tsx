@@ -9,7 +9,6 @@ import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
 
-import { Instrument } from "./api";
 import { AppContext } from "./AppContext";
 // eslint-disable-next-line import/default
 import { NFTIcons } from "./fakeData";
@@ -23,6 +22,7 @@ import {
 import Ethereum from "./styles/images/Ethereum.svg";
 import theme from "./theme";
 import {burnSynth, loadUserOrderStat, manageSynth} from "./util/interact";
+import {Instrument} from "./util/dataStructures";
 
 type SellSpecConfig = {
   minRatio: number;
@@ -335,7 +335,7 @@ type UserStatSpec = {
 };
 
 // Wraps the business logic in a single hook
-function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
+function useUserStatSpec(burnSpec: BurnSpec, instrument: Instrument): UserStatSpec {
   const { unit } = useContext(AppContext);
   const { walletAddress } = useContext(AppContext);
   const [oldCollateral, setOldCollateral] = useState(new BigNumber(0));
@@ -350,7 +350,7 @@ function useUserStatSpec(burnSpec: BurnSpec): UserStatSpec {
   useEffect(() => {
     const getAndSetUserStat = async () => {
       const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
-        await loadUserOrderStat(walletAddress);
+        await loadUserOrderStat(walletAddress, instrument.ticker);
         const ratio = new BigNumber(bnCRatio).div(unit).times(100).toString();
         const collateral = new BigNumber(bnCollateral).div(unit).toString();
         const debt = new BigNumber(bnDebt).div(unit).toString();
@@ -426,7 +426,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
 
   const { state, dispatch } = useContext(ManageContext);
 
-  const UserStatSpec = useUserStatSpec(burnSpec);
+  const UserStatSpec = useUserStatSpec(burnSpec, instrument);
   const {
     walletAddress,
     oldDebt,
@@ -450,7 +450,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
     );
     const getAndSetUserStat = async () => {
       const [bnCollateral, bnCRatio, bnDebt, bnSynthPrice] =
-          await loadUserOrderStat(walletAddress);
+          await loadUserOrderStat(walletAddress, instrument.ticker);
       const ratio = new BigNumber(bnCRatio).div('1e18').times(100).toString();
       const collateral = new BigNumber(bnCollateral).div('1e18').toString();
       const debt = new BigNumber(bnDebt).div('1e18').toString();

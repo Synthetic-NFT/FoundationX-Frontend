@@ -100,11 +100,11 @@ export default function FarmLongShort(): React.ReactElement {
       link: LONG_URL,
       tooltip: "Provide liquidity to receive LP tokens which are staked to earn MIR token rewards"
     },
-    {
-      label: "Short Farm",
-      link: SHORT_URL,
-      tooltip: "Provide collateral to create short positions and earn MIR token rewards."
-    },
+    // {
+    //   label: "Short Farm",
+    //   link: SHORT_URL,
+    //   tooltip: "Provide collateral to create short positions and earn MIR token rewards."
+    // },
   ];
 
   return (
@@ -151,9 +151,9 @@ export default function FarmLongShort(): React.ReactElement {
           <Route path="/farm/long" exact>
             <FarmLong instrument={instrument} />
           </Route>
-          <Route path="/farm/short" exact>
-            <FarmShort instrument={instrument} />
-          </Route>
+          {/*<Route path="/farm/short" exact>*/}
+          {/*  <FarmShort instrument={instrument} />*/}
+          {/*</Route>*/}
         </Switch>
       </div>
     </>

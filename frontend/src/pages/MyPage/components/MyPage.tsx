@@ -9,13 +9,17 @@ import ReactEcharts from "echarts-for-react";
 import React, { useContext, useEffect, useState } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
 
-import api, { MyPageData } from "../../../api";
+import api, { blockchainAPI } from "../../../api";
+import { AppContext } from "../../../AppContext";
 import CreditCard from "../../../styles/images/CreditCard.png";
 import Send from "../../../styles/images/send.svg";
 import Star from "../../../styles/images/star.svg";
 import theme from "../../../theme";
+import {TradeContext} from "../../../TradeContext";
+import { connectWallet, getCurrentWalletConnected } from "../../../util/interact";
 import MyPageTable from "./MyPageTable";
-import { holdingTableColumns, borrowingTableColumns, governTableColumns } from "./tableColumns";
+import { holdingTableColumns, borrowingTableColumns } from "./tableColumns";
+
 
 const useStyles = makeStyles({
   loginGroup: {
@@ -240,58 +244,136 @@ export default function MypPage(): React.ReactElement {
   const history = useHistory();
   const styles = useStyles();
 
-  const [loginSuccess, setLoginSuccess] = useState(false);
-  const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
+  const { walletAddress, setWallet } = useContext(AppContext);
+  // const [loginSuccess, setLoginSuccess] = useState(false);
+  // const [myPageData, setMyPageData] = useState<MyPageData | null>(null);
+  const [holding, setHolding] = useState({});
+  const { tradeData } = useContext(TradeContext);
+  const [farming, setFarming] = useState({});
   const [step, setStep] = useState(0);
-
+  const [status, setStatus] = useState("");
   const [loading, setIsLoading] = React.useState(false);
+  const [canMintNFT, setCanMintNFT] = useState(false);
+
   useEffect(() => {
-    if (!loading) {
-      setIsLoading(true);
-      api.loadMyPageData().then((data) => {
-        setMyPageData(data);
-        // setStep(0);
+    const setWalletAndStatus = async () => {
+      const {address, status} = await getCurrentWalletConnected();
+      setWallet(address);
+      setStatus(status);
+    };
+    setWalletAndStatus();
+
+    function addWalletListener() {
+      if ((window as any).ethereum) {
+        (window as any).ethereum.on(
+            "accountsChanged",
+            (accounts: string | any[]) => {
+              if (accounts.length > 0) {
+                setWallet(accounts[0]);
+                setStatus("👆🏽 Write a message in the text-field above.");
+              } else {
+                setWallet("");
+                setStatus("🦊 Connect to Metamask using the top right button.");
+              }
+            },
+        );
+      } else {
+        setStatus("Not installed");
+      }
+    }
+    addWalletListener()
+  }, [setWallet, setStatus])
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (walletAddress) {
+      blockchainAPI.loadUserAllTokenPosition(walletAddress).then(holdings => {
+        const result = [];
+        if (holdings) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const key of Object.keys(holdings)) {
+            const item = holdings[key];
+            const instrument = tradeData?.instruments.find(
+                (instrument: { ticker: string; }) => instrument.ticker === key,
+            );
+            const target = {
+              "ticker": key,
+              "instrument": instrument,
+              "balance": Number(item[0]).toFixed(2),
+              "value": Number(item[1]).toFixed(2),
+              "poolPrice": Number(item[3]).toFixed(2)
+            }
+            result.push(target)
+          }
+        }
+        console.log("Holding", result);
+        setHolding(result);
         setIsLoading(false);
       });
-    }
-  }, [loading, setIsLoading, myPageData, setMyPageData]);
 
-  function login() {
-    setLoginSuccess(true);
-  }
-
-  function getOption() {
-    return {
-      tooltip: {
-        trigger: 'item'
-      },
-      color: colors,
-      legend: {
-        show: false,
-      },
-      series: [
-        {
-          name: 'My Page',
-          type: 'pie',
-          radius: ['70%', '98%'],
-          avoidLabelOverlap: false,
-          label: {
-            show: false,
-            position: 'center'
-          },
-          emphasis: false,
-          labelLine: {
-            show: false
-          },
-          data: [
-            { value: myPageData?.ust, name: 'ust' },
-            { value: myPageData?.holding, name: 'holding' },
-            { value: myPageData?.borrowing, name: 'borrowing' },
-          ]
+      blockchainAPI.loadUserAllLpBalance(walletAddress).then(farmings => {
+        const result = [];
+        if (farmings) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const key of Object.keys(farmings)) {
+            const item = farmings[key];
+            const target = {
+              "ticker": key,
+              "oraclePrice": Number(item)
+            }
+            result.push(target)
+          }
         }
-      ]
-    };
+        console.log("Framing", result);
+        setFarming(result);
+        setIsLoading(false);
+      });
+
+      blockchainAPI.checkUserCanMintWithNFT(walletAddress).then(canMint => {
+        setCanMintNFT(canMint);
+      })
+    }
+  }, [setWallet, setStatus, walletAddress, setFarming, setHolding, setCanMintNFT, tradeData])
+
+
+  const login = async () => {
+    const walletResponse = await connectWallet();
+    setStatus(walletResponse.status);
+    setWallet(walletResponse.address);
   }
+
+  // function getOption() {
+  //   return {
+  //     tooltip: {
+  //       trigger: 'item'
+  //     },
+  //     color: colors,
+  //     legend: {
+  //       show: false,
+  //     },
+  //     series: [
+  //       {
+  //         name: 'My Page',
+  //         type: 'pie',
+  //         radius: ['70%', '98%'],
+  //         avoidLabelOverlap: false,
+  //         label: {
+  //           show: false,
+  //           position: 'center'
+  //         },
+  //         emphasis: false,
+  //         labelLine: {
+  //           show: false
+  //         },
+  //         data: [
+  //           { value: myPageData?.ust, name: 'ust' },
+  //           { value: myPageData?.holding, name: 'holding' },
+  //           { value: myPageData?.borrowing, name: 'borrowing' },
+  //         ]
+  //       }
+  //     ]
+  //   };
+  // }
 
   const HoldingHeader = (
     <div className={styles.header}>
@@ -370,23 +452,17 @@ export default function MypPage(): React.ReactElement {
       </div>
     </div>
   )
-  const statusList = ['claim', 'trade', 'swap'];
-  const titleList = [
-    'You don’t have any NFT yet. Claim testing NFT now',
-    'Now you can mint sTokens with your NFTs',
-    'Now you can trade your sTokens',
-  ]
-  const buttonList = ['Claim your NFT now', 'Mint sTokens with your NFTs', 'Trade your sTokens']
+  const statusList = canMintNFT ? ['trade', 'swap']: ['claim'];
+  const titleList = canMintNFT ? [ 'Now you can mint sTokens with your NFTs', 'Now you can trade your sTokens', ]: [ 'You don’t have any NFT yet. Claim testing NFT now' ]
+  const buttonList = canMintNFT ? ['Mint sTokens with your NFTs', 'Trade your sTokens'] : ['Claim your NFT now']
   function handleClick() {
-    // const s = step + 1;
-    // setStep(s % 3);
     history.push(`/${statusList[step]}`);
   }
 
   return (
     <>
       {
-        !loginSuccess &&
+        walletAddress === "" &&
         <div className={styles.loginGroup} >
           <Button
             className={styles.button}
@@ -402,7 +478,7 @@ export default function MypPage(): React.ReactElement {
         </div>
       }
       {
-        loginSuccess && myPageData &&
+        walletAddress !== "" &&
         <>
           <div className={styles.cardGroup}>
             <div className={styles.cardLeft} >
@@ -476,11 +552,12 @@ export default function MypPage(): React.ReactElement {
               >
                 {buttonList[step]}
               </Button>
-              <Button onClick={() => setStep((step + 1) % 3)} size="small">
+
+              <Button hidden={titleList.length <= 1} onClick={() => setStep((step + 1) % titleList.length)} size="small">
                 next step
               </Button>
             </div>
-            <div className={styles.cardRight} >
+            {/* <div className={styles.cardRight} >
               <div className={styles.titleGroup} style={{ width: "11.67rem" }}>
                 <div className={styles.totalValueTitle} style={{ display: "flex", alignItems: "center" }}>
                   Total Claimable Rewards
@@ -516,12 +593,12 @@ export default function MypPage(): React.ReactElement {
               >
                 Claim All Rewards
               </Button>
-            </div>
+            </div> */}
           </div>
           <div style={{ margin: "0 0.17rem 2.25rem 0.17rem" }}>
-            <MyPageTable tableColumns={holdingTableColumns} data={myPageData?.data.holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
-            <MyPageTable tableColumns={borrowingTableColumns} data={myPageData?.data.borrowing} Header={BorrowingHeader} Radius="0 0 0 0" />
-            <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader} Radius="0 0 0.83rem 0.83rem" />
+            <MyPageTable tableColumns={holdingTableColumns} data={holding} Header={HoldingHeader} Radius="0.83rem 0.83rem 0 0" />
+            <MyPageTable tableColumns={borrowingTableColumns} data={farming} Header={BorrowingHeader} Radius="0 0 0 0" />
+            {/* <MyPageTable tableColumns={holdingTableColumns} data={[]} Header={GovernHeader} Radius="0 0 0.83rem 0.83rem" /> */}
           </div>
         </>
       }
