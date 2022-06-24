@@ -43,6 +43,7 @@ export const simpleSwapExactETHForTokens = async (walletAddress: string, amountI
 
     const amountOutOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveB, reserveA).call();
     const amountOutMin = new BigNumber(amountOutOptimal).times('0.9').toFixed(0);
+
     await swapExactETHForTokens(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now() + 60)
 }
 export const swapExactTokensForETH = async (amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
