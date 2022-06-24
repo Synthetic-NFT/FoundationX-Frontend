@@ -1,4 +1,5 @@
 export const networks = [3,4,5,42,123, 1337, 444800, 444900]
+export const supportedNetworks = new Set([5, 31337])
 
 export const ChainId = {
   // MAINNET: 1,

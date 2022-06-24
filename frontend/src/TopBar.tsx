@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import React, { useContext, useEffect, useState } from "react";
-
+import {supportedNetworks} from "./constants/chains";
 import api from "./api";
 import { AppContext } from "./AppContext";
 import theme from "./theme";
@@ -32,7 +32,7 @@ const useStyles = makeStyles({
 });
 
 export default function TopBar(): React.ReactElement {
-  const { appData, setAppData } = useContext(AppContext);
+  const { appData, setAppData, wrongNetwork, setWrongNetwork } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const { walletAddress, setWallet } = useContext(AppContext);
   const [status, setStatus] = useState("");
@@ -41,6 +41,13 @@ export default function TopBar(): React.ReactElement {
 
   function addWalletListener() {
     if ((window as any).ethereum) {
+      // detect Network account change
+      (window as any).ethereum.on('networkChanged', (networkId: number) => {
+        if (!supportedNetworks.has(networkId)) {
+          setWrongNetwork(true)
+        }
+      });
+
       (window as any).ethereum.on(
         "accountsChanged",
         (accounts: string | any[]) => {

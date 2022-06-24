@@ -216,28 +216,10 @@ function HoldingActionCellRenderer({ row }: CellRendererProps): TableCellElement
 
   function handleSwapClick() {
     // history.push(`/swap`);
-    history.push(
-    '/swap', row.instrument
-    )
-  // return (
-  //   <Switch>
-  //       history.push(
-  //           '/swap', row.instrument
-  //       )
-  //       <Route path={`/swap`}>
-  //           <CoinSwapper instrument={row.instrument} />
-  //       </Route>
-  //   </Switch>
-  // );
-    // history.push(`/trade/order/buy?ticker=${row.ticker}`);
-    //
-    //   return (
-    //       <Switch>
-    //           <Route path={`/swap`}>
-    //               <CoinSwapper instrument={row.instrument} />
-    //           </Route>
-    //       </Switch>
-    //   );
+      history.push({
+          pathname: '/swap',
+          state: { instrument: row.instrument }
+      });
   }
   function handleManageClick() {
     history.push(`/mypage/manage/nft?ticker=${row.ticker}`);

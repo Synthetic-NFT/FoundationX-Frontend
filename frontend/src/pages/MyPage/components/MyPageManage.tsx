@@ -127,7 +127,7 @@ export default function MyPageManage(): React.ReactElement {
             <InstrumentSell instrument={instrument} />
           </Route>
           <Route path="/mypage/manage/nft" exact>
-            <MyPageManageNFT instrument={instrument} buttonName="Redeem" haveAdd={false} openDialog />
+            <MyPageManageNFT instrument={instrument} buttonName="Burn" haveAdd={false} openDialog />
           </Route>
           <Route path="/mypage/manage/withdraw" exact>
             <MyPageWithdraw instrument={instrument} />

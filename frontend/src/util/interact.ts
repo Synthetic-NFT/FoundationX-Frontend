@@ -2,7 +2,7 @@ import {BigNumber} from "bignumber.js";
 
 import ContractAddress from "../constants/ContractAddress";
 import web3Instance, {
-  FactoryAddress, FactoryContract, LpPairContract, ReserveContract,
+  FactoryAddress, FactoryContract, LpPairContract, NFTAddress, NFTContract, ReserveContract,
   RouterContract, SynthAddress, SynthContract, VaultAddress, VaultContract,
   WETHAddress, WETHContract
 } from "../constants/web3Instance";
@@ -244,6 +244,32 @@ export const loadUserOrderStat = async (address: string, tickerID: string) => {
   }
   const bnCRatio = cRatio.times(new BigNumber("1e18"));
   return [bnCollateral, bnCRatio, bnDebt, bnSynthPrice];
+};
+
+export const claimWETH = async(walletAddress: string, amount: string) => {
+  const claimParameters = {
+    to: WETHAddress, // Required except during contract publications.
+    from: walletAddress, // must match user's active address.
+    data: WETHContract.methods.mintFree(walletAddress, new BigNumber(amount).times("1e18")).encodeABI(),
+  }
+
+  try {
+    const claimHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [claimParameters],
+    });
+    console.log(claimHash);
+    return {
+      status: "success",
+      // depositHash,
+      claimHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+
 };
 
 export const loadUserDebtDeposit = async (walletAddress: string, tickerIDs: string[]) => {

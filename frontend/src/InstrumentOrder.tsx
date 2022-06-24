@@ -54,15 +54,15 @@ const useStyles = makeStyles({
   },
 });
 
-const TRADE_URL = "/trade";
+const TRADE_URL = "/mint";
 const BASE_URL = `${TRADE_URL}/order`;
-const BUY_URL = `${BASE_URL}/buy`;
-const SELL_URL = `${BASE_URL}/sell`;
+const ETH_URL = `${BASE_URL}/with_eth`;
+const NFT_URL = `${BASE_URL}/with_nft`;
 
 // Rendered in `/trade/order` and has 2 sub pages, one for buy and another for sell.
 // The instrument of this order is in the URL search param `ticker=`
 export default function InstrumentOrder(): React.ReactElement {
-  const match = useRouteMatch([BUY_URL, SELL_URL]);
+  const match = useRouteMatch([ETH_URL, NFT_URL]);
   const location = useLocation();
   const history = useHistory();
   const ticker = new URLSearchParams(location.search).get("ticker");
@@ -106,7 +106,7 @@ export default function InstrumentOrder(): React.ReactElement {
 
   return (
     <>
-      <ReturnButton onClick={() => history.push('/trade')} textValue="Back" />
+      <ReturnButton onClick={() => history.push('/mint')} textValue="Back" />
       <Box
         sx={{
           borderBottom: 1,
@@ -114,9 +114,9 @@ export default function InstrumentOrder(): React.ReactElement {
         }}
       >
         {/* Since there are only 2 tabs, just hard code 0 or 1 as the selected tab */}
-        <Tabs centered value={match?.url === BUY_URL ? 0 : 1}>
-          <Tab label="Mint with ETH" onClick={() => onSwitch(BUY_URL)} />
-          <Tab label="Mint with NFT" onClick={() => onSwitch(SELL_URL)} />
+        <Tabs centered value={match?.url === ETH_URL ? 0 : 1}>
+          <Tab label="Mint with ETH" onClick={() => onSwitch(ETH_URL)} />
+          <Tab label="Mint with NFT" onClick={() => onSwitch(NFT_URL)} />
         </Tabs>
       </Box>
       <div
@@ -132,10 +132,10 @@ export default function InstrumentOrder(): React.ReactElement {
       >
         <Switch>
           {/* Renders buy or sell based on URL */}
-          <Route path="/trade/order/buy" exact>
+          <Route path="/mint/order/with_eth" exact>
             <InstrumentBuy instrument={instrument} />
           </Route>
-          <Route path="/trade/order/sell" exact>
+          <Route path="/mint/order/with_nft" exact>
             <MyPageManageNFT instrument={instrument} buttonName="Mint" haveAdd={false} openDialog />
           </Route>
         </Switch>

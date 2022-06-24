@@ -1,7 +1,14 @@
 import { BigNumber } from "bignumber.js";
 
 import ContractAddress from "../constants/ContractAddress";
-import {NFTAddress, NFTContract, VaultAddress, VaultContract} from "../constants/web3Instance";
+import {
+  FactoryAddress, FactoryContract,
+  NFTAddress,
+  NFTContract, SynthAddress,
+  SynthContract,
+  VaultAddress,
+  VaultContract
+} from "../constants/web3Instance";
 import {OneNFT} from "./dataStructures";
 import {loadActiveTokens} from "./interact";
 
@@ -68,11 +75,39 @@ export function loadUserGivenNFT(walletAddress: string, tickerID: string): Promi
               ticker: tickerID,
               tokenID: tokenIDs[i],
               tokenURI: tokenImages[i],
-              nftAddress: NFTAddress[i],
+              nftAddress: NFTAddress[tickerID],
             })
           }
           return oneNFTs;
         })
+      })
+    })
+  })
+}
+
+export function loadUserDepositedNFTs(walletAddress: string, tickerID: string): Promise<OneNFT[]> {
+  const depositsPromise = FactoryContract.methods.listUserDebtDeposit(walletAddress, [tickerID]).call();
+  return depositsPromise.then((result: any) => {
+
+    const tokenIDs = result.depositNFTs[0];
+    const tokenURIPromises = Promise.all(tokenIDs.map((tokenId: any) => NFTContract[tickerID].methods.tokenURI(tokenId).call()))
+    return tokenURIPromises.then(tokenURIs => {
+      const fetchJSONPromises = []
+      for (let i = 0; i < tokenURIs.length; i += 1) {
+        const tokenURI = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
+        fetchJSONPromises.push(getIPFSMetadataFromURL(tokenURI));
+      }
+      return Promise.all(fetchJSONPromises).then(tokenImages => {
+        const oneNFTs = []
+        for (let i = 0; i < tokenIDs.length; i += 1) {
+          oneNFTs.push({
+            ticker: tickerID,
+            tokenID: tokenIDs[i],
+            tokenURI: tokenImages[i],
+            nftAddress: NFTAddress[tickerID],
+          })
+        }
+        return oneNFTs;
       })
     })
   })
@@ -140,7 +175,27 @@ export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], t
         .userMintSynthNFT(tokenIDs)
         .encodeABI(),
   };
+  //
+  // const approveParameters = []
+  // for (let i = 0; i < tokenIDs.length; i += 1) {
+  //   approveParameters.push({
+  //     to: NFTAddress[tickerID], // Required except during contract publications.
+  //     from: walletAddress, // must match user's active address.
+  //     data: NFTAddress[tickerID].methods.approve(VaultAddress[tickerID], bnBurnAmount).encodeABI(),
+  //   })
+  // }
+  const approveParameters = {
+      to: NFTAddress[tickerID], // Required except during contract publications.
+      from: walletAddress, // must match user's active address.
+      data: NFTContract[tickerID].methods.setApprovalForAll(VaultAddress[tickerID], true).encodeABI(),
+    }
+
   try {
+    const approveHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [approveParameters],
+    });
+    console.log(approveHash);
     const mintHash = await (window as any).ethereum.request({
       method: "eth_sendTransaction",
       params: [mintParameters],
@@ -158,3 +213,49 @@ export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], t
   }
 }
 
+
+
+export const burnSynthWithNFT = async (walletAddress: string, tokenIDs: any[], tickerID: string) => {
+  // input error handling
+  if (!(window as any).ethereum || walletAddress === null) {
+    return {
+      status:
+          "💡 Connect your Metamask wallet to update the message on the blockchain.",
+    };
+  }
+  const burnParameters = {
+    to: VaultAddress[tickerID], // Required except during contract publications.
+    from: walletAddress, // must match user's active address.
+    data: VaultContract[tickerID].methods.userBurnSynthNFT(tokenIDs).encodeABI(),
+  };
+  const bnBurnAmount = new BigNumber(tokenIDs.length).times("1e18")
+  const approveParameters = {
+    to: SynthAddress[tickerID], // Required except during contract publications.
+    from: walletAddress, // must match user's active address.
+    data: SynthContract[tickerID].methods.approve(VaultAddress[tickerID], bnBurnAmount).encodeABI(),
+  };
+
+  // sign the transaction
+  try {
+    const approveHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [approveParameters],
+    });
+    console.log(approveHash);
+    const burnHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [burnParameters],
+    });
+    console.log(burnHash);
+    return {
+      status: "success",
+      approveHash,
+      burnHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+
+}

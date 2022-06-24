@@ -453,7 +453,7 @@ export default function FarmLong({
           <div className={styles.stepNumber}>1</div>
           <div style={{ marginLeft: "1.25rem" }}>
             <FieldLabel
-              title="Provide mApple"
+              title="Provide sTokens"
               description=""
             />
             <div >
@@ -465,8 +465,8 @@ export default function FarmLong({
           <div className={styles.stepNumber}>2</div>
           <div style={{ marginLeft: "1.25rem" }}>
             <FieldLabel
-              title="Provide Additional UST"
-              description="An equivalent UST amount must be provided."
+              title="Provide Additional ETH"
+              description="An equivalent ETH amount must be provided."
             />
             <div style={{ display: "flex", marginTop: "1.5rem" }}>
               <SearchInput availableCoins={[ethCoin]} defaultValue={ethCoin.name} value={tokenBValue} disableInput />

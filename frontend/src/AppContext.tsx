@@ -16,12 +16,16 @@ export const AppContext = React.createContext<{
   walletAddress: string;
   setWallet: (_: string) => void;
   unit: BigNumber;
+  wrongNetwork: boolean;
+  setWrongNetwork: (_: boolean) => void;
 }>({
   appData: null,
   setAppData: () => {},
   walletAddress: "",
   setWallet: () => {},
   unit: new BigNumber("1e18"),
+  wrongNetwork: false,
+  setWrongNetwork: () => {},
 });
 
 export function AppContextProvider({
@@ -32,10 +36,10 @@ export function AppContextProvider({
   const [appData, setAppData] = React.useState<AppData | null>(null);
   const [walletAddress, setWallet] = React.useState<string>("");
   const [unit] = React.useState<BigNumber>(new BigNumber("1e18"));
-
+  const [wrongNetwork, setWrongNetwork ] = React.useState<boolean>(false);
   return (
     <AppContext.Provider
-      value={{ appData, setAppData, walletAddress, setWallet, unit}}
+      value={{ appData, setAppData, walletAddress, setWallet, unit, wrongNetwork, setWrongNetwork}}
     >
       {children}
     </AppContext.Provider>

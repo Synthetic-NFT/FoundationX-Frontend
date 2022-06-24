@@ -28,7 +28,7 @@ type Route = {
   RouteContainer?: React.FunctionComponent;
 };
 
-const tradeRoute = "/trade";
+const mintRoute = "/mint";
 const myPageRoute = "/myPage";
 const swapRoute = "/swap";
 const farmRoute = "/farm";
@@ -47,7 +47,7 @@ export const routes: Route[] = [
     RouteContainer: MyPageRouteContainer,
   },
   {
-    path: tradeRoute,
+    path: mintRoute,
     label: "Mint",
     icon: Trade,
     RouteContainer: TradeRouteContainer,

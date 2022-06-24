@@ -11,9 +11,16 @@ import {AppContext} from "../../../AppContext";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
 import {TradeContext} from "../../../TradeContext";
-import {loadUserGivenNFT} from "../../../util/nft_interact";
+import {
+  burnSynthWithNFT,
+  loadUserDepositedNFTs,
+  loadUserGivenNFT,
+  mintSynthWithNFT,
+  userClaimBatchNFT
+} from "../../../util/nft_interact";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
 import {OneNFT} from "../../../util/dataStructures";
+import {Button} from "@mui/material";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -68,6 +75,16 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     marginTop: "0.5rem",
     textAlign: "center",
     minHeight: "1.25rem",
+  },
+  button: {
+    width: "6.5rem",
+    height: "2rem",
+    background: "linear-gradient(102.22deg, #1368E8 41.1%, #221FBE 78.05%)",
+    borderRadius: "0.125rem",
+    fontWeight: 400,
+    fontSize: "0.83rem",
+    lineHeight: "1.25rem",
+    color: "#FFFFFF",
   }
 });
 
@@ -81,20 +98,28 @@ function MyPageManageNFT(props: any): React.ReactElement {
   const classes = useStyles();
   const history = useHistory();
 
-  const { instrument, buttonName, onButtonClick } = props;
+  const { instrument, buttonName } = props;
   const {tradeData} = useContext(TradeContext);
   const {walletAddress} = useContext(AppContext);
-  const [depositedNFTs, setDepositedNFTs] = React.useState<OneNFT[]>([]);
+  const [relatedNFTs, setRelatedNFTs] = React.useState<OneNFT[]>([]);
+  const [selectedTokenIDs, setSelectedTokenIDs] = React.useState<string[]>([]);
 
 
   // Stores a record of whether their respective dialog window is open
   const [dialog, setDialog] = React.useState({});
 
   useEffect(() => {
-    loadUserGivenNFT(walletAddress, instrument.ticker).then(oneNFTs => {
-      setDepositedNFTs(oneNFTs);
-    })
-  }, [walletAddress, instrument]);
+    if (buttonName === "Mint") {
+      loadUserGivenNFT(walletAddress, instrument.ticker).then(oneNFTs => {
+        setRelatedNFTs(oneNFTs);
+      })
+    }
+    else if (buttonName === "Burn") {
+      loadUserDepositedNFTs(walletAddress, instrument.ticker).then(oneNFTs => {
+        setRelatedNFTs(oneNFTs);
+      })
+    }
+  }, [walletAddress, instrument, buttonName]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
@@ -107,25 +132,54 @@ function MyPageManageNFT(props: any): React.ReactElement {
     });
   });
 
-  function handleCardClick(item: OneNFT) {
-    setDialog(item)
+  function handleCardClick(item:any) {
+    const cards = [...selectedTokenIDs];
+    const index = cards.indexOf(item.tokenID);
+    if (index > -1) {
+      cards.splice(index, 1);
+    } else {
+      cards.push(item.tokenID);
+    }
+
+    setSelectedTokenIDs(cards);
   }
 
-  function handleButtonClick(item: OneNFT) {
-    setDialog(item)
+  function handleButtonClick() {
+    if (buttonName === "Mint") {
+      mintSynthWithNFT(walletAddress, selectedTokenIDs, instrument.ticker)
+    }
+    else if (buttonName === "Burn") {
+      burnSynthWithNFT(walletAddress, selectedTokenIDs, instrument.ticker)
+    }
   }
-
+  const active = {
+    // borderImage: "linear-gradient(222deg, rgba(152, 44, 177, 1), rgba(228, 88, 95, 1))",
+    border: "1px solid #951FBE"
+  }
+  const inactive = {
+  }
   // @ts-ignore
   return (
     <div style={{
       display: "flex",
       justifyContent: "flex",
+      flexDirection: "column",
     }}>
-      <CardDialog
-        data={dialog}
-        onClose={() => setDialog({})}
-        buttonName={buttonName}
-      />
+      {/*<CardDialog*/}
+      {/*  data={dialog}*/}
+      {/*  onClose={() => setDialog({})}*/}
+      {/*  buttonName={buttonName}*/}
+      {/*/>*/}
+      <div>
+        <Button
+            className={classes.button}
+            size="small"
+            variant="contained"
+            onClick={() => handleButtonClick()}
+        >
+          {buttonName}
+        </Button>
+      </div>
       <Grid
         container
         direction="row"
@@ -133,7 +187,7 @@ function MyPageManageNFT(props: any): React.ReactElement {
         alignItems="center"
       >
         {
-          depositedNFTs.map(item =>
+          relatedNFTs.map(item =>
           (
             <Grid
               item
@@ -147,11 +201,11 @@ function MyPageManageNFT(props: any): React.ReactElement {
               alignItems="center"
               onClick={() => handleCardClick(item)}
             >
-              <Card cardStyl="">
+              <Card cardStyle={selectedTokenIDs.indexOf(item.tokenID) > -1 ? active : inactive}>
                 {/* eslint-disable-next-line global-require,import/no-dynamic-require */}
                 <img src={item.tokenURI} alt={item.ticker} style={{ height: "100%", width: "100%" }} />
               </Card>
-              <div className={classes.id}>{item.ticker}</div>
+              <div className={classes.id}>{item.tokenID}</div>
             </Grid>
           )
           )

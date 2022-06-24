@@ -23,6 +23,7 @@ export function getFarmDesiredETH(tickerID: string, amountADesired: string): Pro
     const bnAmountADesired = new BigNumber(amountADesired).times('1e18');
     LpPairContract[tickerID].methods.getReserves().call()
         .then((lpReserve: { _reserve0: any; _reserve1: any; }) => {
+          console.log(lpReserve)
           // eslint-disable-next-line no-underscore-dangle
           const [reserveA, reserveB] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
 

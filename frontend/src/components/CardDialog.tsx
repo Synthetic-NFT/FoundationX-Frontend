@@ -12,7 +12,7 @@ import MuiDialogActions from "@material-ui/core/DialogActions";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
 import PropTypes from "prop-types";
-import React from "react";
+import React, {useState} from "react";
 
 import Ethereum from "../styles/images/Ethereum.svg";
 import Card from "./Card"
@@ -139,6 +139,8 @@ function CardDialog(props: any) {
   const classes = useStyles();
   const { onClose, data, buttonName, onClick } = props;
 
+  const [value, setValue] = useState('');
+
   const exit = (value: string | undefined, name: string | undefined) => {
     onClose(value, name);
   };
@@ -159,11 +161,18 @@ function CardDialog(props: any) {
         <div style={{ marginLeft: "1.5rem" }}>
           <div className={classes.name}>{data.name}</div>
           <SearchInput />
+          <input
+              type="text"
+              placeholder=""
+              value={value}
+              onChange={(e) =>
+                setValue(e.target.value.replace(/\D/g, ''))}
+          />
           <Button
             className={classes.button}
             size="small"
             variant="contained"
-            onClick={()=>onClick()}
+            onClick={()=>onClick(value)}
           >
             {buttonName}
           </Button>

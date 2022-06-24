@@ -38,6 +38,8 @@ import {
   Instrument,
   NFTCollection
 } from "../../../util/dataStructures";
+import {claimWETH} from "../../../util/interact";
+import {AppContext} from "../../../AppContext";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -108,7 +110,7 @@ function ClaimDetail(props: any): React.ReactElement {
   const { buttonName, haveAdd, openDialog, onCollectionSelect } = props;
   const {tradeData} = useContext(TradeContext);
   const [availableNFTCollection, setAvailableNFTCollection] = React.useState<NFTCollection[]>(getSupportedNFTCollections(tradeData));
-
+  const {walletAddress} = useContext(AppContext)
   // Stores a record of whether their respective dialog window is open
   const [dialog, setDialog] = React.useState({});
 
@@ -159,6 +161,7 @@ function ClaimDetail(props: any): React.ReactElement {
         coins={[ethCoin]}
         signer="placeholder"
         buttonName={buttonName}
+        onClick = {(v: string) => claimWETH(walletAddress, v)}
       />
       <Grid
         container

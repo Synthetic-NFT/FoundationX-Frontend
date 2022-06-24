@@ -28,7 +28,8 @@ import CoinDialog from "./CoinDialog";
 import CoinField from "./CoinField";
 import SwapperCard from "./SwapperCard";
 import {simpleSwapExactETHForTokens, simpleSwapExactTokensForETH} from "../util/swap_interact";
-import {CoinInterface, defaultInstrument, ethCoin, TradeData} from "../util/dataStructures";
+import {CoinInterface, Instrument, defaultInstrument, ethCoin, TradeData} from "../util/dataStructures";
+import {useHistory, useLocation} from "react-router-dom";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -91,6 +92,8 @@ const useStyles = makeStyles(styles);
 
 function CoinSwapper(props: any): React.ReactElement {
   const classes = useStyles();
+  const history = useHistory();
+  const location = useLocation();
 
   const { instrument } = props;
   const { tradeData } = useContext(TradeContext);
@@ -102,7 +105,6 @@ function CoinSwapper(props: any): React.ReactElement {
   // Stores a record of whether their respective dialog window is open
   const [dialog1Open, setDialog1Open] = React.useState(false);
   const [dialog2Open, setDialog2Open] = React.useState(false);
-  const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
 
   // Stores data about their respective coin
@@ -212,6 +214,11 @@ function CoinSwapper(props: any): React.ReactElement {
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
   useEffect(() => {
+    // @ts-ignore
+    // if (location.state && location.state.instrument) {
+    //   // @ts-ignore
+    //   setCoin2(getCoinFromInstrument(location.state.instrument as Instrument))
+    // }
     const coinTimeout = setTimeout(() => {
       console.log('props: ', props);
       console.log("Checking balances...");
@@ -292,14 +299,14 @@ function CoinSwapper(props: any): React.ReactElement {
 
   const swapNow = async () => {
     if (coin1.name !== "Ethereum") {
-      if (coin1.symbol !== undefined) {
-        const result = await simpleSwapExactTokensForETH(walletAddress, field1Value, coin1.symbol);
+      if (coin1.name !== undefined) {
+        const result = await simpleSwapExactTokensForETH(walletAddress, field1Value, coin1.name);
         console.log("simpleSwapExactTokensForETH", result)
       } else {
         console.log("[Error] coin1.symbol is undefined");
       }
-    } else if (coin2.symbol !== undefined) {
-      const result = await simpleSwapExactETHForTokens(walletAddress, field1Value, coin2.symbol);
+    } else if (coin2.name !== undefined) {
+      const result = await simpleSwapExactETHForTokens(walletAddress, field1Value, coin2.name);
       console.log("simpleSwapExactTokensForETH", result)
     } else {
       console.log("[Error] coin2.symbol is undefined");
