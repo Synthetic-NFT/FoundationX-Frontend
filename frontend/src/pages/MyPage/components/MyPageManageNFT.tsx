@@ -2,6 +2,7 @@ import {
   Grid,
   makeStyles,
 } from "@material-ui/core";
+import {Button} from "@mui/material";
 import React, {useContext, useEffect} from "react";
 import {
   useHistory,
@@ -11,6 +12,7 @@ import {AppContext} from "../../../AppContext";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
 import {TradeContext} from "../../../TradeContext";
+import {OneNFT} from "../../../util/dataStructures";
 import {
   burnSynthWithNFT,
   loadUserDepositedNFTs,
@@ -19,8 +21,6 @@ import {
   userClaimBatchNFT
 } from "../../../util/nft_interact";
 import ClaimDetail from "../../Claim/components/ClaimDetail";
-import {OneNFT} from "../../../util/dataStructures";
-import {Button} from "@mui/material";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -165,11 +165,11 @@ function MyPageManageNFT(props: any): React.ReactElement {
       justifyContent: "flex",
       flexDirection: "column",
     }}>
-      {/*<CardDialog*/}
-      {/*  data={dialog}*/}
-      {/*  onClose={() => setDialog({})}*/}
-      {/*  buttonName={buttonName}*/}
-      {/*/>*/}
+      {/* <CardDialog */}
+      {/*  data={dialog} */}
+      {/*  onClose={() => setDialog({})} */}
+      {/*  buttonName={buttonName} */}
+      {/* /> */}
       <div>
         <Button
             className={classes.button}

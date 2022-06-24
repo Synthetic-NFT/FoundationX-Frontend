@@ -151,9 +151,9 @@ export default function FarmLongShort(): React.ReactElement {
           <Route path="/farm/long" exact>
             <FarmLong instrument={instrument} />
           </Route>
-          {/*<Route path="/farm/short" exact>*/}
-          {/*  <FarmShort instrument={instrument} />*/}
-          {/*</Route>*/}
+          {/* <Route path="/farm/short" exact> */}
+          {/*  <FarmShort instrument={instrument} /> */}
+          {/* </Route> */}
         </Switch>
       </div>
     </>
