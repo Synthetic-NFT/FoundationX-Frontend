@@ -299,9 +299,9 @@ export default function MypPage(): React.ReactElement {
             const target = {
               "ticker": key,
               "instrument": instrument,
-              "balance": Number(item[0]).toFixed(2),
-              "value": Number(item[1]).toFixed(2),
-              "poolPrice": Number(item[3]).toFixed(2)
+              "balance": Number(item[0]).toFixed(5),
+              "value": Number(item[1]).toFixed(5),
+              "poolPrice": Number(item[3]).toFixed(5)
             }
             result.push(target)
           }

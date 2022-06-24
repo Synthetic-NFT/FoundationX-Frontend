@@ -71,36 +71,36 @@
 
 // Address on MXL server
 const ContractAddress = {
-    factory: "0xf8FD5918C8D4F0966a190F686901cEf4a69D36Ad",
-    oracle: "0xb15AA6755839c5AE183d10fF0dB1Cdc732321C51",
-    swapFactory: "0x7E5960B2DA6226C4dAe8845da019dE2f973d5b62",
-    router: "0x7c4B17eCC06582B10b23BF8eF1de2181A29e7b36",
-    weth: "0xAea5861dea4633284a3E388b19f230948e466a53",
-    SafeDecimalMath: "0xEb9cd7BB99252F099d9c122a1063CDE2A0E953f3",
+    factory: "0xfb5b0089e71C3f754aB766FeA84afE35Fa0DE9D6",
+    oracle: "0xD2C3BDDFA996A22A061427a551C2149683a52Db3",
+    swapFactory: "0x2f7C8bB2738F5D7EaE7961b3589a9dbB73207D3C",
+    router: "0x5e1dc44c07A7e34ae1097C04Ff180d2F4957B827",
+    weth: "0xe4BAB45E2747ce7B31b338f3FE88de8F93Bcdf6f",
+    SafeDecimalMath: "0xf4c6753EbBdD763962F576E872C627AD724F42Ff",
     tokens : [
         {
             name: "BoredApeYachtClub",
-            reserve: "0x1432bbE8E60ab33AF8972000c0B993f4cD3672c0",
-            NFT: "0xD2C3BDDFA996A22A061427a551C2149683a52Db3",
-            synth: "0xe4BAB45E2747ce7B31b338f3FE88de8F93Bcdf6f",
-            vault: "0x1f95B92D7ADBE2C89ED54d25E41CD0484aB0C8db",
-            lp: "0xE4089a7DC337d62451040328F96e4Fec5C5b97f3"
+            reserve: "0x34e7F7a5Cb17511277825B74E3E248b8298C7C2b",
+            NFT: "0x671A2Aa5315c7bc1C4c0bC50A5c0B3feb15d32Dd",
+            synth: "0x094592E865bC4c1cF4aEF53068c7eb6bffaf33a8",
+            vault: "0x21Bf5dd651Bc68F3A901adc9C4EBF40C567CfAcA",
+            lp: "0x2FF6C331CbaeE9Dbb04876E6abcb2bA97cB02779"
         },
         {
             name: "MutantApeYachtClub",
-            synth: "0x464eb2ee6e3b8B061265DfA7c8AAf59D80390f7E",
-            vault: "0xb89D175c8386042fd3dC192caeC6B2ff1a2887D7",
-            reserve: "0x094592E865bC4c1cF4aEF53068c7eb6bffaf33a8",
-            NFT: "0xE8f3A618E3C3e0d1aFD60df04Fa6f632CB8617b4",
-            lp: "0xcdF7b26b3d51f87e1381c2180152E3cdF6E9Bd3a"
+            reserve: "0x3fa9f0F3bBD69df2A3e0E685B5A5D272AdaF13ED",
+            NFT: "0xb05342Bb5106C3C5e85aEa8034D537bC05912E33",
+            synth: "0xDC5Cf389F2Ee301DED329bDcd431707D4Aba608d",
+            vault: "0x92d7c1502C1Ef4fb812e8C845Ad68FD6164E721D",
+            lp: "0x29CEBE4097FD990326514d551cE562Fe733EcE8d"
         },
         {
             name: "Otherdeed",
-            synth: "0x9767AFa0926722aE8198E42eC936290A1dc8ae3B",
-            vault: "0xbB7C0f014C9dB4E6B5f3CD97794a905dD5b857Dc",
-            reserve: "0xb05342Bb5106C3C5e85aEa8034D537bC05912E33",
-            NFT: "0xDC5Cf389F2Ee301DED329bDcd431707D4Aba608d",
-            lp: "0xaa9Dc313F7947aDeb2f8bA4b54A1551681760E3d"
+            reserve: "0xd8182E11b110F8e5A35f069CA9DA1F28B51eE60c",
+            NFT: "0x949E1F5F7bB7b678C54f8e81232Ad601bf085b81",
+            synth: "0xf8FD5918C8D4F0966a190F686901cEf4a69D36Ad",
+            vault: "0x3f54F10172c9DFE4915DA36a17b6D5902C015E59",
+            lp: "0x4F5fAc8EF4045fE3ef2AC22Fab95f05347Db8b5C"
         },
     ]
 }

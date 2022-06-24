@@ -39,8 +39,10 @@ export const swapExactETHForTokens = async (amountIn: BigNumber, amountOutMin: s
 export const simpleSwapExactETHForTokens = async (walletAddress: string, amountIn: string, tickerID: string) => {
     const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
     // eslint-disable-next-line no-underscore-dangle
-    const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
-    const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0);
+    const [reserveA, reserveB] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
+
+    const amountOutOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveB, reserveA).call();
+    const amountOutMin = new BigNumber(amountOutOptimal).times('0.9').toFixed(0);
     await swapExactETHForTokens(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now() + 60)
 }
 export const swapExactTokensForETH = async (amountIn: BigNumber, amountOutMin: string, tickerID: string, addressFrom: string, addressTo: string, deadline: number) => {
@@ -70,7 +72,21 @@ export const swapExactTokensForETH = async (amountIn: BigNumber, amountOutMin: s
 export const simpleSwapExactTokensForETH = async (walletAddress: string, amountIn: string, tickerID: string) => {
     const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
     // eslint-disable-next-line no-underscore-dangle
-    const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), lpReserve._reserve0, lpReserve._reserve1).call();
+    const [reserveA, reserveB] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
+    //
+    // let amountETHOptimal = 0;
+    // if (SynthAddress[tickerID] < WETHAddress) {
+    //     const reserveA = lpReserve._reserve0
+    //     const reserveB = lpReserve._reserve1
+    //     amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveA, reserveB).call();
+    // }
+    // else {
+    //     const reserveA = lpReserve._reserve1
+    //     const reserveB = lpReserve._reserve0
+    //     amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveB, reserveA).call();
+    // }
+
+    const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveA, reserveB).call();
     const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0);
     await swapExactTokensForETH(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now() + 60)
 }
