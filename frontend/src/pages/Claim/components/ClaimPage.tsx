@@ -149,7 +149,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
   const [postsPerPage] = useState(10);
   const [currentNFTAPIPage, setCurrentNFTAPIPage] = useState(0);
   const [loadedNFTs, setLoadedNFTs] = useState<any[]>([]);
-  const NFTAPIItemPerPage = 100;
+  const NFTAPIItemPerPage = 10;
 
   interface Card {
     name: string;
@@ -160,6 +160,10 @@ export default function ClaimPage(props: any) : React.ReactElement{
     const coinTimeout = setTimeout(() => () => clearTimeout(coinTimeout));
   });
 
+  const onNFTLoad = (item: any) => {
+    setLoading(false);
+    setLoadedNFTs([...loadedNFTs, item]);
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -167,6 +171,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
       setLoadedNFTs(result);
       setLoading(false);
     })
+    // loadUnclaimedGivenNFT(collection.ticker, currentPage-1, onNFTLoad)
   }, [currentPage, collection]);
 
   // Change page
@@ -248,7 +253,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
         }
       </Grid>
       <Pagination
-          postsPerPage={100}
+          postsPerPage={10}
           totalPosts={1000}
           paginate={paginate}
       />

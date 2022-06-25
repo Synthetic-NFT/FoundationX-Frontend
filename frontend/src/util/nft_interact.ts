@@ -17,11 +17,11 @@ BigNumber.config({ DECIMAL_PLACES: 19 });
 // const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
 const getIPFSMetadataFromURL = (url: string) => fetch(url)
-    .then((response) => 
+    .then((response) =>
       // const temp = response.json();
        response.json()
     )
-    .then((responseJson) => 
+    .then((responseJson) =>
       // console.log("ppp", responseJson);
       // const temp = responseJson;
        responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/")
@@ -29,7 +29,15 @@ const getIPFSMetadataFromURL = (url: string) => fetch(url)
     .catch((error) => {
       console.error(error);
     })
-
+const getIPFSMetadataFromURLWithTokenID = (url: string, tokenId: string) => fetch(url)
+    .then((response) =>
+        // const temp = response.json();
+        response.json()
+    )
+    .then((responseJson) => ([tokenId, responseJson.image.replace("ipfs://", "https://ipfs.io/ipfs/")]))
+    .catch((error) => {
+      console.error(error);
+    })
 
 export function loadUnclaimedGivenNFT( tickerID: string, pageIndex: number): Promise<any[]> {
   return new Promise(resolve => {
@@ -52,6 +60,7 @@ export function loadUnclaimedGivenNFT( tickerID: string, pageIndex: number): Pro
     })
   })
 }
+
 
 export function loadUserGivenNFT(walletAddress: string, tickerID: string): Promise<OneNFT[]> {
   const balancePromise = NFTContract[tickerID].methods.balanceOf(walletAddress).call();

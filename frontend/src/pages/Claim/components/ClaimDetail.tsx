@@ -113,20 +113,20 @@ function ClaimDetail(props: any): React.ReactElement {
   const {walletAddress} = useContext(AppContext)
   // Stores a record of whether their respective dialog window is open
   const [dialog, setDialog] = React.useState({});
+  const images = require.context('../../../styles/images', true);
 
 
   ethCollection.img = Ethereum;
 
   useEffect(() => {
     // @ts-ignore
-    const images = require.context('../../../styles/images', true);
     const availableNFTCollection = getSupportedNFTCollections(tradeData);
     for (let i = 0; i < availableNFTCollection.length; i += 1) {
       const nftCollection = availableNFTCollection[i];
       nftCollection.img = images(`./${nftCollection?.ticker||"BoredApeYachtClub"}.png`).default;
     }
     setAvailableNFTCollection(availableNFTCollection);
-  }, [tradeData]);
+  }, [images, tradeData]);
 
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
