@@ -41,7 +41,8 @@ const getIPFSMetadataFromURLWithTokenID = (url: string, tokenId: string) => fetc
 
 export function loadUnclaimedGivenNFT( tickerID: string, pageIndex: number): Promise<any[]> {
   return new Promise(resolve => {
-    NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex)).call().then((result: any) => {
+
+    NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex || 0)).call().then((result: any) => {
       const {_tokenIds, _tokenURIs} = result;
       const imgFromTokenURIPromises = []
       for (let i = 0; i < _tokenURIs.length; i += 1) {
