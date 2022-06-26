@@ -10,11 +10,15 @@ import {
 import LoopIcon from "@material-ui/icons/Loop";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { Button } from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import {useContext, useEffect, useState} from "react";
+import * as React from 'react';
 import {
   useHistory,
 } from "react-router-dom";
 
+import {AppContext} from "../../../AppContext";
 import Card from "../../../components/Card";
 import CardDialog from "../../../components/CardDialog";
 import {AUTONITYCoins, GÖRLICoins, DummyCoins} from "../../../constants/coins";
@@ -24,9 +28,8 @@ import Azuki from "../../../styles/images/Azuki.jpeg";
 import BoredApeYachtClub from "../../../styles/images/BoredApeYachtClub.png";
 import CryptoPunks from "../../../styles/images/CryptoPunks.png";
 import Ethereum from "../../../styles/images/Ethereum.svg";
-import {loadUnclaimedGivenNFT, userClaimBatchNFT} from "../../../util/nft_interact";
-import {AppContext} from "../../../AppContext";
 import {defaultInstrument} from "../../../util/dataStructures";
+import {loadUnclaimedGivenNFT, userClaimBatchNFT} from "../../../util/nft_interact";
 
 const styles = (theme: { spacing: (arg0: number) => any; }) => ({
   paperContainer: {
@@ -102,36 +105,21 @@ const styles = (theme: { spacing: (arg0: number) => any; }) => ({
     fontSize: "0.83rem",
     lineHeight: "1.25rem",    
     color: "#FFFFFF",
+  },
+  pagination: {
+    "& .MuiButtonBase-root":{
+      color: "white",
+      borderColor: "white"
+    },
+    "& .MuiPaginationItem-root": {
+      color: "white",
+      borderColor: "white"
+    },
+    "& .Mui-selected": {
+      backgroundColor:"gray !important"
+    }
   }
 });
-
-
-export function Pagination(props: any) : React.ReactElement{
-  const { postsPerPage, totalPosts, paginate } = props
-  const pageNumbers = [];
-
-  for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i+=1) {
-    pageNumbers.push(i);
-  }
-
-  return (
-      <nav>
-        <ul className='pagination'>
-          {pageNumbers.map(number => (
-              <li key={number} className='page-item'>
-                <a onClick={(e) => {
-                  e.preventDefault();
-                  paginate(number)
-                }} href="!#" className='page-link'>
-                  {number}
-                </a>
-              </li>
-          ))}
-        </ul>
-      </nav>
-  );
-}
-
 
 // @ts-ignore
 const useStyles = makeStyles(styles);
@@ -149,6 +137,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
   const [postsPerPage] = useState(10);
   const [currentNFTAPIPage, setCurrentNFTAPIPage] = useState(0);
   const [loadedNFTs, setLoadedNFTs] = useState<any[]>([]);
+
   const NFTAPIItemPerPage = 10;
 
   interface Card {
@@ -171,18 +160,17 @@ export default function ClaimPage(props: any) : React.ReactElement{
       setLoadedNFTs(result);
       setLoading(false);
     })
+    console.log("currentPage", currentPage)
     // loadUnclaimedGivenNFT(collection.ticker, currentPage-1, onNFTLoad)
   }, [currentPage, collection]);
-
-  // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-
-
 
   useEffect(() => {
     const coinTimeout = setTimeout(() => () => clearTimeout(coinTimeout));
   });
+  
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
 
   function handleCardClick(item:any) {
     const cards = [...selectCards];
@@ -244,7 +232,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
                 onClick={() => handleCardClick(item)}
                 >
                 <Card cardStyle={selectCards.indexOf(item.tokenId) > -1 ? active : inactive}>
-                  <img src={item.img} alt={item.tokenId} style={{height:"10rem", width:"10rem"}} />
+                  <img src={item.img} alt={item.tokenId} style={{height:"100%", width:"100%", objectFit:"cover"}} />
                 </Card>
                 <div className={classes.id}>#{item.tokenId}</div>
               </Grid>
@@ -252,11 +240,15 @@ export default function ClaimPage(props: any) : React.ReactElement{
           )
         }
       </Grid>
-      <Pagination
-          postsPerPage={10}
-          totalPosts={1000}
-          paginate={paginate}
-      />
+      <Stack spacing={2}>
+        <Pagination 
+          className={classes.pagination}
+          count={1000/postsPerPage} 
+          defaultPage={currentPage} 
+          variant="outlined" 
+          onChange={handlePageChange}
+          shape="rounded" />
+      </Stack>
     </div>
   );
 };
