@@ -244,7 +244,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
                 onClick={() => handleCardClick(item)}
                 >
                 <Card cardStyle={selectCards.indexOf(item.tokenId) > -1 ? active : inactive}>
-                  <img src={item.img} alt={item.tokenId} style={{height:"100%", width:"100%"}} />
+                  <img src={item.img} alt={item.tokenId} style={{height:"10rem", width:"10rem"}} />
                 </Card>
                 <div className={classes.id}>#{item.tokenId}</div>
               </Grid>

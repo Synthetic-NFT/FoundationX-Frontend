@@ -379,24 +379,14 @@ export default function MypPage(): React.ReactElement {
     <div className={styles.header}>
       <div>
         Holding
-        <Tooltip title={<h4>Holding tooltip</h4>}>
+        {/* <Tooltip title={<h4>Holding tooltip</h4>}>
           <IconButton>
             <HelpOutlineOutlinedIcon
               sx={{ color: theme.tableHeaderTextColor }}
             />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </div>
-      {/* <div>
-        ≈ {myPageData?.data.holding[0].value} UST
-        <Tooltip title={<h4>value tooltip</h4>}>
-          <IconButton>
-            <HelpOutlineOutlinedIcon
-              sx={{ color: theme.tableHeaderTextColor }}
-            />
-          </IconButton>
-        </Tooltip>
-      </div> */}
     </div>
   )
 
@@ -404,36 +394,14 @@ export default function MypPage(): React.ReactElement {
     <div className={styles.header}>
       <div>
         Farming
-        <Tooltip title={<h4>Borrowing tooltip</h4>}>
+        {/* <Tooltip title={<h4>Borrowing tooltip</h4>}>
           <IconButton>
             <HelpOutlineOutlinedIcon
               sx={{ color: theme.tableHeaderTextColor }}
             />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </div>
-      {/* <div>
-        <span>
-          Borrowed ≈ {myPageData?.data.borrowing[0].borrowed.ust} UST
-          <Tooltip title={<h4>Borrowed tooltip</h4>}>
-            <IconButton>
-              <HelpOutlineOutlinedIcon
-                sx={{ color: theme.tableHeaderTextColor }}
-              />
-            </IconButton>
-          </Tooltip>
-        </span>
-        <span>
-          Collateral ≈ {myPageData?.data.borrowing[0].borrowed.ust} UST
-          <Tooltip title={<h4>Collateral tooltip</h4>}>
-            <IconButton>
-              <HelpOutlineOutlinedIcon
-                sx={{ color: theme.tableHeaderTextColor }}
-              />
-            </IconButton>
-          </Tooltip>
-        </span>
-      </div> */}
     </div>
   )
 
@@ -453,7 +421,7 @@ export default function MypPage(): React.ReactElement {
     </div>
   )
   const statusList = canMintNFT ? ['trade', 'swap']: ['claim'];
-  const titleList = canMintNFT ? [ 'Now you can mint sTokens with your NFTs', 'Now you can trade your sTokens', ]: [ 'You don’t have any NFT yet. Claim testing NFT now' ]
+  const titleList = canMintNFT ? [ 'Now you can mint sTokens with your NFTs', 'Now you can trade your sTokens' ]: [ 'You don’t have any NFT yet. Claim testing NFT now' ]
   const buttonList = canMintNFT ? ['Mint sTokens with your NFTs', 'Trade your sTokens'] : ['Claim your NFT now']
   function handleClick() {
     history.push(`/${statusList[step]}`);
@@ -553,7 +521,7 @@ export default function MypPage(): React.ReactElement {
                 {buttonList[step]}
               </Button>
 
-              <Button hidden={titleList.length <= 1} onClick={() => setStep((step + 1) % titleList.length)} size="small">
+              <Button style={{ display: titleList.length <= 1 ? 'none' : "block" }} hidden={titleList.length <= 1} onClick={() => setStep((step + 1) % titleList.length)} size="small">
                 next step
               </Button>
             </div>
