@@ -101,6 +101,10 @@ const StyledTextField = withStyles({
       color: theme.activeTextColor,
       fontWeight: "bold",
     },
+    "& .MuiOutlinedInput-input.Mui-disabled": {
+      color: "gray !important",
+      WebkitTextFillColor: "unset"
+    },
     "& label.Mui-focused": {
       color: theme.tradeFormOutline,
     },
@@ -239,7 +243,7 @@ function OrigCollateralField({
   return (
     <StyledTextField
       value={numCount}
-      style={{ margin: "1rem" }}
+      style={{ margin: "1rem", color:"white" }}
       label="Count"
       type="number"
       disabled
@@ -272,7 +276,7 @@ function RatioField({
       }}
     >
       <StyledSlider
-        style={{ width: "15.17rem" }}
+        style={{ width: "15.17rem", marginTop:"2rem" }}
         value={state.ratioValid ? +state.ratio : 0}
         step={5}
         min={100}
@@ -305,7 +309,7 @@ function RatioField({
       <StyledTextField
         value={state.ratioValid ? state.ratio : ""}
         inputProps={{ min: 0, max: 12 }}
-        style={{ margin: "1rem", width: "2.67rem" }}
+        style={{ margin: "1rem", width: "3.67rem" }}
         label="Ratio"
         type="number"
         onChange={(e) =>
@@ -494,7 +498,7 @@ function SellForm({ instrument }: { instrument: Instrument }) {
           borderRadius: "0.25rem",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: theme.tradeFormBackgroundColor,
+          backgroundColor: "inherit",
           flexGrow: 1,
         }}
       >

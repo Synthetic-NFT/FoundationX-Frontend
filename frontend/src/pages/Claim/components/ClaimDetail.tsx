@@ -200,7 +200,7 @@ function ClaimDetail(props: any): React.ReactElement {
             >
               <Card cardStyl="">
                 {/* eslint-disable-next-line global-require,import/no-dynamic-require */}
-                <img src={item.img} alt={item.ticker} style={{ height: "100%", width: "100%" }} />
+                <img src={item.img} alt={item.ticker} style={{ height: "100%", width: "100%", objectFit: "cover" }} />
               </Card>
               <div className={classes.id}>{item.ticker}</div>
             </Grid>
