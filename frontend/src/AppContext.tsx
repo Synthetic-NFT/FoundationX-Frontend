@@ -47,10 +47,10 @@ export function AppContextProvider({
 }
 
 // Notice that you should NEVER use this to communicate with the blockchain!
-export function convertWeiToString(a: any) {
-  return new BigNumber(a).div('1e18').toString();
-}
-export function convertWeiToNumber(a: any) {
+export function convertWeiToString(a: any, digit: number|undefined = undefined) {
+  if (digit) {
+    return new BigNumber(a).div('1e18').toFixed(digit)
+  }
   return new BigNumber(a).div('1e18').toString();
 }
 export function convertStringToWei(a: any) {

@@ -12,7 +12,7 @@ import FormControl from '@mui/material/FormControl';
 import { BigNumber } from "bignumber.js";
 import React, { useContext, useEffect, useState } from "react";
 
-import { AppContext } from "../../../AppContext";
+import {AppContext, convertWeiToString} from "../../../AppContext";
 // eslint-disable-next-line import/default
 import { SearchInput, BootstrapInput } from '../../../components/SearchInput'
 import { NFTIcons } from "../../../fakeData";
@@ -27,6 +27,7 @@ import theme from "../../../theme";
 import { TradeContext } from "../../../TradeContext";
 import { mintSynth } from "../../../util/interact";
 import {Instrument} from "../../../util/dataStructures";
+import {getETHLpWithdrawValue, removeLiquidityETH} from "../../../util/farm_interact";
 
 type BuySpecConfig = {
   minRatio: number;
@@ -462,6 +463,9 @@ export default function MyPageWithdraw({
 
   const [inst, setInst] = useState(instrument);
   const { tradeData } = useContext(TradeContext);
+  const [withdrawAmount, setWithdrawAmount] = useState("")
+  const [liquidity, setLiquidity] = useState("0");
+  const {walletAddress} = useContext(AppContext)
   function handleChange(id: string) {
     const inst: Instrument | undefined = tradeData?.instruments.find(item => item.id === id) || instrument;
     setInst(inst)
@@ -470,6 +474,20 @@ export default function MyPageWithdraw({
     minRatio: 150,
     safeRatio: 200,
   };
+
+  function handleValueChange(liquidity: string) {
+      setLiquidity(liquidity)
+      getETHLpWithdrawValue(inst.ticker, liquidity).then(res=>{
+          const keys = Object.keys(res)
+          const amounts = Object.values(res)
+          const withdrawString = `${convertWeiToString(amounts[0], 4)} ${keys[0]} + ${convertWeiToString(amounts[1], 4)} ${keys[1]}`
+          setWithdrawAmount(withdrawString)
+      })
+  }
+
+  function handleUnstakeOnClick() {
+      removeLiquidityETH(walletAddress, inst.ticker, liquidity)
+  }
 
   return (
     <div style={{ display: "flex", overflow: "hidden" }}>
@@ -482,7 +500,8 @@ export default function MyPageWithdraw({
               description=""
             />
             <div >
-              <SearchInput />
+              <BootstrapInput onChange={(e) => {handleValueChange(e.target.value )}}
+              />
             </div>
           </div>
         </div>
@@ -495,7 +514,10 @@ export default function MyPageWithdraw({
               description=""
             />
             <div style={{ display: "flex", }}>
-              <BootstrapInput />
+              <BootstrapInput
+                value={withdrawAmount}
+                disabled
+              />
             </div>
           </div>
         </div>
@@ -504,6 +526,7 @@ export default function MyPageWithdraw({
           className={styles.button}
           size="large"
           variant="contained"
+          onClick={() => handleUnstakeOnClick()}
         >
           Unstake
         </Button>

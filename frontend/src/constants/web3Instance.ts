@@ -94,6 +94,8 @@ const Web3 = require("web3");
 const web3 = new Web3("http://localhost:8545");
 
 const IERC721EnumerableABI = require("../abi/@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol/ERC721EnumerableUpgradeable.json");
+// const IUniswapV2PairABI = require("../abi/contracts/core/interfaces/IUniswapV2Pair.sol/IUniswapV2Pair.json");
+const IERC20ABI = require("../abi/@openzeppelin/contracts/token/ERC20/IERC20.sol/IERC20.json")
 const SwapFactoryABI = require("../abi/contracts/core/UniswapV2Factory.sol/UniswapV2Factory.json");
 const LpPairABI = require("../abi/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json");
 const FactoryABI = require("../abi/contracts/Factory.sol/Factory.json");
@@ -116,6 +118,7 @@ export const ReserveAddress: { [key: string]: any } = {};
 export const SynthAddress: { [key: string]: any } = {};
 export const VaultAddress: { [key: string]: any } = {};
 export const NFTAddress: { [key: string]: any } = {};
+export const LpPairAddress: { [key: string]: any } = {};
 
 export const ReserveContract: { [key: string]: any } = {};
 export const SynthContract: { [key: string]: any } = {};
@@ -130,6 +133,7 @@ for (let i = 0; i < ContractAddress.tokens.length; i += 1) {
     SynthAddress[name] = ContractAddress.tokens[i].synth;
     VaultAddress[name] = ContractAddress.tokens[i].vault;
     NFTAddress[name] = ContractAddress.tokens[i].NFT;
+    LpPairAddress[name] = ContractAddress.tokens[i].lp;
 
     ReserveContract[name] = new web3.eth.Contract(ReserveABI, ContractAddress.tokens[i].reserve);
     SynthContract[name] = new web3.eth.Contract(SynthABI, ContractAddress.tokens[i].synth);

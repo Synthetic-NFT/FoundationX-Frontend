@@ -2,7 +2,7 @@ import {BigNumber} from "bignumber.js";
 
 import ContractAddress from "../constants/ContractAddress";
 import web3, {
-  FactoryAddress, FactoryContract, LpPairContract, NFTAddress, NFTContract, ReserveContract,
+  FactoryAddress, FactoryContract, LpPairAddress, LpPairContract, NFTAddress, NFTContract, ReserveContract,
   RouterContract, SynthAddress, SynthContract, VaultAddress, VaultContract,
   WETHAddress, WETHContract
 } from "../constants/web3Instance";
@@ -61,6 +61,29 @@ export const approveToken = async(amount: BigNumber, tickerID: string, userAddre
   }
 }
 
+export const approveLpToken = async(amount: BigNumber, tickerID: string, userAddress: string, callerAddress: string) => {
+  const approveParameters = {
+    to: LpPairAddress[tickerID], // Required except during contract publications.
+    from: userAddress, // must match user's active address.
+    data: LpPairContract[tickerID].methods.approve(callerAddress, amount.toString()).encodeABI(),
+  };
+
+  // sign the transaction
+  try {
+    const approveHash = await (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [approveParameters],
+    });
+    return {
+      status: "success",
+      approveHash,
+    };
+  } catch (error) {
+    return {
+      status: (error as any).message,
+    };
+  }
+}
 
 
 export const mintSynth = async (

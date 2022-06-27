@@ -1,13 +1,14 @@
 import {BigNumber} from "bignumber.js";
 
-import {convertWeiToString} from "../AppContext";
+import {convertStringToWei, convertWeiToString} from "../AppContext";
 import web3, {
+  LpPairAddress,
   LpPairContract,
   RouterAddress,
-  RouterContract, SynthAddress,
-  WETHAddress
+  RouterContract, SynthAddress, SynthContract,
+  WETHAddress, WETHContract
 } from "../constants/web3Instance";
-import {approveToken, getLpReserve} from "./interact";
+import {approveLpToken, approveToken, getLpReserve} from "./interact";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -74,6 +75,66 @@ export const addLiquidityETH = async (walletAddress: string, tickerID: string, h
       status: (error as any).message,
     };
   }
+}
+
+
+export async function getETHLpWithdrawValue(tickerID: string, liquidity: string): Promise<{[key: string]: BigNumber} > {
+  const lpAddress = LpPairAddress[tickerID]
+  const balance0Promise = SynthContract[tickerID].methods.balanceOf(lpAddress).call()
+  const balance1Promise = WETHContract.methods.balanceOf(lpAddress).call()
+  const totalSupplyPromise = LpPairContract[tickerID].methods.totalSupply().call()
+  return new Promise(resolve => {
+    Promise.all([balance0Promise, balance1Promise, totalSupplyPromise]).then(res => {
+      const [balance0, balance1] = SynthAddress[tickerID] < WETHAddress? [res[0], res[1]]: [res[1], res[0]]
+      const totalSupply = res[2]
+      const amount0 = convertStringToWei(liquidity).times(balance0).div(totalSupply); // using balances ensures pro-rata distribution
+      const amount1 = convertStringToWei(liquidity).times(balance1).div(totalSupply); // using balances ensures pro-rata distribution
+      const [key0, key1] = SynthAddress[tickerID] < WETHAddress? [tickerID, "Ethereum"]: ["Ethereum", tickerID]
+      const result: {[key: string]: BigNumber} = {};
+      result[key0] = amount0
+      result[key1] = amount1
+      resolve(result)
+    })
+  })
+}
+
+export const removeLiquidityETH = async (walletAddress: string, tickerID: string, liquidity: string) => {
+  await approveLpToken(convertStringToWei(liquidity), tickerID, walletAddress, RouterAddress);
+
+  getETHLpWithdrawValue(tickerID, liquidity).then((res: {[key: string]: BigNumber}) => {
+    const amountSynth = res[tickerID]
+    const amountETH = res.Ethereum
+
+    const amountSynthMin = amountSynth.times('99').div('100')
+    const amountETHMin = amountETH.times('99').div('100')
+
+    const farmParameters = {
+      to: RouterAddress, // Required except during contract publications.
+      from: walletAddress, // must match user's active address.
+      data: RouterContract.methods
+          .removeLiquidityETH(
+            SynthAddress[tickerID],
+            convertStringToWei(liquidity).toFixed(0),
+            amountSynthMin.toFixed(0),
+            amountETHMin.toFixed(0),
+            walletAddress,
+            Date.now() + 60,
+          ).encodeABI(),
+    };
+    // sign the transaction
+    (window as any).ethereum.request({
+      method: "eth_sendTransaction",
+      params: [farmParameters],
+    }).then((farmHash: any) => ({
+        status: "success",
+        // depositHash,
+        farmHash,
+      })).catch ((error: any) => ({
+      status: (error as any).message,
+    }))
+  })
+
+
 }
 
 export function loadPoolSynthPrice(tickerID: string): Promise<string> {
