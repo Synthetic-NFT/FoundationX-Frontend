@@ -155,7 +155,6 @@ export const userClaimBatchNFT = async (walletAddress: string, tokenIDs: string[
       method: "eth_sendTransaction",
       params: [mintParameters],
     });
-    console.log(mintHash);
     return {
       status: "success",
       // depositHash,

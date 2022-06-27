@@ -87,61 +87,61 @@ export const blockchainAPI = {
     // console.log("aa", await this.loadUserAllLpBalance('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     // console.log("a", await loadUserAllNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'), await this.checkUserCanMintWithNFT('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'));
     // console.log("a", await getFarmDesiredETH("BoredApeYachtClub", "100"));
-    const activeTokens = await loadActiveTokens();
-    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses, nftAddresses} = activeTokens;
-    // console.log(nftAddresses, "aaaa")
-    const oraclePricePromises = []
-    const poolPricePromises = []
-    await loadPoolSynthPrice(tokenNames[0])
-    for(let i = 0; i < tokenNames.length; i += 1) {
-      oraclePricePromises.push(loadSynthPrice(tokenNames[i]));
-      poolPricePromises.push(loadPoolSynthPrice(tokenNames[i]));
-    }
-
-    const allOraclePrices = await Promise.all(oraclePricePromises);
-    const allPoolPrices = await Promise.all(poolPricePromises);
-
-    const tradeData: TradeData = {
-      instruments: []
-    };
-
-    for(let i = 0; i < tokenNames.length; i += 1) {
-      const currInstrument: Instrument = {
-        ticker: tokenNames[i],
-        fullName: tokenNames[i],
-        symbol: tokenSymbols[i],
-        id: tokenNames[i],
-        price: new BigNumber(allOraclePrices[i]).div('1e18').toString(),
-        poolPrice: allPoolPrices[i],
-        fee: 0,
-        long: 0,
-        short: 0,
-        premium: 0,
-        vaultAddress: vaultAddresses[i],
-        address: synthAddresses[i],
-        reserveAddress: reserveAddresses[i],
-        nftAddress: nftAddresses[i]
-      }
-      tradeData.instruments.push(currInstrument);
-    }
-
     return new Promise((resolve) => {
-      resolve(tradeData);
+      loadActiveTokens().then(activeTokens=>{
+        const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses, nftAddresses} = activeTokens;
+        // console.log(nftAddresses, "aaaa")
+        const oraclePricePromises = []
+        const poolPricePromises = []
+        for(let i = 0; i < tokenNames.length; i += 1) {
+          oraclePricePromises.push(loadSynthPrice(tokenNames[i]));
+          poolPricePromises.push(loadPoolSynthPrice(tokenNames[i]));
+        }
+
+        Promise.all(oraclePricePromises.concat(poolPricePromises)).then(priceResult => {
+          const allOraclePrices = priceResult.slice(0, oraclePricePromises.length)
+          const allPoolPrices = priceResult.slice(oraclePricePromises.length)
+          const tradeData: TradeData = {
+            instruments: []
+          };
+
+          for(let i = 0; i < tokenNames.length; i += 1) {
+            const currInstrument: Instrument = {
+              ticker: tokenNames[i],
+              fullName: tokenNames[i],
+              symbol: tokenSymbols[i],
+              id: tokenNames[i],
+              price: new BigNumber(allOraclePrices[i]).div('1e18').toString(),
+              poolPrice: allPoolPrices[i],
+              fee: 0,
+              long: 0,
+              short: 0,
+              premium: 0,
+              vaultAddress: vaultAddresses[i],
+              address: synthAddresses[i],
+              reserveAddress: reserveAddresses[i],
+              nftAddress: nftAddresses[i]
+            }
+            tradeData.instruments.push(currInstrument);
+          }
+          resolve(tradeData);
+        })
+      })
     });
   },
 
   async checkUserCanMintWithNFT(walletAddress: string): Promise<boolean> {
-    const userNFT = await loadUserAllNFT(walletAddress);
-    let totalBalance = 0;
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [ key, value ] of Object.entries(userNFT)) {
-      // do something with `key` and `value`
-      totalBalance += Object.keys(value).length;
-    }
-    const result = totalBalance > 0;
-
     return new Promise((resolve) => {
-      resolve(result);
+      loadUserAllNFT(walletAddress).then(userNFT=>{
+        let totalBalance = 0;
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [ key, value ] of Object.entries(userNFT)) {
+          // do something with `key` and `value`
+          totalBalance += Object.keys(value).length;
+        }
+        const result = totalBalance > 0;
+        resolve(result)
+      })
     });
   },
 
@@ -162,53 +162,100 @@ export const blockchainAPI = {
   },
 
   async loadUserAllTokenBalance(walletAddress: string): Promise<{ [key: string]: string }> {
-    const activeTokens = await loadActiveTokens();
-    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
-    return this.loadUserGivenTokenBalance(walletAddress, tokenNames);
+    // const activeTokens = await loadActiveTokens();
+    // const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    // return this.loadUserGivenTokenBalance(walletAddress, tokenNames);
+    return loadActiveTokens().then(activeTokens => {
+      const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+      return this.loadUserGivenTokenBalance(walletAddress, tokenNames);
+    })
+
   },
 
   async loadUserGivenLpBalance(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: string }> {
+    // const tokenBalancePromises:  Promise<BigNumber>[] = [];
+    // for (let i = 0; i < tickerIDs.length; i += 1) {
+    //   tokenBalancePromises.push(readWalletLpBalance(walletAddress, tickerIDs[i]));
+    // }
+    // const bnAllTokenBalances = await Promise.all(tokenBalancePromises);
+    // const allTokenBalances : { [key: string]: string } = {};
+    // for(let i = 0; i < tickerIDs.length; i += 1) {
+    //   allTokenBalances[tickerIDs[i]] = bnAllTokenBalances[i].toString();
+    // }
+    // return new Promise((resolve) => {
+    //   resolve(allTokenBalances);
+    // });
     const tokenBalancePromises:  Promise<BigNumber>[] = [];
     for (let i = 0; i < tickerIDs.length; i += 1) {
       tokenBalancePromises.push(readWalletLpBalance(walletAddress, tickerIDs[i]));
     }
-    const bnAllTokenBalances = await Promise.all(tokenBalancePromises);
-    const allTokenBalances : { [key: string]: string } = {};
-    for(let i = 0; i < tickerIDs.length; i += 1) {
-      allTokenBalances[tickerIDs[i]] = bnAllTokenBalances[i].toString();
-    }
-    return new Promise((resolve) => {
-      resolve(allTokenBalances);
-    });
+    return new Promise(resolve => {
+      Promise.all(tokenBalancePromises).then(bnAllTokenBalances=>{
+        const allTokenBalances : { [key: string]: string } = {};
+        for(let i = 0; i < tickerIDs.length; i += 1) {
+          allTokenBalances[tickerIDs[i]] = bnAllTokenBalances[i].toString();
+        }
+        resolve(allTokenBalances)
+      })
+    })
+
   },
 
   async loadUserAllLpBalance(walletAddress: string): Promise<{ [key: string]: string }> {
-    const activeTokens = await loadActiveTokens();
-    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
-    return this.loadUserGivenLpBalance(walletAddress, tokenNames);
+    // const activeTokens = await loadActiveTokens();
+    // const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    // return this.loadUserGivenLpBalance(walletAddress, tokenNames);
+    return loadActiveTokens().then(activeTokens => {
+      const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+      return this.loadUserGivenLpBalance(walletAddress, tokenNames);
+    })
   },
 
   async loadUserGivenTokenPosition(walletAddress: string, tickerIDs: string[]): Promise<{ [key: string]: any[]}> {
-    const tokenBalances = await this.loadUserGivenTokenBalance(walletAddress, tickerIDs);
-    const userDebtDeposit = await loadUserHoldingInfo(walletAddress, tickerIDs);
-    const result: { [key: string]: any[]} = {}
-    for (let i = 0; i < tickerIDs.length; i += 1) {
-      const tickerID = tickerIDs[i];
-      result[tickerID] = [
-        tokenBalances[tickerID],
-        convertWeiToString(userDebtDeposit[0][i]),
-        convertWeiToString(userDebtDeposit[1][i]),
-        convertWeiToString(userDebtDeposit[2][i])
-      ];
-    }
-    return new Promise((resolve) => {
-      resolve(result);
-    });
+    // const tokenBalances = await this.loadUserGivenTokenBalance(walletAddress, tickerIDs);
+    // const userDebtDeposit = await loadUserHoldingInfo(walletAddress, tickerIDs);
+    // const result: { [key: string]: any[]} = {}
+    // for (let i = 0; i < tickerIDs.length; i += 1) {
+    //   const tickerID = tickerIDs[i];
+    //   result[tickerID] = [
+    //     tokenBalances[tickerID],
+    //     convertWeiToString(userDebtDeposit[0][i]),
+    //     convertWeiToString(userDebtDeposit[1][i]),
+    //     convertWeiToString(userDebtDeposit[2][i])
+    //   ];
+    // }
+    // return new Promise((resolve) => {
+    //   resolve(result);
+    // });
+    const tokenBalancesPromise = this.loadUserGivenTokenBalance(walletAddress, tickerIDs);
+    const userDebtDepositPromise = loadUserHoldingInfo(walletAddress, tickerIDs);
+    return new Promise(resolve=>{
+      Promise.all([tokenBalancesPromise, userDebtDepositPromise]).then(res => {
+        const tokenBalances = res[0]
+        const userDebtDeposit = res[1]
+        const result: { [key: string]: any[]} = {}
+        for (let i = 0; i < tickerIDs.length; i += 1) {
+          const tickerID = tickerIDs[i];
+          result[tickerID] = [
+            tokenBalances[tickerID],
+            convertWeiToString(userDebtDeposit[0][i]),
+            convertWeiToString(userDebtDeposit[1][i]),
+            convertWeiToString(userDebtDeposit[2][i])
+          ];
+        }
+        resolve(result);
+      })
+    })
+
   },
   async loadUserAllTokenPosition(walletAddress: string): Promise<{ [key: string]: any[]}> {
-    const activeTokens = await loadActiveTokens();
-    const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
-    return this.loadUserGivenTokenPosition(walletAddress, tokenNames);
+    // const activeTokens = await loadActiveTokens();
+    // const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+    // return this.loadUserGivenTokenPosition(walletAddress, tokenNames);
+    return loadActiveTokens().then(activeTokens => {
+      const {tokenNames, tokenSymbols, reserveAddresses, synthAddresses, vaultAddresses} = activeTokens;
+      return this.loadUserGivenTokenPosition(walletAddress, tokenNames);
+    })
   },
 }
 

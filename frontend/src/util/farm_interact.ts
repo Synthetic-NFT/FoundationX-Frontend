@@ -11,13 +11,6 @@ import {approveToken, getLpReserve} from "./interact";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
-// const { BigNumber } = require("@ethersproject");
-
-
-// const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
-
-
-
 export function getFarmDesiredETH(tickerID: string, amountADesired: string): Promise<string> {
   return new Promise(resolve => {
     const bnAmountADesired = new BigNumber(amountADesired).times('1e18').toString();

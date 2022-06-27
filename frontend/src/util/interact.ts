@@ -12,10 +12,11 @@ BigNumber.config({ DECIMAL_PLACES: 19 });
 
 // const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
-export const loadActiveTokens = async () => {
-  const res = await FactoryContract.methods.listTokenAddressInfo().call();
-  return res;
-}
+export const loadActiveTokens = async () =>
+  // const res = await FactoryContract.methods.listTokenAddressInfo().call();
+  // return res;
+   FactoryContract.methods.listTokenAddressInfo().call()
+
 
 export const getLpReserve = async(tickerID: string) => {
   const lpReserve = await LpPairContract[tickerID].methods.getReserves().call();
