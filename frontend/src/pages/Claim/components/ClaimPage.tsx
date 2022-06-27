@@ -12,7 +12,7 @@ import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { Button } from "@mui/material";
 import React, {useContext, useEffect, useState} from "react";
 import {
-  useHistory,
+  useHistory, useLocation,
 } from "react-router-dom";
 
 import Card from "../../../components/Card";
@@ -139,10 +139,12 @@ const useStyles = makeStyles(styles);
 export default function ClaimPage(props: any) : React.ReactElement{
   const classes = useStyles();
   const history = useHistory();
+  const location = useLocation();
 
   const { collection, buttonName, haveAdd } = props;
   const {walletAddress} = useContext(AppContext)
   const [selectCards, setSelectCards] = React.useState<string[]>([]);
+  const ticker = new URLSearchParams(location.search).get("ticker");
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -167,12 +169,13 @@ export default function ClaimPage(props: any) : React.ReactElement{
 
   useEffect(() => {
     setLoading(true);
-    loadUnclaimedGivenNFT(collection.ticker, currentPage-1).then(result => {
+
+    loadUnclaimedGivenNFT(collection?.ticker||ticker, currentPage-1).then(result => {
       setLoadedNFTs(result);
       setLoading(false);
     })
     // loadUnclaimedGivenNFT(collection.ticker, currentPage-1, onNFTLoad)
-  }, [currentPage, collection]);
+  }, [currentPage, collection, ticker]);
 
   // Change page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -217,7 +220,7 @@ export default function ClaimPage(props: any) : React.ReactElement{
             className={classes.button}
             size="small"
             variant="contained"
-            onClick={() => userClaimBatchNFT(walletAddress, selectCards, collection.ticker)}
+            onClick={() => userClaimBatchNFT(walletAddress, selectCards, collection?.ticker||ticker)}
           >
             Claim Now
           </Button>

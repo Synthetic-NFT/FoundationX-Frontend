@@ -16,7 +16,7 @@ export const swapExactETHForTokens = async (amountIn: BigNumber, amountOutMin: s
     const swapParameters = {
         to: RouterAddress, // Required except during contract publications.
         from: addressFrom, // must match user's active address.
-        value: web3.utils.toHex(amountIn), // how much the user is depositing
+        value: web3.utils.toHex(amountIn.toString()), // how much the user is depositing
         data: RouterContract.methods
             .swapExactETHForTokens(amountOutMin, [WETHAddress, SynthAddress[tickerID]], addressTo, deadline)
             .encodeABI(),
@@ -41,7 +41,7 @@ export const simpleSwapExactETHForTokens = async (walletAddress: string, amountI
     // eslint-disable-next-line no-underscore-dangle
     const [reserveA, reserveB] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
 
-    const amountOutOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveB, reserveA).call();
+    const amountOutOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn).toString(), reserveB, reserveA).call();
     const amountOutMin = new BigNumber(amountOutOptimal).times('0.9').toFixed(0);
 
     await swapExactETHForTokens(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now() + 60)
@@ -51,7 +51,7 @@ export const swapExactTokensForETH = async (amountIn: BigNumber, amountOutMin: s
         to: RouterAddress, // Required except during contract publications.
         from: addressFrom, // must match user's active address.
         data: RouterContract.methods
-            .swapExactTokensForETH(amountIn, amountOutMin, [SynthAddress[tickerID], WETHAddress], addressTo, deadline)
+            .swapExactTokensForETH(amountIn.toString(), amountOutMin, [SynthAddress[tickerID], WETHAddress], addressTo, deadline)
             .encodeABI(),
     };
     try {
@@ -87,7 +87,7 @@ export const simpleSwapExactTokensForETH = async (walletAddress: string, amountI
     //     amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveB, reserveA).call();
     // }
 
-    const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn), reserveA, reserveB).call();
+    const amountETHOptimal = await RouterContract.methods.quote(convertStringToWei(amountIn).toString(), reserveA, reserveB).call();
     const amountOutMin = new BigNumber(amountETHOptimal).times('0.9').toFixed(0);
     await swapExactTokensForETH(convertStringToWei(amountIn), amountOutMin, tickerID, walletAddress, walletAddress, Date.now() + 60)
 }

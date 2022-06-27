@@ -6,7 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { TextField } from "@mui/material";
 import { BigNumber } from "bignumber.js";
-import { ethers } from "ethers";
+// import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "./AppContext";
@@ -235,7 +235,8 @@ function OrigCollateralField({
   if (isCRatio) {
     c = c.times(new BigNumber(100));
   }
-  const numCount = ethers.utils.formatEther(c.toString());
+  // const numCount = ethers.utils.formatEther(c.toString());
+  const numCount = c.div("1e18").toString()
   return (
     <StyledTextField
       value={numCount}

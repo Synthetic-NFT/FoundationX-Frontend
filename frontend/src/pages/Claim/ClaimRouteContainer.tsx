@@ -17,7 +17,8 @@ export default function ClaimRouteContainer(): React.ReactElement {
             <Route path="/claim" exact>
                 <ClaimDetail
                     onCollectionSelect={(collection: NFTCollection) => {
-                        history.push("/claim/NFT", collection);
+                        history.push(`/claim/NFT?ticker=${collection.ticker}`);
+                        // history.push(`/claim/${collection.ticker}`, collection);
                         setSelectedCollection(collection);
                     }}
                     buttonName="Claim"

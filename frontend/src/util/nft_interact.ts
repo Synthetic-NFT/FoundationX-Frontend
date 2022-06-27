@@ -1,7 +1,7 @@
-import { BigNumber } from "bignumber.js";
+// import { BigNumber } from "bignumber.js";
 
 import ContractAddress from "../constants/ContractAddress";
-import {
+import web3, {
   FactoryAddress, FactoryContract,
   NFTAddress,
   NFTContract, SynthAddress,
@@ -12,7 +12,8 @@ import {
 import {OneNFT} from "./dataStructures";
 import {loadActiveTokens} from "./interact";
 
-BigNumber.config({ DECIMAL_PLACES: 19 });
+
+// BigNumber.config({ DECIMAL_PLACES: 19 });
 
 // const {ReserveAddress, SynthAddress, VaultAddress, NFTAddress, ReserveContract, SynthContract, VaultContract, LpPairContract, NFTContract} = initContractAndAddress()
 
@@ -42,7 +43,7 @@ const getIPFSMetadataFromURLWithTokenID = (url: string, tokenId: string) => fetc
 export function loadUnclaimedGivenNFT( tickerID: string, pageIndex: number): Promise<any[]> {
   return new Promise(resolve => {
 
-    NFTContract[tickerID].methods.remainingTokenURI(new BigNumber(pageIndex || 0)).call().then((result: any) => {
+    NFTContract[tickerID].methods.remainingTokenURI(pageIndex || 0).call().then((result: any) => {
       const {_tokenIds, _tokenURIs} = result;
       const imgFromTokenURIPromises = []
       for (let i = 0; i < _tokenURIs.length; i += 1) {
@@ -141,12 +142,12 @@ export const loadUserAllNFT = async (walletAddress: string) => {
 
 
 
-export const userClaimNFT = async (walletAddress: string, tokenID: string, tickerID: string) => {
+export const userClaimBatchNFT = async (walletAddress: string, tokenIDs: string[], tickerID: string) => {
   const mintParameters = {
     to: NFTAddress[tickerID], // Required except during contract publications.
     from: walletAddress, // must match user's active address.
     data: NFTContract[tickerID].methods
-        .safeMint(walletAddress, tokenID)
+        .safeBatchMint(walletAddress, tokenIDs)
         .encodeABI(),
   };
   try {
@@ -165,16 +166,6 @@ export const userClaimNFT = async (walletAddress: string, tokenID: string, ticke
       status: (error as any).message,
     };
   }
-}
-
-export const userClaimBatchNFT = async (walletAddress: string, tokenIDs: string[], tickerID: string) => {
-  const mintPromises = []
-  for (let i = 0; i < tokenIDs.length; i += 1) {
-    const tokenID = tokenIDs[i];
-    mintPromises.push(userClaimNFT(walletAddress, tokenID, tickerID))
-  }
-  const batchMintResult = await Promise.all(mintPromises);
-  return batchMintResult;
 }
 
 export const mintSynthWithNFT = async (walletAddress: string, tokenIDs: any[], tickerID: string) => {
@@ -238,7 +229,8 @@ export const burnSynthWithNFT = async (walletAddress: string, tokenIDs: any[], t
     from: walletAddress, // must match user's active address.
     data: VaultContract[tickerID].methods.userBurnSynthNFT(tokenIDs).encodeABI(),
   };
-  const bnBurnAmount = new BigNumber(tokenIDs.length).times("1e18")
+  // const bnBurnAmount = new BigNumber(tokenIDs.length).times("1e18")
+  const bnBurnAmount = web3.utils.toWei(tokenIDs.length.toString());
   const approveParameters = {
     to: SynthAddress[tickerID], // Required except during contract publications.
     from: walletAddress, // must match user's active address.

@@ -1,12 +1,11 @@
 import {BigNumber} from "bignumber.js";
 
 import ContractAddress from "../constants/ContractAddress";
-import web3Instance, {
+import web3, {
   FactoryAddress, FactoryContract, LpPairContract, NFTAddress, NFTContract, ReserveContract,
   RouterContract, SynthAddress, SynthContract, VaultAddress, VaultContract,
   WETHAddress, WETHContract
 } from "../constants/web3Instance";
-import web3 from "../constants/web3Instance";
 
 BigNumber.config({ DECIMAL_PLACES: 19 });
 
@@ -25,14 +24,14 @@ export const getLpReserve = async(tickerID: string) => {
 
 export const getAmountSynthOut = async(tickerID: string, amountETH: string) => {
   const bnAmountETH = new BigNumber(amountETH).times("1e18");
-  const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountETH, [WETHAddress, SynthAddress[tickerID]]).call();
+  const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountETH.toString(), [WETHAddress, SynthAddress[tickerID]]).call();
   const res = new BigNumber( amountsOut[1]).div("1e18");
   return res;
 }
 
 export const getAmountETHOut = async(tickerID: string, amountSynth: string) => {
   const bnAmountSynth = new BigNumber(amountSynth).times("1e18");
-  const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountSynth, [SynthAddress[tickerID], WETHAddress]).call();
+  const amountsOut = await RouterContract.methods.getAmountsOut(bnAmountSynth.toString(), [SynthAddress[tickerID], WETHAddress]).call();
   const res = new BigNumber( amountsOut[1]).div("1e18");
   return res;
 }
@@ -41,7 +40,7 @@ export const approveToken = async(amount: BigNumber, tickerID: string, userAddre
   const approveParameters = {
     to: SynthAddress[tickerID], // Required except during contract publications.
     from: userAddress, // must match user's active address.
-    data: SynthContract[tickerID].methods.approve(callerAddress, amount).encodeABI(),
+    data: SynthContract[tickerID].methods.approve(callerAddress, amount.toString()).encodeABI(),
   };
 
   // sign the transaction
@@ -129,7 +128,7 @@ export const burnSynth = async (
   const approveParameters = {
     to: synthAddress, // Required except during contract publications.
     from: address, // must match user's active address.
-    data: SynthContract[tickerID].methods.approve(FactoryAddress, amount).encodeABI(),
+    data: SynthContract[tickerID].methods.approve(FactoryAddress, amount.toString()).encodeABI(),
   };
 
   // sign the transaction
@@ -176,11 +175,11 @@ export const manageSynth = async (
   const bnTargetDebt = new BigNumber(targetDebt).times('1e18').toFixed(0).toString();
   // const bnApproveAmount = new BigNumber(originalDebt).times('1e18').minus(new BigNumber(targetDebt).times('1e18'))
   const bnApproveAmount = new BigNumber(originalDebt).times('1e18')
-  const a = await VaultContract[tickerID].methods.WETHAddress().call();
-  const b = await WETHContract.methods.balanceOf(VaultAddress[tickerID]).call();
-  const c = await ReserveContract[tickerID].methods.getMinterDepositETH(address).call();
-
-  const d = await ReserveContract[tickerID].methods.getMinterDebtETH(address).call();
+  // const a = await VaultContract[tickerID].methods.WETHAddress().call();
+  // const b = await WETHContract.methods.balanceOf(VaultAddress[tickerID]).call();
+  // const c = await ReserveContract[tickerID].methods.getMinterDepositETH(address).call();
+  //
+  // const d = await ReserveContract[tickerID].methods.getMinterDebtETH(address).call();
   const manageParameters = {
     to: VaultAddress[tickerID], // Required except during contract publications.
     from: address, // must match user's active address.
@@ -250,7 +249,7 @@ export const claimWETH = async(walletAddress: string, amount: string) => {
   const claimParameters = {
     to: WETHAddress, // Required except during contract publications.
     from: walletAddress, // must match user's active address.
-    data: WETHContract.methods.mintFree(walletAddress, new BigNumber(amount).times("1e18")).encodeABI(),
+    data: WETHContract.methods.mintFree(walletAddress, new BigNumber(amount).times("1e18").toString()).encodeABI(),
   }
 
   try {

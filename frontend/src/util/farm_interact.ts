@@ -20,7 +20,7 @@ BigNumber.config({ DECIMAL_PLACES: 19 });
 
 export function getFarmDesiredETH(tickerID: string, amountADesired: string): Promise<string> {
   return new Promise(resolve => {
-    const bnAmountADesired = new BigNumber(amountADesired).times('1e18');
+    const bnAmountADesired = new BigNumber(amountADesired).times('1e18').toString();
     LpPairContract[tickerID].methods.getReserves().call()
         .then((lpReserve: { _reserve0: any; _reserve1: any; }) => {
           console.log(lpReserve)
@@ -89,6 +89,7 @@ export function loadPoolSynthPrice(tickerID: string): Promise<string> {
       // eslint-disable-next-line no-underscore-dangle
       const [synthReserve, ethReserve] = SynthAddress[tickerID] < WETHAddress? [lpReserve._reserve0, lpReserve._reserve1] : [lpReserve._reserve1, lpReserve._reserve0]
       const poolSynthPriceInETH = new BigNumber(ethReserve).div(synthReserve).toString();
+      // const poolSynthPriceInETH = web3.utils.toBN(ethReserve).div(synthReserve).toString();
       resolve(poolSynthPriceInETH);
     }).catch(error => {
       console.error(error);
